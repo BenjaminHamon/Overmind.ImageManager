@@ -1,0 +1,17 @@
+# Backup files
+*.bak
+*.bak.meta
+
+# Build
+.build/
+
+# NuGet
+packages/
+
+# Visual Studio
+.vs/
+*.csproj.user
+*.suo
+
+# Visual Studio Code
+.vscode/

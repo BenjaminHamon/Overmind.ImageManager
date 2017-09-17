@@ -3,10 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Overmind.ImageManager.WindowsClient"
-        mc:Ignorable="d"
-        Title="Overmind Image Manager" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+        xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
+        mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:MainViewModel}"
+        Title="{Binding Path=ApplicationTitle}" Height="900" Width="1600">
+    <main:MainView DataContext="{Binding}"/>
 </Window>

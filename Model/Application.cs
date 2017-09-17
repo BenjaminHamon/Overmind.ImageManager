@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
 
 namespace Overmind.ImageManager.Model
 {
 	public class Application
 	{
+		public Application()
+		{
+			JsonSerializer serializer = new JsonSerializer() { Formatting = Formatting.Indented };
+			DataProvider = new DataProvider(serializer);
+		}
+
+		public DataProvider DataProvider { get; }
 	}
 }

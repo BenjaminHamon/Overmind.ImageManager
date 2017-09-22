@@ -11,7 +11,9 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Menu Grid.Row="0">
+        <!-- IsFocusScope is set to ensure any active control lose focus and gets its binding updated
+             See https://stackoverflow.com/questions/57493/wpf-databind-before-saving -->
+        <Menu Grid.Row="0" FocusManager.IsFocusScope="False">
             <MenuItem Header="File">
                 <MenuItem Header="New collection" Click="CreateCollection"/>
                 <MenuItem Header="Open collection" Click="LoadCollection"/>

@@ -55,6 +55,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ImagePropertiesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -72,6 +76,9 @@
     </Compile>
     <Compile Include="CollectionViewModel.cs" />
     <Compile Include="DelegateCommand.cs" />
+    <Compile Include="ImagePropertiesView.xaml.cs">
+      <DependentUpon>ImagePropertiesView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ImageViewModel.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="MainWindow.xaml.cs">

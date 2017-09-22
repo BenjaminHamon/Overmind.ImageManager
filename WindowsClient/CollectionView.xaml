@@ -30,14 +30,28 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <StackPanel Grid.Column="1">
-            <DockPanel Margin="5">
+        <DockPanel Grid.Column="1">
+            <DockPanel DockPanel.Dock="Top" Margin="5">
                 <Button Content="Add" Command="{Binding Path=AddImageCommand}"
                         CommandParameter="{Binding ElementName=newImageUri, Path=Text}"
                         DockPanel.Dock="Right" Margin="5" Width="50"/>
                 <TextBox x:Name="newImageUri" x:FieldModifier="private"
                          DockPanel.Dock="Left" Margin="5"/>
             </DockPanel>
-        </StackPanel>
+            <DockPanel DockPanel.Dock="Top">
+                <DockPanel.Style>
+                    <Style TargetType="DockPanel">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=SelectedImage}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DockPanel.Style>
+                <Image DockPanel.Dock="Top" Source="{Binding Path=SelectedImage.FilePath}"
+                       Margin="10" MaxHeight="200" RenderOptions.BitmapScalingMode="HighQuality"/>
+                <main:ImagePropertiesView DockPanel.Dock="Top" DataContext="{Binding Path=SelectedImage}" Margin="5"/>
+            </DockPanel>
+        </DockPanel>
     </Grid>
 </UserControl>

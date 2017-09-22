@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 
@@ -12,6 +13,11 @@ namespace Overmind.ImageManager.Model
 		public string FileNameInStorage { get; set; }
 		[DataMember]
 		public string Hash { get; set; }
+
+		[DataMember(EmitDefaultValue = false)]
+		public string Title { get; set; }
+		[DataMember]
+		public List<string> Tags { get; set; } = new List<string>();
 
 		public static string CreateHash(byte[] imageData)
 		{

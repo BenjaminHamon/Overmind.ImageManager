@@ -14,8 +14,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
-            <ComboBox x:Name="layoutComboBox" x:FieldModifier="private" SelectedValuePath="Tag">
+        <DockPanel Grid.Row="0">
+            <ComboBox DockPanel.Dock="Left" x:Name="layoutComboBox" x:FieldModifier="private" SelectedValuePath="Tag" Margin="5">
                 <ComboBoxItem Tag="Grid" IsSelected="True">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="/Resources/Icons/Grid.png" Height="24" Width="24"/>
@@ -29,7 +29,14 @@
                     </StackPanel>
                 </ComboBoxItem>
             </ComboBox>
-        </StackPanel>
+            <Button DockPanel.Dock="Right" Command="{Binding Path=SearchCommand}"
+                    CommandParameter="{Binding ElementName=searchTextBox, Path=Text}"
+                    IsDefault="True" Margin="5">
+                <Image Source="/Resources/Icons/Search.png" Height="24" Width="24"/>
+            </Button>
+            <TextBox DockPanel.Dock="Right" x:Name="searchTextBox" x:FieldModifier="private"
+                     Margin="5" VerticalAlignment="Center"/>
+        </DockPanel>
         <ListBox Grid.Row="1" ItemsSource="{Binding Path=ImageCollection}"
                  SelectedItem="{Binding Path=SelectedImage}" Margin="5">
             <ListBox.Resources>

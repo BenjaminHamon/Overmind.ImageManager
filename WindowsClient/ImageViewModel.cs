@@ -1,6 +1,5 @@
 ﻿using Overmind.ImageManager.Model;
 using System;
-using System.IO;
 using System.Linq;
 
 namespace Overmind.ImageManager.WindowsClient
@@ -26,6 +25,11 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			get { return String.Join(" ", model.Tags); }
 			set { model.Tags = value.Trim().Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList(); }
+		}
+
+		public bool IsMatched(string query)
+		{
+			return ((model.Title != null) && model.Title.Contains(query)) || model.Tags.Any(tag => tag.Contains(query));
 		}
 	}
 }

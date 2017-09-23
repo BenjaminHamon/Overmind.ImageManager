@@ -1,5 +1,6 @@
 ﻿using Overmind.ImageManager.Model;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -13,15 +14,18 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			this.model = model;
 
-			ImageCollection = new ObservableCollection<ImageViewModel>(model.Images.Select(image => new ImageViewModel(image, () => model.GetImagePath(image))));
+			allImages = new ObservableCollection<ImageViewModel>(model.Images.Select(image => new ImageViewModel(image, () => model.GetImagePath(image))));
 
 			AddImageCommand = new DelegateCommand<string>(uri => AddImage(new Uri(uri)));
+			SearchCommand = new DelegateCommand<string>(Search);
 		}
 
 		private readonly CollectionModel model;
+		private readonly ObservableCollection<ImageViewModel> allImages;
+		private ObservableCollection<ImageViewModel> filteredImages;
 
 		public string Name { get { return model.Name; } }
-		public ObservableCollection<ImageViewModel> ImageCollection { get; }
+		public ObservableCollection<ImageViewModel> ImageCollection { get { return filteredImages ?? allImages; } }
 
 		private ImageViewModel selectedImageField;
 		public ImageViewModel SelectedImage
@@ -48,6 +52,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		public DelegateCommand<string> AddImageCommand { get; }
+		public DelegateCommand<string> SearchCommand { get; }
 
 		private void AddImage(Uri uri)
 		{
@@ -70,6 +75,19 @@ namespace Overmind.ImageManager.WindowsClient
 				ImageCollection.Add(newImageViewModel);
 				SelectedImage = newImageViewModel;
 			}
+		}
+
+		private void Search(string query)
+		{
+			if (String.IsNullOrEmpty(query))
+				filteredImages = null;
+			else
+			{
+				IList<string> queryElements = query.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				IEnumerable<ImageViewModel> matchingImages = allImages.Where(image => queryElements.Any(element => image.IsMatched(element)));
+				filteredImages = new ObservableCollection<ImageViewModel>(matchingImages);
+			}
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageCollection)));
 		}
 	}
 }

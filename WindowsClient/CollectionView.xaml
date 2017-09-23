@@ -37,8 +37,8 @@
                     <WrapPanel/>
                 </ItemsPanelTemplate>
                 <DataTemplate x:Key="gridItemTemplate">
-                    <Image Source="{Binding Path=FilePath}" Margin="10" MaxHeight="128" MaxWidth="128"
-                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image Source="{Binding Path=FilePath, Converter={StaticResource ImageConverter}}"
+                           Margin="10" MaxHeight="128" MaxWidth="128" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </DataTemplate>
                 <ItemsPanelTemplate x:Key="listTemplate">
                     <VirtualizingStackPanel/>
@@ -47,8 +47,8 @@
                     <StackPanel Orientation="Horizontal">
                         <ContentPresenter Margin="5" Height="32" Width="32">
                             <ContentPresenter.Content>
-                                <Image Source="{Binding Path=FilePath}" MaxHeight="32" MaxWidth="32"
-                                       RenderOptions.BitmapScalingMode="HighQuality"/>
+                                <Image Source="{Binding Path=FilePath, Converter={StaticResource ImageConverter}}"
+                                       MaxHeight="32" MaxWidth="32" RenderOptions.BitmapScalingMode="HighQuality"/>
                             </ContentPresenter.Content>
                         </ContentPresenter>
                         <TextBlock Text="{Binding Path=Name}" Margin="5" VerticalAlignment="Center"/>

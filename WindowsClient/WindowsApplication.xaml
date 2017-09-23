@@ -1,9 +1,10 @@
 ﻿<Application x:Class="Overmind.ImageManager.WindowsClient.WindowsApplication"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
              Startup="Application_Startup"
              Exit="Application_Exit">
     <Application.Resources>
-         
+        <main:StringToImageConverter x:Key="ImageConverter"/>
     </Application.Resources>
 </Application>

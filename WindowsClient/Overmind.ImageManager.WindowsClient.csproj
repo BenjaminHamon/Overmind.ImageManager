@@ -84,6 +84,7 @@
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="StringToImageConverter.cs" />
     <Compile Include="WindowsApplication.xaml.cs">
       <DependentUpon>WindowsApplication.xaml</DependentUpon>
       <SubType>Code</SubType>

@@ -10,14 +10,14 @@ namespace Overmind.ImageManager.Model
 		{
 			this.dataProvider = dataProvider;
 			this.data = data;
-			this.StoragePath = storagePath;
+			this.storagePath = storagePath;
 		}
 
 		private readonly DataProvider dataProvider;
 		private readonly CollectionData data;
+		private readonly string storagePath;
 
-		public string Name { get { return StoragePath; } }
-		public string StoragePath { get; }
+		public string Name { get { return storagePath; } }
 		public IEnumerable<ImageModel> Images { get { return data.Images; } }
 
 		public void AddImage(ImageModel newImage, byte[] newImageData)
@@ -26,18 +26,23 @@ namespace Overmind.ImageManager.Model
 			if (existingImage != null)
 				throw new InvalidOperationException("An image with the same hash already exists");
 
-			dataProvider.AddImage(StoragePath, newImage, newImageData);
+			dataProvider.AddImage(storagePath, newImage, newImageData);
 			data.Images.Add(newImage);
+		}
+
+		public string GetImagePath(ImageModel image)
+		{
+			return dataProvider.GetImagePath(storagePath, image);
 		}
 
 		public void Save()
 		{
-			dataProvider.SaveCollection(StoragePath, data);
+			dataProvider.SaveCollection(storagePath, data);
 		}
 
 		public void Dispose()
 		{
-			dataProvider.CleanTemporary(StoragePath);
+			dataProvider.CleanTemporary(storagePath);
 		}
 	}
 }

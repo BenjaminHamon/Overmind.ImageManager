@@ -13,7 +13,7 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			this.model = model;
 
-			ImageCollection = new ObservableCollection<ImageViewModel>(model.Images.Select(image => new ImageViewModel(image, () => model.StoragePath)));
+			ImageCollection = new ObservableCollection<ImageViewModel>(model.Images.Select(image => new ImageViewModel(image, () => model.GetImagePath(image))));
 
 			AddImageCommand = new DelegateCommand<string>(uri => AddImage(new Uri(uri)));
 		}
@@ -66,7 +66,7 @@ namespace Overmind.ImageManager.WindowsClient
 			{
 				ImageModel newImage = new ImageModel() { Hash = newImageHash, FileName = uri.Segments.Last() };
 				model.AddImage(newImage, newImageData);
-				ImageViewModel newImageViewModel = new ImageViewModel(newImage, () => model.StoragePath);
+				ImageViewModel newImageViewModel = new ImageViewModel(newImage, () => model.GetImagePath(newImage));
 				ImageCollection.Add(newImageViewModel);
 				SelectedImage = newImageViewModel;
 			}

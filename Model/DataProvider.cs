@@ -74,6 +74,14 @@ namespace Overmind.ImageManager.Model
 				serializer.Serialize(jsonWriter, collectionData.Images);
 		}
 
+		public string GetImagePath(string collectionPath, ImageModel image)
+		{
+			string imagePath = Path.Combine(collectionPath, DataProvider.TemporaryDirectory, image.FileNameInStorage);
+			if (File.Exists(imagePath))
+				return imagePath;
+			return Path.Combine(collectionPath, image.FileName);
+		}
+
 		public void AddImage(string collectionPath, ImageModel image, byte[] imageData)
 		{
 			string temporaryDirectory = Path.Combine(collectionPath, DataProvider.TemporaryDirectory);

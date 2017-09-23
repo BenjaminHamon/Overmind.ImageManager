@@ -7,17 +7,17 @@ namespace Overmind.ImageManager.WindowsClient
 {
 	public class ImageViewModel
 	{
-		public ImageViewModel(ImageModel model, Func<string> getStoragePath)
+		public ImageViewModel(ImageModel model, Func<string> getImagePath)
 		{
 			this.model = model;
-			this.getStoragePath = getStoragePath;
+			this.getImagePath = getImagePath;
 		}
 
 		private readonly ImageModel model;
-		private readonly Func<string> getStoragePath;
+		private readonly Func<string> getImagePath;
 		
 		public string Name { get { return model.FileName; } }
-		public string FilePath { get { return Path.Combine(getStoragePath(), model.FileName); } }
+		public string FilePath { get { return getImagePath(); } }
 		public string Hash { get { return model.Hash; } }
 
 		public string Title { get { return model.Title; } set { model.Title = value; } }

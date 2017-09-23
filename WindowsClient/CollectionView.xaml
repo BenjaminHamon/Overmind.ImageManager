@@ -6,52 +6,69 @@
              xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:CollectionViewModel}"
              d:DesignHeight="300" d:DesignWidth="700">
-
-    <UserControl.Style>
-        <Style TargetType="UserControl">
-            <Style.Triggers>
-                <Trigger Property="DataContext" Value="{x:Null}">
-                    <Setter Property="IsEnabled" Value="False"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-    </UserControl.Style>
-    
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="visibilityConverter"/>
+    </UserControl.Resources>
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="400"/>
-        </Grid.ColumnDefinitions>
-        <ListView Grid.Column="0" ItemsSource="{Binding Path=ImageCollection}"
-                  SelectedItem="{Binding Path=SelectedImage}" Margin="5">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Path=Name}" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
+            <ComboBox x:Name="layoutComboBox" x:FieldModifier="private" SelectedValuePath="Tag">
+                <ComboBoxItem Tag="Grid" IsSelected="True">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Resources/Icons/Grid.png" Height="24" Width="24"/>
+                        <TextBlock Text="Grid" Margin="5" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </ComboBoxItem>
+                <ComboBoxItem Tag="List">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Resources/Icons/List.png" Height="24" Width="24"/>
+                        <TextBlock Text="List" Margin="5" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </ComboBoxItem>
+            </ComboBox>
+        </StackPanel>
+        <ListBox Grid.Row="1" ItemsSource="{Binding Path=ImageCollection}"
+                 SelectedItem="{Binding Path=SelectedImage}" Margin="5">
+            <ListBox.Resources>
+                <ItemsPanelTemplate x:Key="gridTemplate">
+                    <WrapPanel/>
+                </ItemsPanelTemplate>
+                <DataTemplate x:Key="gridItemTemplate">
+                    <Image Source="{Binding Path=FilePath}" Margin="10" MaxHeight="128" MaxWidth="128"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
                 </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-        <DockPanel Grid.Column="1">
-            <DockPanel DockPanel.Dock="Top" Margin="5">
-                <Button Content="Add" Command="{Binding Path=AddImageCommand}"
-                        CommandParameter="{Binding ElementName=newImageUri, Path=Text}"
-                        DockPanel.Dock="Right" Margin="5" Width="50"/>
-                <TextBox x:Name="newImageUri" x:FieldModifier="private"
-                         DockPanel.Dock="Left" Margin="5"/>
-            </DockPanel>
-            <DockPanel DockPanel.Dock="Top">
-                <DockPanel.Style>
-                    <Style TargetType="DockPanel">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Path=SelectedImage}" Value="{x:Null}">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </DockPanel.Style>
-                <Image DockPanel.Dock="Top" Source="{Binding Path=SelectedImage.FilePath}"
-                       Margin="10" MaxHeight="200" RenderOptions.BitmapScalingMode="HighQuality"/>
-                <main:ImagePropertiesView DockPanel.Dock="Top" DataContext="{Binding Path=SelectedImage}" Margin="5"/>
-            </DockPanel>
-        </DockPanel>
+                <ItemsPanelTemplate x:Key="listTemplate">
+                    <VirtualizingStackPanel/>
+                </ItemsPanelTemplate>
+                <DataTemplate x:Key="listItemTemplate">
+                    <StackPanel Orientation="Horizontal">
+                        <ContentPresenter Margin="5" Height="32" Width="32">
+                            <ContentPresenter.Content>
+                                <Image Source="{Binding Path=FilePath}" MaxHeight="32" MaxWidth="32"
+                                       RenderOptions.BitmapScalingMode="HighQuality"/>
+                            </ContentPresenter.Content>
+                        </ContentPresenter>
+                        <TextBlock Text="{Binding Path=Name}" Margin="5" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.Resources>
+            <ListBox.Style>
+                <Style TargetType="ListBox">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=layoutComboBox, Path=SelectedValue}" Value="Grid">
+                            <Setter Property="ItemsPanel" Value="{StaticResource gridTemplate}"/>
+                            <Setter Property="ItemTemplate" Value="{StaticResource gridItemTemplate}"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ElementName=layoutComboBox, Path=SelectedValue}" Value="List">
+                            <Setter Property="ItemsPanel" Value="{StaticResource listTemplate}"/>
+                            <Setter Property="ItemTemplate" Value="{StaticResource listItemTemplate}"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListBox.Style>
+        </ListBox>
     </Grid>
 </UserControl>

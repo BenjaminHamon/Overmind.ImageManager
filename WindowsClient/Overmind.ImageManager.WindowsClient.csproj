@@ -110,5 +110,14 @@
       <Name>Overmind.ImageManager.Model</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Grid.png" />
+    <Resource Include="Resources\Icons\List.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Credits.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

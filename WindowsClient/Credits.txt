@@ -1,0 +1,5 @@
+Overmind Image Manager uses licensed assets from:
+
+- Google Material Design Icons
+	https://material.io/icons/
+	Apache License Version 2.0

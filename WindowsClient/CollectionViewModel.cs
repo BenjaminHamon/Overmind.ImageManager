@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 
 namespace Overmind.ImageManager.WindowsClient
 {
@@ -83,8 +84,10 @@ namespace Overmind.ImageManager.WindowsClient
 				filteredImages = null;
 			else
 			{
-				IList<string> queryElements = query.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-				IEnumerable<ImageViewModel> matchingImages = allImages.Where(image => queryElements.Any(element => image.IsMatched(element)));
+				List<Regex> queryRegexes = query.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+					.Select(element => new Regex("^" + Regex.Escape(element).Replace("\\*", ".*") + "$")).ToList();
+				IEnumerable<ImageViewModel> matchingImages = allImages
+					.Where(image => queryRegexes.All(regex => image.GetSearchableValues().Any(value => regex.IsMatch(value))));
 				filteredImages = new ObservableCollection<ImageViewModel>(matchingImages);
 			}
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageCollection)));

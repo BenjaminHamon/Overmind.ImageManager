@@ -38,7 +38,8 @@
                      Margin="5" VerticalAlignment="Center"/>
         </DockPanel>
         <ListBox Grid.Row="1" ItemsSource="{Binding Path=ImageCollection}"
-                 SelectedItem="{Binding Path=SelectedImage}" Margin="5">
+                 SelectedItem="{Binding Path=SelectedImage}" Margin="5"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListBox.Resources>
                 <ItemsPanelTemplate x:Key="gridTemplate">
                     <WrapPanel/>

@@ -42,8 +42,8 @@
                     <Button Content="Add" Command="{Binding Path=AddImageCommand}"
                             CommandParameter="{Binding ElementName=newImageUri, Path=Text}"
                             DockPanel.Dock="Right" Margin="5" Width="50"/>
-                    <TextBox x:Name="newImageUri" x:FieldModifier="private"
-                             DockPanel.Dock="Left" Margin="5"/>
+                    <TextBox x:Name="newImageUri" x:FieldModifier="private" DockPanel.Dock="Left" Margin="5"
+                             PreviewDragOver="CheckDraggedImageUri" PreviewDragEnter="CheckDraggedImageUri" PreviewDrop="DropImageUri"/>
                 </DockPanel>
                 <DockPanel DockPanel.Dock="Top">
                     <DockPanel.Style>

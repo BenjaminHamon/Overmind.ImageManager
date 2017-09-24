@@ -1,6 +1,8 @@
 ﻿using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Overmind.ImageManager.Model;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -42,6 +44,36 @@ namespace Overmind.ImageManager.WindowsClient
 
 			MainViewModel viewModel = (MainViewModel)DataContext;
 			viewModel.LoadCollectionCommand.Execute(Path.GetDirectoryName(fileDialog.FileName));
+		}
+
+		private void CheckDraggedImageUri(object sender, DragEventArgs eventArguments)
+		{
+			eventArguments.Effects = DragDropEffects.None;
+
+			if (eventArguments.Data.GetDataPresent(DataFormats.FileDrop))
+			{
+				IList<string> files = (IList<string>)eventArguments.Data.GetData(DataFormats.FileDrop);
+				if (files.Count == 1)
+					eventArguments.Effects = DragDropEffects.Copy;
+			}
+			else if (eventArguments.Data.GetDataPresent(DataFormats.Text))
+			{
+				string text = (string)eventArguments.Data.GetData(DataFormats.Text);
+				if (Uri.IsWellFormedUriString(text, UriKind.Absolute))
+					eventArguments.Effects = DragDropEffects.Copy;
+			}
+
+			eventArguments.Handled = true;
+		}
+
+		private void DropImageUri(object sender, DragEventArgs eventArguments)
+		{
+			if (eventArguments.Data.GetDataPresent(DataFormats.FileDrop))
+				newImageUri.Text = ((IList<string>)eventArguments.Data.GetData(DataFormats.FileDrop)).First();
+			else if (eventArguments.Data.GetDataPresent(DataFormats.Text))
+				newImageUri.Text = (string)eventArguments.Data.GetData(DataFormats.Text);
+
+			eventArguments.Handled = true;
 		}
 	}
 }

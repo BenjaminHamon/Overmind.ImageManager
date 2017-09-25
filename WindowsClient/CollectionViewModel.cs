@@ -62,7 +62,7 @@ namespace Overmind.ImageManager.WindowsClient
 				newImageData = webClient.DownloadData(uri);
 
 			string newImageHash = ImageModel.CreateHash(newImageData);
-			ImageViewModel existingImage = ImageCollection.FirstOrDefault(i => i.Hash == newImageHash);
+			ImageViewModel existingImage = allImages.FirstOrDefault(i => i.Hash == newImageHash);
 
 			if (existingImage != null)
 			{
@@ -73,7 +73,7 @@ namespace Overmind.ImageManager.WindowsClient
 				ImageModel newImage = new ImageModel() { Hash = newImageHash, FileName = uri.Segments.Last() };
 				model.AddImage(newImage, newImageData);
 				ImageViewModel newImageViewModel = new ImageViewModel(newImage, () => model.GetImagePath(newImage));
-				ImageCollection.Add(newImageViewModel);
+				allImages.Add(newImageViewModel);
 				SelectedImage = newImageViewModel;
 			}
 		}

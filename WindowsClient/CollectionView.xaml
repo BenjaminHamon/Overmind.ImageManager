@@ -29,6 +29,7 @@
                     </StackPanel>
                 </ComboBoxItem>
             </ComboBox>
+            <Button DockPanel.Dock="Left" Content="SlideShow" Click="OpenSlideShow" Margin="5" Padding="5,0"/>
             <Button DockPanel.Dock="Right" Command="{Binding Path=SearchCommand}"
                     CommandParameter="{Binding ElementName=searchTextBox, Path=Text}"
                     IsDefault="True" Margin="5">

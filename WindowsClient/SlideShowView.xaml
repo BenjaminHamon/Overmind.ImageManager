@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="Overmind.ImageManager.WindowsClient.SlideShowView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
+             Focusable="True"
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:SlideShowViewModel}"
+             d:DesignHeight="200" d:DesignWidth="500">
+    <UserControl.InputBindings>
+        <KeyBinding Key="Left" Command="{Binding Path=PreviousCommand}"/>
+        <KeyBinding Key="Right" Command="{Binding Path=NextCommand}"/>
+    </UserControl.InputBindings>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Image Grid.ColumnSpan="2" Grid.Row="0" Source="{Binding Path=CurrentImage.FilePath}" RenderOptions.BitmapScalingMode="HighQuality"/>
+        <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="5">
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock Text="Cycling every " VerticalAlignment="Center"/>
+                <TextBox Text="{Binding Path=IntervalSeconds}" KeyUp="SubmitInterval"
+                         Width="50" HorizontalContentAlignment="Right" VerticalAlignment="Center"/>
+                <TextBlock Text=" seconds" VerticalAlignment="Center"/>
+            </StackPanel>
+            <Button Command="{Binding Path=PreviousCommand}" Margin="5">
+                <Image Source="/Resources/Icons/Previous.png" Height="24" Width="24"/>
+            </Button>
+            <ToggleButton IsChecked="{Binding Path=IsRunning}" Margin="5">
+                <Image Height="24" Width="24">
+                    <Image.Style>
+                        <Style TargetType="Image">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=IsRunning}" Value="True">
+                                    <Setter Property="Source" Value="/Resources/Icons/Pause.png"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=IsRunning}" Value="False">
+                                    <Setter Property="Source" Value="/Resources/Icons/Resume.png"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+            </ToggleButton>
+            <Button Command="{Binding Path=NextCommand}" Margin="5">
+                <Image Source="/Resources/Icons/Next.png" Height="24" Width="24"/>
+            </Button>
+        </StackPanel>
+        <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding Path=CurrentImage.Name}" Margin="10" VerticalAlignment="Center"/>
+    </Grid>
+</UserControl>

@@ -51,6 +51,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="SlideShowView.xaml.cs">
+      <DependentUpon>SlideShowView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SlideShowViewModel.cs" />
     <Page Include="CollectionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -60,6 +65,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SlideShowView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -119,6 +128,10 @@
     <Content Include="Credits.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\Icons\Pause.png" />
+    <Resource Include="Resources\Icons\Resume.png" />
+    <Resource Include="Resources\Icons\Next.png" />
+    <Resource Include="Resources\Icons\Previous.png" />
     <Resource Include="Resources\Icons\Search.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

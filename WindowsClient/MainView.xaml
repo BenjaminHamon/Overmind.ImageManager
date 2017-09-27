@@ -5,7 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:MainViewModel}"
-             d:DesignHeight="300" d:DesignWidth="700">
+             d:DesignHeight="300" d:DesignWidth="1000">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -55,8 +55,8 @@
                             </Style.Triggers>
                         </Style>
                     </DockPanel.Style>
-                    <Image DockPanel.Dock="Top" Source="{Binding Path=SelectedImage.FilePath, Converter={StaticResource ImageConverter}}"
-                           Margin="10" MaxHeight="200" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image Source="{Binding Path=SelectedImage.FilePath, Converter={StaticResource DefaultImageConverter}, IsAsync=True}"
+                           DockPanel.Dock="Top" Margin="10" MaxHeight="200" RenderOptions.BitmapScalingMode="HighQuality"/>
                     <main:ImagePropertiesView DockPanel.Dock="Top" DataContext="{Binding Path=SelectedImage}" Margin="5"/>
                 </DockPanel>
             </DockPanel>

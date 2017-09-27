@@ -5,9 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:CollectionViewModel}"
-             d:DesignHeight="300" d:DesignWidth="700">
+             d:DesignHeight="300" d:DesignWidth="500">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="visibilityConverter"/>
+        <main:StringToImageConverter x:Key="imageConverter" MaxHeight="128" MaxWidth="128"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -46,7 +47,7 @@
                     <WrapPanel/>
                 </ItemsPanelTemplate>
                 <DataTemplate x:Key="gridItemTemplate">
-                    <Image Source="{Binding Path=FilePath, Converter={StaticResource ImageConverter}}"
+                    <Image Source="{Binding Path=FilePath, Converter={StaticResource imageConverter}, IsAsync=True}"
                            Margin="10" MaxHeight="128" MaxWidth="128" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </DataTemplate>
                 <ItemsPanelTemplate x:Key="listTemplate">
@@ -56,7 +57,7 @@
                     <StackPanel Orientation="Horizontal">
                         <ContentPresenter Margin="5" Height="32" Width="32">
                             <ContentPresenter.Content>
-                                <Image Source="{Binding Path=FilePath, Converter={StaticResource ImageConverter}}"
+                                <Image Source="{Binding Path=FilePath, Converter={StaticResource imageConverter}, IsAsync=True}"
                                        MaxHeight="32" MaxWidth="32" RenderOptions.BitmapScalingMode="HighQuality"/>
                             </ContentPresenter.Content>
                         </ContentPresenter>

@@ -7,24 +7,49 @@ using System.Windows.Media.Imaging;
 
 namespace Overmind.ImageManager.WindowsClient
 {
-	// This converter avoids holding a lock on the image file.
+	// The image is loaded manually to avoid keeping a lock on the source file.
+	// Setting a maximum size avoids keeping large images in memory for scaled down images like thumbnails.
+	// Unfortunately, we need to load the image twice to know its actual size.
+
 	[ValueConversion(typeof(string), typeof(ImageSource))]
 	public class StringToImageConverter : IValueConverter
 	{
+		public int? MaxHeight { get; set; }
+		public int? MaxWidth { get; set; }
+
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			string filePath = value as string;
 			if ((filePath != null) && File.Exists(filePath))
 			{
-				BitmapImage image = new BitmapImage();
 				using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
 				{
+					BitmapImage image = new BitmapImage();
 					image.BeginInit();
-					image.CacheOption = BitmapCacheOption.OnLoad;
+					image.CacheOption = BitmapCacheOption.None;
+					image.CreateOptions = BitmapCreateOptions.None;
 					image.StreamSource = stream;
 					image.EndInit();
+					image.Freeze();
+				
+					float heightRatio = System.Convert.ToSingle(MaxHeight ?? image.PixelHeight) / image.PixelHeight;
+					float widthRatio = System.Convert.ToSingle(MaxWidth ?? image.PixelWidth) / image.PixelWidth;
+
+					stream.Seek(0, SeekOrigin.Begin);
+
+					image = new BitmapImage();
+					image.BeginInit();
+					image.CacheOption = BitmapCacheOption.OnLoad;
+					if ((MaxHeight != null) && (heightRatio < 1) && (heightRatio < widthRatio))
+						image.DecodePixelHeight = MaxHeight.Value;
+					else if ((MaxWidth != null) && (widthRatio < 1))
+						image.DecodePixelWidth = MaxWidth.Value;
+					image.StreamSource = stream;
+					image.EndInit();
+					image.Freeze();
+
+					return image;
 				}
-				return image;
 			}
 			return null;
 		}

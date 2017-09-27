@@ -5,6 +5,6 @@
              Startup="Application_Startup"
              Exit="Application_Exit">
     <Application.Resources>
-        <main:StringToImageConverter x:Key="ImageConverter"/>
+        <main:StringToImageConverter x:Key="DefaultImageConverter"/>
     </Application.Resources>
 </Application>

@@ -90,7 +90,12 @@ namespace Overmind.ImageManager.WindowsClient
 					.Where(image => queryRegexes.All(regex => image.GetSearchableValues().Any(value => regex.IsMatch(value))));
 				filteredImages = new ObservableCollection<ImageViewModel>(matchingImages);
 			}
+			
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageCollection)));
+			
+			// The memory does not get reliably released when changing the displayed image collection.
+			// Manually calling the garbage collector here seems to help reduce the used memory as soon as possible.
+			GC.Collect();
 		}
 	}
 }

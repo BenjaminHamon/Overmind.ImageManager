@@ -1,4 +1,5 @@
 ﻿using Overmind.ImageManager.Model;
+using Overmind.WpfExtensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

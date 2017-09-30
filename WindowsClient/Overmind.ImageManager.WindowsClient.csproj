@@ -30,10 +30,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>
-    </StartupObject>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.WindowsAPICodePack-Core.1.1.0.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
@@ -84,7 +80,6 @@
       <DependentUpon>CollectionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="CollectionViewModel.cs" />
-    <Compile Include="DelegateCommand.cs" />
     <Compile Include="ImagePropertiesView.xaml.cs">
       <DependentUpon>ImagePropertiesView.xaml</DependentUpon>
     </Compile>
@@ -118,6 +113,10 @@
     <ProjectReference Include="..\Model\Overmind.ImageManager.Model.csproj">
       <Project>{6b9087f2-e5a0-4869-9cba-0fe28df17277}</Project>
       <Name>Overmind.ImageManager.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfExtensions\Overmind.WpfExtensions.csproj">
+      <Project>{0a54b239-9de8-4cce-a244-da844f3080c9}</Project>
+      <Name>Overmind.WpfExtensions</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

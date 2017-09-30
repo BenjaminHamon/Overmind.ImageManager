@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace Overmind.ImageManager.WindowsClient
+namespace Overmind.WpfExtensions
 {
 	/// <summary>
 	/// ICommand implementation for MVVM.

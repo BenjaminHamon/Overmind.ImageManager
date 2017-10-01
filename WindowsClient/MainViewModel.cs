@@ -24,8 +24,8 @@ namespace Overmind.ImageManager.WindowsClient
 			get
 			{
 				if (ActiveCollection == null)
-					return "Overmind Image Manager";
-				return ActiveCollection.Name + " - Overmind Image Manager";
+					return WindowsApplication.Name;
+				return ActiveCollection.Name + " - " + WindowsApplication.Name;
 			}
 		}
 

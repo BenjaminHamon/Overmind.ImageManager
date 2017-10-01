@@ -55,7 +55,7 @@
                             </Style.Triggers>
                         </Style>
                     </DockPanel.Style>
-                    <Image Source="{Binding Path=SelectedImage.FilePath, Converter={StaticResource DefaultImageConverter}, IsAsync=True}"
+                    <Image Source="{Binding Path=SelectedImage.FilePath, Converter={StaticResource DefaultImageConverter}}"
                            DockPanel.Dock="Top" Margin="10" MaxHeight="200" RenderOptions.BitmapScalingMode="HighQuality"/>
                     <main:ImagePropertiesView DockPanel.Dock="Top" DataContext="{Binding Path=SelectedImage}" Margin="5"/>
                 </DockPanel>

@@ -1,24 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Overmind.ImageManager.Model
 {
-	public class CollectionModel : IDisposable
+	public class CollectionModel : ReadOnlyCollectionModel, IDisposable
 	{
 		public CollectionModel(DataProvider dataProvider, CollectionData data, string storagePath)
-		{
-			this.dataProvider = dataProvider;
-			this.data = data;
-			this.storagePath = storagePath;
-		}
-
-		private readonly DataProvider dataProvider;
-		private readonly CollectionData data;
-		private readonly string storagePath;
-
-		public string Name { get { return storagePath; } }
-		public IEnumerable<ImageModel> Images { get { return data.Images; } }
+			: base(dataProvider, data, storagePath)
+		{ }
 
 		public void AddImage(ImageModel newImage, byte[] newImageData)
 		{
@@ -28,11 +17,6 @@ namespace Overmind.ImageManager.Model
 
 			dataProvider.AddImage(storagePath, newImage, newImageData);
 			data.Images.Add(newImage);
-		}
-
-		public string GetImagePath(ImageModel image)
-		{
-			return dataProvider.GetImagePath(storagePath, image);
 		}
 
 		public void Save()

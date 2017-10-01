@@ -24,16 +24,13 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public string TagCollection
 		{
-			get { return String.Join(" ", model.Tags); }
-			set { model.Tags = value.Trim().Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList(); }
+			get { return String.Join(" ", model.TagCollection); }
+			set { model.TagCollection = value.Trim().Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList(); }
 		}
 
-		public IEnumerable<string> GetSearchableValues()
+		public bool IsSearchMatch(Func<ImageModel, bool> queryFunction)
 		{
-			if (String.IsNullOrEmpty(model.Title) == false)
-				yield return model.Title;
-			foreach (string tag in model.Tags)
-				yield return tag;
+			return queryFunction(model);
 		}
 	}
 }

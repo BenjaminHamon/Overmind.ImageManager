@@ -6,7 +6,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
-using System.Text.RegularExpressions;
 
 namespace Overmind.ImageManager.WindowsClient
 {
@@ -79,16 +78,14 @@ namespace Overmind.ImageManager.WindowsClient
 			}
 		}
 
-		private void Search(string query)
+		private void Search(string queryString)
 		{
-			if (String.IsNullOrEmpty(query))
+			if (String.IsNullOrEmpty(queryString))
 				filteredImages = null;
 			else
 			{
-				List<Regex> queryRegexes = query.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
-					.Select(element => new Regex("^" + Regex.Escape(element).Replace("\\*", ".*") + "$")).ToList();
-				IEnumerable<ImageViewModel> matchingImages = allImages
-					.Where(image => queryRegexes.All(regex => image.GetSearchableValues().Any(value => regex.IsMatch(value))));
+				Func<ImageModel, bool> queryFunction = model.CreateSearchQuery(queryString);
+				IEnumerable<ImageViewModel> matchingImages = allImages.Where(imageViewModel => imageViewModel.IsSearchMatch(queryFunction));
 				filteredImages = new ObservableCollection<ImageViewModel>(matchingImages);
 			}
 			

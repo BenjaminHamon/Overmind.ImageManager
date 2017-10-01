@@ -17,12 +17,20 @@ namespace Overmind.ImageManager.Model
 		[DataMember(EmitDefaultValue = false)]
 		public string Title { get; set; }
 		[DataMember]
-		public List<string> Tags { get; set; } = new List<string>();
+		public List<string> TagCollection { get; set; } = new List<string>();
 
 		public static string CreateHash(byte[] imageData)
 		{
 			using (MD5 md5 = MD5.Create())
 				return BitConverter.ToString(md5.ComputeHash(imageData)).Replace("-", "").ToLowerInvariant();
+		}
+
+		public IEnumerable<string> GetSearchableValues()
+		{
+			if (String.IsNullOrEmpty(Title) == false)
+				yield return Title;
+			foreach (string tag in TagCollection)
+				yield return tag;
 		}
 	}
 }

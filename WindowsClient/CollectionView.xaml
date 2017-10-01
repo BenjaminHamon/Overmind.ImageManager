@@ -33,11 +33,16 @@
             <Button DockPanel.Dock="Left" Content="SlideShow" Click="OpenSlideShow" Margin="5" Padding="5,0"/>
             <Button DockPanel.Dock="Right" Command="{Binding Path=SearchCommand}"
                     CommandParameter="{Binding ElementName=searchTextBox, Path=Text}"
-                    IsDefault="True" Margin="5">
+                    Margin="5">
                 <Image Source="/Resources/Icons/Search.png" Height="24" Width="24"/>
             </Button>
             <TextBox DockPanel.Dock="Right" x:Name="searchTextBox" x:FieldModifier="private"
-                     Margin="5" VerticalAlignment="Center"/>
+                     Margin="5" VerticalAlignment="Center">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding Path=SearchCommand}"
+                                CommandParameter="{Binding ElementName=searchTextBox, Path=Text}"/>
+                </TextBox.InputBindings>
+            </TextBox>
         </DockPanel>
         <ListBox Grid.Row="1" ItemsSource="{Binding Path=ImageCollection}"
                  SelectedItem="{Binding Path=SelectedImage}" Margin="5"

@@ -70,7 +70,7 @@ namespace Overmind.ImageManager.WindowsClient
 			}
 			else
 			{
-				ImageModel newImage = new ImageModel() { Hash = newImageHash, FileName = uri.Segments.Last() };
+				ImageModel newImage = new ImageModel() { Hash = newImageHash, FileName = Uri.UnescapeDataString(uri.Segments.Last()) };
 				model.AddImage(newImage, newImageData);
 				ImageViewModel newImageViewModel = new ImageViewModel(newImage, () => model.GetImagePath(newImage));
 				allImages.Add(newImageViewModel);

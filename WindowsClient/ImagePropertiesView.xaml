@@ -16,7 +16,7 @@
         </Style>
     </UserControl.Resources>
 
-    <ScrollViewer>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -32,7 +32,7 @@
             <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=Title}"/>
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Tags"/>
             <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Path=TagCollection}"
-                     TextWrapping="Wrap" Height="100"/>
+                     TextWrapping="Wrap" MinHeight="100"/>
 
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Hash"/>
             <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Path=Hash, Mode=OneWay}"

@@ -44,22 +44,38 @@
                 </TextBox.InputBindings>
             </TextBox>
         </DockPanel>
-        <ListBox Grid.Row="1" ItemsSource="{Binding Path=ImageCollection}"
-                 SelectedItem="{Binding Path=SelectedImage}" Margin="5"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <ListBox Grid.Row="1" ItemsSource="{Binding Path=ImageCollection}" SelectedItem="{Binding Path=SelectedImage}"
+                 Margin="5" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.InputBindings>
+                <KeyBinding Key="Enter" Command="{Binding Path=SelectedImage.ViewCommand}"/>
+            </ListBox.InputBindings>
             <ListBox.Resources>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                </Style>
                 <ItemsPanelTemplate x:Key="gridTemplate">
                     <WrapPanel/>
                 </ItemsPanelTemplate>
                 <DataTemplate x:Key="gridItemTemplate">
-                    <Image Source="{Binding Path=FilePath, Converter={StaticResource imageConverter}, IsAsync=True}"
-                           Margin="10" MaxHeight="128" MaxWidth="128" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <!-- Transparent background to ensure the item register mouse hits everywhere -->
+                    <Grid Background="Transparent">
+                        <Grid.InputBindings>
+                            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding Path=ViewCommand}"/>
+                        </Grid.InputBindings>
+                        <Image Source="{Binding Path=FilePath, Converter={StaticResource imageConverter}, IsAsync=True}"
+                               Margin="10" MaxHeight="128" MaxWidth="128" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Grid>
                 </DataTemplate>
                 <ItemsPanelTemplate x:Key="listTemplate">
                     <VirtualizingStackPanel/>
                 </ItemsPanelTemplate>
                 <DataTemplate x:Key="listItemTemplate">
-                    <StackPanel Orientation="Horizontal">
+                    <!-- Transparent background to ensure the item register mouse hits everywhere -->
+                    <StackPanel Background="Transparent" Orientation="Horizontal">
+                        <StackPanel.InputBindings>
+                            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding Path=ViewCommand}"/>
+                        </StackPanel.InputBindings>
                         <ContentPresenter Margin="5" Height="32" Width="32">
                             <ContentPresenter.Content>
                                 <Image Source="{Binding Path=FilePath, Converter={StaticResource imageConverter}, IsAsync=True}"

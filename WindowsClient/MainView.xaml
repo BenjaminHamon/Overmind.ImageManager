@@ -45,19 +45,23 @@
                     <TextBox x:Name="newImageUri" x:FieldModifier="private" DockPanel.Dock="Left" Margin="5"
                              PreviewDragOver="CheckDraggedImageUri" PreviewDragEnter="CheckDraggedImageUri" PreviewDrop="DropImageUri"/>
                 </DockPanel>
-                <DockPanel DockPanel.Dock="Top">
+                <DockPanel DockPanel.Dock="Top" DataContext="{Binding Path=SelectedImage}">
                     <DockPanel.Style>
                         <Style TargetType="DockPanel">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=SelectedImage}" Value="{x:Null}">
+                                <Trigger Property="DataContext" Value="{x:Null}">
                                     <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
+                                </Trigger>
                             </Style.Triggers>
                         </Style>
                     </DockPanel.Style>
-                    <Image Source="{Binding Path=SelectedImage.FilePath, Converter={StaticResource DefaultImageConverter}}"
-                           DockPanel.Dock="Top" Margin="10" MaxHeight="200" RenderOptions.BitmapScalingMode="HighQuality"/>
-                    <main:ImagePropertiesView DockPanel.Dock="Top" DataContext="{Binding Path=SelectedImage}" Margin="5"/>
+                    <Image DockPanel.Dock="Top" Source="{Binding Path=FilePath, Converter={StaticResource DefaultImageConverter}}"
+                           Margin="5" MaxHeight="200" RenderOptions.BitmapScalingMode="HighQuality">
+                        <Image.InputBindings>
+                            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding Path=ViewCommand}"/>
+                        </Image.InputBindings>
+                    </Image>
+                    <main:ImagePropertiesView DockPanel.Dock="Top" Margin="5"/>
                 </DockPanel>
             </DockPanel>
         </Grid>

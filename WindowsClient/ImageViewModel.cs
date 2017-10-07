@@ -1,6 +1,6 @@
 ﻿using Overmind.ImageManager.Model;
+using Overmind.WpfExtensions;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Overmind.ImageManager.WindowsClient
@@ -11,6 +11,8 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			this.model = model;
 			this.getImagePath = getImagePath;
+
+			ViewCommand = new DelegateCommand<object>(_ => WindowsApplication.ViewImage(this));
 		}
 
 		private readonly ImageModel model;
@@ -27,6 +29,8 @@ namespace Overmind.ImageManager.WindowsClient
 			get { return String.Join(" ", model.TagCollection); }
 			set { model.TagCollection = value.Trim().Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList(); }
 		}
+
+		public DelegateCommand<object> ViewCommand { get; }
 
 		public bool IsSearchMatch(Func<ImageModel, bool> queryFunction)
 		{

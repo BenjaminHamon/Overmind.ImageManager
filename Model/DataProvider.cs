@@ -24,7 +24,7 @@ namespace Overmind.ImageManager.Model
 				throw new ArgumentException("Directory is not empty", nameof(collectionPath));
 
 			CollectionData newCollection = new CollectionData();
-			SaveCollection(collectionPath, newCollection);
+			SaveCollection(collectionPath, newCollection, new List<ImageModel>());
 			return newCollection;
 		}
 
@@ -45,7 +45,7 @@ namespace Overmind.ImageManager.Model
 			return collectionData;
 		}
 
-		public void SaveCollection(string collectionPath, CollectionData collectionData)
+		public void SaveCollection(string collectionPath, CollectionData collectionData, IEnumerable<ImageModel> removedImages)
 		{
 			Directory.CreateDirectory(collectionPath);
 			string jsonPath = Path.Combine(collectionPath, ImageCollectionFileName);
@@ -72,6 +72,9 @@ namespace Overmind.ImageManager.Model
 			using (StreamWriter streamWriter = new StreamWriter(jsonPath))
 			using (JsonWriter jsonWriter = new JsonTextWriter(streamWriter))
 				serializer.Serialize(jsonWriter, collectionData.Images);
+
+			foreach (ImageModel image in removedImages)
+				File.Delete(Path.Combine(collectionPath, image.FileName));
 		}
 
 		public string GetImagePath(string collectionPath, ImageModel image)

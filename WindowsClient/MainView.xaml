@@ -37,15 +37,20 @@
                 <ColumnDefinition Width="400"/>
             </Grid.ColumnDefinitions>
             <main:CollectionView Grid.Row="2"/>
-            <DockPanel Grid.Column="1">
-                <DockPanel DockPanel.Dock="Top" Margin="5">
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <DockPanel Grid.Row="0" Margin="5">
                     <Button Content="Add" Command="{Binding Path=AddImageCommand}"
                             CommandParameter="{Binding ElementName=newImageUri, Path=Text}"
-                            DockPanel.Dock="Right" Margin="5" Width="50"/>
-                    <TextBox x:Name="newImageUri" x:FieldModifier="private" DockPanel.Dock="Left" Margin="5"
+                            DockPanel.Dock="Right" Margin="5" Padding="5"/>
+                    <TextBox x:Name="newImageUri" x:FieldModifier="private" DockPanel.Dock="Left" Margin="5" VerticalAlignment="Center"
                              PreviewDragOver="CheckDraggedImageUri" PreviewDragEnter="CheckDraggedImageUri" PreviewDrop="DropImageUri"/>
                 </DockPanel>
-                <DockPanel DockPanel.Dock="Top" DataContext="{Binding Path=SelectedImage}">
+                <DockPanel Grid.Row="1" DataContext="{Binding Path=SelectedImage}">
                     <DockPanel.Style>
                         <Style TargetType="DockPanel">
                             <Style.Triggers>
@@ -63,7 +68,11 @@
                     </Image>
                     <main:ImagePropertiesView DockPanel.Dock="Top" Margin="5"/>
                 </DockPanel>
-            </DockPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="5">
+                    <Button Command="{Binding Path=RemoveImageCommand}"
+                            Content="Remove" Margin="5" Padding="5"/>
+                </StackPanel>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>

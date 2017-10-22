@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Overmind.ImageManager.Model
@@ -8,6 +9,8 @@ namespace Overmind.ImageManager.Model
 		public CollectionModel(DataProvider dataProvider, CollectionData data, string storagePath)
 			: base(dataProvider, data, storagePath)
 		{ }
+
+		private readonly List<ImageModel> removedImages = new List<ImageModel>();
 
 		public void AddImage(ImageModel newImage, byte[] newImageData)
 		{
@@ -19,9 +22,17 @@ namespace Overmind.ImageManager.Model
 			data.Images.Add(newImage);
 		}
 
+		public void RemoveImage(ImageModel image)
+		{
+			bool removed = data.Images.Remove(image);
+			if (removed)
+				removedImages.Add(image);
+		}
+
 		public void Save()
 		{
-			dataProvider.SaveCollection(storagePath, data);
+			dataProvider.SaveCollection(storagePath, data, removedImages);
+			removedImages.Clear();
 		}
 
 		public void Dispose()

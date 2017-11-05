@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Net;
 
 namespace Overmind.ImageManager.WindowsClient
 {
@@ -17,7 +16,6 @@ namespace Overmind.ImageManager.WindowsClient
 
 			allImages = new ObservableCollection<ImageViewModel>(model.Images.Select(image => new ImageViewModel(image, () => model.GetImagePath(image))));
 
-			AddImageCommand = new DelegateCommand<string>(uri => AddImage(new Uri(uri)));
 			RemoveImageCommand = new DelegateCommand<object>(_ => RemoveImage(SelectedImage), _ => SelectedImage != null);
 			SearchCommand = new DelegateCommand<string>(Search);
 		}
@@ -25,6 +23,7 @@ namespace Overmind.ImageManager.WindowsClient
 		private readonly CollectionModel model;
 		private readonly ObservableCollection<ImageViewModel> allImages;
 		private ObservableCollection<ImageViewModel> filteredImages;
+		private readonly object modelLock = new object();
 
 		public string Name { get { return model.Name; } }
 		public ObservableCollection<ImageViewModel> ImageCollection { get { return filteredImages ?? allImages; } }
@@ -35,8 +34,6 @@ namespace Overmind.ImageManager.WindowsClient
 			get { return selectedImageField; }
 			set
 			{
-				if (value == selectedImageField)
-					return;
 				selectedImageField = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedImage)));
 				RemoveImageCommand.RaiseCanExecuteChanged();
@@ -45,47 +42,53 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public void Save()
 		{
-			model.Save();
+			lock (modelLock)
+			{
+				model.Save();
+			}
 		}
 
 		public void Dispose()
 		{
-			model.Dispose();
+			lock (modelLock)
+			{
+				model.Dispose();
+			}
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
-		public DelegateCommand<string> AddImageCommand { get; }
 		public DelegateCommand<object> RemoveImageCommand { get; }
 		public DelegateCommand<string> SearchCommand { get; }
 
-		private void AddImage(Uri uri)
+		public ImageViewModel GetImage(string hash)
 		{
-			byte[] newImageData;
-			using (WebClient webClient = new WebClient())
-				newImageData = webClient.DownloadData(uri);
-
-			string newImageHash = ImageModel.CreateHash(newImageData);
-			ImageViewModel existingImage = allImages.FirstOrDefault(i => i.Hash == newImageHash);
-
-			if (existingImage != null)
+			lock (modelLock)
 			{
-				SelectedImage = existingImage;
+				return allImages.FirstOrDefault(i => i.Hash == hash);
 			}
-			else
+		}
+
+		public ImageViewModel AddImage(string newImageName, byte[] newImageData)
+		{
+			string newImageHash = ImageModel.CreateHash(newImageData);
+			lock (modelLock)
 			{
-				ImageModel newImage = new ImageModel() { Hash = newImageHash, FileName = Uri.UnescapeDataString(uri.Segments.Last()) };
+				ImageModel newImage = new ImageModel() { Hash = newImageHash, FileName = newImageName };
 				model.AddImage(newImage, newImageData);
 				ImageViewModel newImageViewModel = new ImageViewModel(newImage, () => model.GetImagePath(newImage));
 				allImages.Add(newImageViewModel);
-				SelectedImage = newImageViewModel;
+				return newImageViewModel;
 			}
 		}
 
 		private void RemoveImage(ImageViewModel image)
 		{
-			model.RemoveImage(image.Model);
-			allImages.Remove(image);
-			filteredImages?.Remove(image);
+			lock (modelLock)
+			{
+				model.RemoveImage(image.Model);
+				allImages.Remove(image);
+				filteredImages?.Remove(image);
+			}
 
 			if (SelectedImage == image)
 				SelectedImage = null;
@@ -93,13 +96,16 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private void Search(string queryString)
 		{
-			if (String.IsNullOrEmpty(queryString))
-				filteredImages = null;
-			else
+			lock (modelLock)
 			{
-				Func<ImageModel, bool> queryFunction = model.CreateSearchQuery(queryString);
-				IEnumerable<ImageViewModel> matchingImages = allImages.Where(imageViewModel => imageViewModel.IsSearchMatch(queryFunction));
-				filteredImages = new ObservableCollection<ImageViewModel>(matchingImages);
+				if (String.IsNullOrEmpty(queryString))
+					filteredImages = null;
+				else
+				{
+					Func<ImageModel, bool> queryFunction = model.CreateSearchQuery(queryString);
+					IEnumerable<ImageViewModel> matchingImages = allImages.Where(imageViewModel => imageViewModel.IsSearchMatch(queryFunction));
+					filteredImages = new ObservableCollection<ImageViewModel>(matchingImages);
+				}
 			}
 			
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageCollection)));

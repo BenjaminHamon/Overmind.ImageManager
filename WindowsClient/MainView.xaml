@@ -41,15 +41,11 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <DockPanel Grid.Row="0" Margin="5">
-                    <Button Content="Add" Command="{Binding Path=AddImageCommand}"
-                            CommandParameter="{Binding ElementName=newImageUri, Path=Text}"
-                            DockPanel.Dock="Right" Margin="5" Padding="5"/>
-                    <TextBox x:Name="newImageUri" x:FieldModifier="private" DockPanel.Dock="Left" Margin="5" VerticalAlignment="Center"
-                             PreviewDragOver="CheckDraggedImageUri" PreviewDragEnter="CheckDraggedImageUri" PreviewDrop="DropImageUri"/>
-                </DockPanel>
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <Button Click="ShowDownloader" Content="Add" Margin="5" Padding="5" MinWidth="50"/>
+                    <Button Command="{Binding Path=RemoveImageCommand}" Content="Remove" Margin="5" Padding="5"/>
+                </StackPanel>
                 <DockPanel Grid.Row="1" DataContext="{Binding Path=SelectedImage}">
                     <DockPanel.Style>
                         <Style TargetType="DockPanel">
@@ -68,10 +64,6 @@
                     </Image>
                     <main:ImagePropertiesView DockPanel.Dock="Top" Margin="5"/>
                 </DockPanel>
-                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="5">
-                    <Button Command="{Binding Path=RemoveImageCommand}"
-                            Content="Remove" Margin="5" Padding="5"/>
-                </StackPanel>
             </Grid>
         </Grid>
     </Grid>

@@ -5,6 +5,7 @@
              Startup="Application_Startup"
              Exit="Application_Exit">
     <Application.Resources>
+        <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
         <main:StringToImageConverter x:Key="DefaultImageConverter"/>
     </Application.Resources>
 </Application>

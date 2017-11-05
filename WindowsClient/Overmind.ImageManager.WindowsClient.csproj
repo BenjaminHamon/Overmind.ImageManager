@@ -51,6 +51,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Downloads\Downloader.cs" />
+    <Compile Include="Downloads\DownloaderView.xaml.cs">
+      <DependentUpon>DownloaderView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Downloads\ImageDownload.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="ImageView.xaml.cs">
       <DependentUpon>ImageView.xaml</DependentUpon>
@@ -60,6 +65,10 @@
     </Compile>
     <Compile Include="SlideShowViewModel.cs" />
     <Page Include="CollectionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Downloads\DownloaderView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -138,6 +147,10 @@
     <Content Include="Credits.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\Icons\View.png" />
+    <Resource Include="Resources\Icons\Cancel.png" />
+    <Resource Include="Resources\Icons\Error.png" />
+    <Resource Include="Resources\Icons\Success.png" />
     <Resource Include="Resources\Icons\Pause.png" />
     <Resource Include="Resources\Icons\Resume.png" />
     <Resource Include="Resources\Icons\Next.png" />

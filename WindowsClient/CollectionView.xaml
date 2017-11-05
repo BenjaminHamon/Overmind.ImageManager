@@ -7,7 +7,6 @@
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:CollectionViewModel}"
              d:DesignHeight="300" d:DesignWidth="500">
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="visibilityConverter"/>
         <main:StringToImageConverter x:Key="imageConverter" MaxHeight="128" MaxWidth="128"/>
     </UserControl.Resources>
     <Grid>
@@ -44,7 +43,8 @@
                 </TextBox.InputBindings>
             </TextBox>
         </DockPanel>
-        <ListBox Grid.Row="1" ItemsSource="{Binding Path=ImageCollection}" SelectedItem="{Binding Path=SelectedImage}"
+        <ListBox Grid.Row="1" x:Name="listBox" x:FieldModifier="private"
+                 ItemsSource="{Binding Path=ImageCollection}" SelectedItem="{Binding Path=SelectedImage}"
                  Margin="5" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListBox.InputBindings>
                 <KeyBinding Key="Enter" Command="{Binding Path=SelectedImage.ViewCommand}"/>

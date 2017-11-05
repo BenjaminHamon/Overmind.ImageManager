@@ -1,4 +1,5 @@
 ﻿using Overmind.ImageManager.Model;
+using Overmind.ImageManager.WindowsClient.Downloads;
 using Overmind.WpfExtensions;
 using System;
 using System.ComponentModel;
@@ -45,6 +46,19 @@ namespace Overmind.ImageManager.WindowsClient
 			}
 		}
 
+		private Downloader downloaderField;
+		public Downloader Downloader
+		{
+			get { return downloaderField; }
+			private set
+			{
+				if (downloaderField == value)
+					return;
+				downloaderField = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Downloader)));
+			}
+		}
+
 		public void Dispose()
 		{
 			if (ActiveCollection != null)
@@ -57,20 +71,6 @@ namespace Overmind.ImageManager.WindowsClient
 		public DelegateCommand<object> SaveCollectionCommand { get; }
 		public DelegateCommand<object> CloseCollectionCommand { get; }
 
-		private void CreateCollection(string collectionPath)
-		{
-			CollectionData collectionData = dataProvider.CreateCollection(collectionPath);
-			CollectionModel collectionModel = new CollectionModel(dataProvider, collectionData, collectionPath);
-			ActiveCollection = new CollectionViewModel(collectionModel);
-		}
-
-		private void LoadCollection(string collectionPath)
-		{
-			CollectionData collectionData = dataProvider.LoadCollection(collectionPath);
-			CollectionModel collectionModel = new CollectionModel(dataProvider, collectionData, collectionPath);
-			ActiveCollection = new CollectionViewModel(collectionModel);
-		}
-
 		private void ChangeCollection(CollectionData collectionData, string collectionPath)
 		{
 			if (ActiveCollection != null)
@@ -78,13 +78,15 @@ namespace Overmind.ImageManager.WindowsClient
 
 			CollectionModel collectionModel = new CollectionModel(dataProvider, collectionData, collectionPath);
 			ActiveCollection = new CollectionViewModel(collectionModel);
+			Downloader = new Downloader(ActiveCollection);
 		}
 
 		private void CloseCollection()
 		{
-			CollectionViewModel previousCollection = ActiveCollection;
+			ActiveCollection.Dispose();
 			ActiveCollection = null;
-			previousCollection.Dispose();
+			Downloader.Dispose();
+			Downloader = null;
 		}
 	}
 }

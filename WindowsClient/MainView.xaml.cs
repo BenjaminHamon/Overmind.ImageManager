@@ -1,12 +1,12 @@
 ﻿using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Overmind.ImageManager.Model;
-using System;
-using System.Collections.Generic;
+using Overmind.ImageManager.WindowsClient.Downloads;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace Overmind.ImageManager.WindowsClient
 {
@@ -16,6 +16,8 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			InitializeComponent();
 		}
+
+		private Window downloaderWindow;
 
 		private void CreateCollection(object sender, RoutedEventArgs eventArguments)
 		{
@@ -46,34 +48,24 @@ namespace Overmind.ImageManager.WindowsClient
 			viewModel.LoadCollectionCommand.Execute(Path.GetDirectoryName(fileDialog.FileName));
 		}
 
-		private void CheckDraggedImageUri(object sender, DragEventArgs eventArguments)
+		private void ShowDownloader(object sender, RoutedEventArgs eventArguments)
 		{
-			eventArguments.Effects = DragDropEffects.None;
-
-			if (eventArguments.Data.GetDataPresent(DataFormats.FileDrop))
+			if (downloaderWindow == null)
 			{
-				IList<string> files = (IList<string>)eventArguments.Data.GetData(DataFormats.FileDrop);
-				if (files.Count == 1)
-					eventArguments.Effects = DragDropEffects.Copy;
+				DownloaderView downloaderView = new DownloaderView();
+				Binding dataContextBinding = new Binding() { Source = DataContext, Path = new PropertyPath(nameof(MainViewModel.Downloader)) };
+				BindingOperations.SetBinding(downloaderView, DataContextProperty, dataContextBinding);
+				
+				downloaderWindow = new Window() { Title = "Downloads - " + WindowsApplication.Name, Content = downloaderView };
+				downloaderWindow.Closed += (s, e) => downloaderWindow = null;
+				downloaderWindow.Show();
 			}
-			else if (eventArguments.Data.GetDataPresent(DataFormats.Text))
+			else
 			{
-				string text = (string)eventArguments.Data.GetData(DataFormats.Text);
-				if (Uri.IsWellFormedUriString(text, UriKind.Absolute))
-					eventArguments.Effects = DragDropEffects.Copy;
+				if (downloaderWindow.WindowState == WindowState.Minimized)
+					downloaderWindow.WindowState = WindowState.Normal;
+				downloaderWindow.Activate();
 			}
-
-			eventArguments.Handled = true;
-		}
-
-		private void DropImageUri(object sender, DragEventArgs eventArguments)
-		{
-			if (eventArguments.Data.GetDataPresent(DataFormats.FileDrop))
-				newImageUri.Text = ((IList<string>)eventArguments.Data.GetData(DataFormats.FileDrop)).First();
-			else if (eventArguments.Data.GetDataPresent(DataFormats.Text))
-				newImageUri.Text = (string)eventArguments.Data.GetData(DataFormats.Text);
-
-			eventArguments.Handled = true;
 		}
 	}
 }

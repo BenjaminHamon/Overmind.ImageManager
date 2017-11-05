@@ -1,31 +1,43 @@
 ﻿using Overmind.ImageManager.Model;
 using Overmind.WpfExtensions;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Net;
 
 namespace Overmind.ImageManager.WindowsClient.Downloads
 {
-	public class ImageDownload : INotifyPropertyChanged, IDisposable
+	public class ImageDownload : IDisposable, INotifyPropertyChanged
 	{
-		public ImageDownload(Uri uri, CollectionViewModel collection)
+		public ImageDownload(string uriString, CollectionViewModel collection)
 		{
-			this.Uri = uri;
+			this.uriStringField = uriString;
 			this.collection = collection;
 
+			if ((uriString != null) && Uri.IsWellFormedUriString(uriString, UriKind.Absolute))
+			{
+				Uri uri = new Uri(uriString);
+				IEnumerable<char> invalidCharacters = Path.GetInvalidFileNameChars();
+				if (Uri.UnescapeDataString(uri.Segments.Last()).Any(c => invalidCharacters.Contains(c) == false))
+					this.uri = uri;
+			}
+			
 			CancelCommand = new DelegateCommand<object>(_ => Cancel(), _ => IsDownloading);
 			SelectCommand = new DelegateCommand<object>(_ => Select(), _ => Image != null);
 		}
 
+		private readonly string uriStringField;
+		private readonly Uri uri;
 		private readonly CollectionViewModel collection;
 		private WebClient webClient;
 		private readonly object downloadLock = new object();
 
 		public event PropertyChangedEventHandler PropertyChanged;
-
-		public Uri Uri { get; }
-		public string Name { get { return Uri.UnescapeDataString(Uri.Segments.Last()); } }
+		
+		public string UriString { get { return uri == null ? uriStringField : uri.ToString(); } }
+		public string Name { get { return uri == null ? UriString : Uri.UnescapeDataString(uri.Segments.Last()); } }
 
 		public bool IsDownloading { get; private set; }
 		public bool Completed { get; private set; }
@@ -56,10 +68,19 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 				Progress = 0;
 				Image = null;
 
-				webClient = new WebClient();
-				webClient.DownloadProgressChanged += HandleDownloadProgress;
-				webClient.DownloadDataCompleted += HandleDownloadCompleted;
-				webClient.DownloadDataAsync(Uri);
+				if (uri == null)
+				{
+					IsDownloading = false;
+					Completed = true;
+					StatusMessage = "Invalid URI";
+				}
+				else
+				{
+					webClient = new WebClient();
+					webClient.DownloadProgressChanged += HandleDownloadProgress;
+					webClient.DownloadDataCompleted += HandleDownloadCompleted;
+					webClient.DownloadDataAsync(uri);
+				}
 			}
 
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsDownloading)));
@@ -100,7 +121,14 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 			if (eventArguments.Error != null)
 			{
-				StatusMessage = eventArguments.Error.Message;
+				Exception exception = eventArguments.Error;
+				while (exception != null)
+				{
+					if (StatusMessage != null)
+						StatusMessage += Environment.NewLine;
+					StatusMessage += exception.Message;
+					exception = exception.InnerException;
+				}
 			}
 			else
 			{

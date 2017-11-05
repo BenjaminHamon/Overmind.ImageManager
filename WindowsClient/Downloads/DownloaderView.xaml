@@ -25,9 +25,14 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBox x:Name="newImageUri" x:FieldModifier="private" Grid.Column="0" Margin="5" VerticalAlignment="Center"
-                     PreviewDragOver="CheckDraggedImageUri" PreviewDragEnter="CheckDraggedImageUri" PreviewDrop="DropImageUri"/>
-            <Button Grid.Column="1" Command="{Binding Path=AddDownloadCommand}" CommandParameter="{Binding ElementName=newImageUri, Path=Text}"
+            <TextBox Grid.Column="0" x:Name="newImageUri" x:FieldModifier="private"
+                     Text="{Binding Path=AddDownloadUri, UpdateSourceTrigger=PropertyChanged}" Margin="5" VerticalAlignment="Center"
+                     PreviewDragOver="CheckDraggedImageUri" PreviewDragEnter="CheckDraggedImageUri" PreviewDrop="DropImageUri">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding Path=AddDownloadCommand}"/>
+                </TextBox.InputBindings>
+            </TextBox>
+            <Button Grid.Column="1" Command="{Binding Path=AddDownloadCommand}"
                     Content="Add" Margin="5" Padding="5" MinWidth="50"/>
         </Grid>
         <ListView Grid.Row="1" Margin="5" ItemsSource="{Binding Path=DownloadCollection}">
@@ -47,7 +52,7 @@
                     <GridViewColumn Header="Name" Width="200">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=Name}" ToolTip="{Binding Path=Uri}"/>
+                                <TextBlock Text="{Binding Path=Name}" ToolTip="{Binding Path=UriString}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

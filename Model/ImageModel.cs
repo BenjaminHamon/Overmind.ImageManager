@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Documents;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
@@ -31,6 +32,16 @@ namespace Overmind.ImageManager.Model
 				yield return Title;
 			foreach (string tag in TagCollection)
 				yield return tag;
+		}
+		
+		public Document ToDocument()
+		{
+			Document document = new Document();
+			document.Add(new Field("title", Title ?? "", Field.Store.YES, Field.Index.ANALYZED));
+			document.Add(new Field("tag", String.Join(";", TagCollection), Field.Store.YES, Field.Index.ANALYZED));
+			document.Add(new Field("hash", Hash, Field.Store.YES, Field.Index.NOT_ANALYZED));
+			document.Add(new Field("any", String.Join(";", GetSearchableValues()), Field.Store.YES, Field.Index.ANALYZED));
+			return document;
 		}
 	}
 }

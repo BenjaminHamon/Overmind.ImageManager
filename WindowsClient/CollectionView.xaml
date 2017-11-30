@@ -30,18 +30,28 @@
                 </ComboBoxItem>
             </ComboBox>
             <Button DockPanel.Dock="Left" Content="SlideShow" Click="OpenSlideShow" Margin="5" Padding="5,0"/>
-            <Button DockPanel.Dock="Right" Command="{Binding Path=SearchCommand}"
-                    CommandParameter="{Binding ElementName=searchTextBox, Path=Text}"
-                    Margin="5">
+            <Button DockPanel.Dock="Right" Command="{Binding Path=SearchCommand}" Margin="5">
                 <Image Source="/Resources/Icons/Search.png" Height="24" Width="24"/>
             </Button>
-            <TextBox DockPanel.Dock="Right" x:Name="searchTextBox" x:FieldModifier="private"
-                     Margin="5" VerticalAlignment="Center">
-                <TextBox.InputBindings>
-                    <KeyBinding Key="Enter" Command="{Binding Path=SearchCommand}"
-                                CommandParameter="{Binding ElementName=searchTextBox, Path=Text}"/>
-                </TextBox.InputBindings>
-            </TextBox>
+            <Border BorderThickness="1" Margin="5" VerticalAlignment="Center">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="BorderBrush" Value="Red"/>
+                        <Setter Property="ToolTip" Value="{Binding Path=SearchError}"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=SearchError}" Value="{x:Null}">
+                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                <Setter Property="ToolTip" Value="{x:Null}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <TextBox DockPanel.Dock="Right" Text="{Binding Path=SearchQuery, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding Path=SearchCommand}"/>
+                    </TextBox.InputBindings>
+                </TextBox>
+            </Border>
         </DockPanel>
         <ListBox Grid.Row="1" x:Name="listBox" x:FieldModifier="private"
                  ItemsSource="{Binding Path=ImageCollection}" SelectedItem="{Binding Path=SelectedImage}"

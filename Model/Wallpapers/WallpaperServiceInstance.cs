@@ -13,13 +13,8 @@ namespace Overmind.ImageManager.Model.Wallpapers
 		public static WallpaperServiceInstance CreateInstance(ReadOnlyCollectionModel collectionModel,
 			WallpaperConfiguration configuration, Action<ImageModel> setSystemWallpaper, Random random)
 		{
-			IEnumerable<ImageModel> imageCollection = collectionModel.Images;
-
-			if (String.IsNullOrEmpty(configuration.ImageQuery) == false)
-			{
-				Func<ImageModel, bool> queryFunction = collectionModel.CreateSearchQuery(configuration.ImageQuery);
-				imageCollection = imageCollection.Where(queryFunction);
-			}
+			IEnumerable<ImageModel> imageCollection = String.IsNullOrEmpty(configuration.ImageQuery) ?
+				collectionModel.AllImages : collectionModel.SearchAdvanced(configuration.ImageQuery);
 
 			return new WallpaperServiceInstance(imageCollection, setSystemWallpaper, random, configuration.CyclePeriod);
 		}

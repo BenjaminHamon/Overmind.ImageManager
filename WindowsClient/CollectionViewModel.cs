@@ -14,10 +14,10 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			this.model = model;
 
-			allImages = new ObservableCollection<ImageViewModel>(model.Images.Select(image => new ImageViewModel(image, () => model.GetImagePath(image))));
+			allImages = new ObservableCollection<ImageViewModel>(model.AllImages.Select(image => new ImageViewModel(image, () => model.GetImagePath(image))));
 
 			RemoveImageCommand = new DelegateCommand<object>(_ => RemoveImage(SelectedImage), _ => SelectedImage != null);
-			SearchCommand = new DelegateCommand<string>(Search);
+			SearchCommand = new DelegateCommand<object>(_ => Search());
 		}
 
 		private readonly CollectionModel model;
@@ -40,6 +40,23 @@ namespace Overmind.ImageManager.WindowsClient
 			}
 		}
 
+		private string searchQueryField;
+		public string SearchQuery
+		{
+			get { return searchQueryField; }
+			set
+			{
+				if (searchQueryField == value)
+					return;
+				searchQueryField = value;
+				SearchError = null;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SearchQuery)));
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SearchError)));
+			}
+		}
+		
+		public string SearchError { get; private set; }
+
 		public void Save()
 		{
 			lock (modelLock)
@@ -58,7 +75,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		public DelegateCommand<object> RemoveImageCommand { get; }
-		public DelegateCommand<string> SearchCommand { get; }
+		public DelegateCommand<object> SearchCommand { get; }
 
 		public ImageViewModel GetImage(string hash)
 		{
@@ -94,20 +111,29 @@ namespace Overmind.ImageManager.WindowsClient
 				SelectedImage = null;
 		}
 
-		private void Search(string queryString)
+		private void Search()
 		{
 			lock (modelLock)
 			{
-				if (String.IsNullOrEmpty(queryString))
+				SearchError = null;
+
+				if (String.IsNullOrEmpty(SearchQuery))
 					filteredImages = null;
 				else
 				{
-					Func<ImageModel, bool> queryFunction = model.CreateSearchQuery(queryString);
-					IEnumerable<ImageViewModel> matchingImages = allImages.Where(imageViewModel => imageViewModel.IsSearchMatch(queryFunction));
-					filteredImages = new ObservableCollection<ImageViewModel>(matchingImages);
+					IEnumerable<ImageModel> searchResult = null;
+					try { searchResult = model.SearchAdvanced(SearchQuery); }
+					catch (Exception exception) { SearchError = exception.Message; }
+
+					if (searchResult != null)
+					{
+						IEnumerable<ImageViewModel> resultImages = allImages.Where(image => searchResult.Contains(image.Model));
+						filteredImages = new ObservableCollection<ImageViewModel>(resultImages);
+					}
 				}
 			}
 			
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SearchError)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageCollection)));
 			
 			// The memory does not get reliably released when changing the displayed image collection.

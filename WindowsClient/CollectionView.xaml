@@ -7,7 +7,7 @@
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:CollectionViewModel}"
              d:DesignHeight="300" d:DesignWidth="500">
     <UserControl.Resources>
-        <main:StringToImageConverter x:Key="imageConverter" MaxHeight="128" MaxWidth="128"/>
+        <main:StringToImageConverter x:Key="imageConverter" MaxHeight="150" MaxWidth="150"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -54,7 +54,7 @@
             </Border>
         </DockPanel>
         <ListBox Grid.Row="1" x:Name="listBox" x:FieldModifier="private"
-                 ItemsSource="{Binding Path=ImageCollection}" SelectedItem="{Binding Path=SelectedImage}"
+                 ItemsSource="{Binding Path=DisplayedImages}" SelectedItem="{Binding Path=SelectedImage}"
                  Margin="5" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListBox.InputBindings>
                 <KeyBinding Key="Enter" Command="{Binding Path=SelectedImage.ViewCommand}"/>
@@ -69,12 +69,13 @@
                 </ItemsPanelTemplate>
                 <DataTemplate x:Key="gridItemTemplate">
                     <!-- Transparent background to ensure the item register mouse hits everywhere -->
-                    <Grid Background="Transparent">
+                    <!-- The container size is set so that the elements are aligned and so that the panel layout is correct whiile loading -->
+                    <Grid Background="Transparent" Height="150" Width="150">
                         <Grid.InputBindings>
                             <MouseBinding Gesture="LeftDoubleClick" Command="{Binding Path=ViewCommand}"/>
                         </Grid.InputBindings>
                         <Image Source="{Binding Path=FilePath, Converter={StaticResource imageConverter}, IsAsync=True}"
-                               Margin="10" MaxHeight="128" MaxWidth="128" RenderOptions.BitmapScalingMode="HighQuality"/>
+                               Margin="10" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Grid>
                 </DataTemplate>
                 <ItemsPanelTemplate x:Key="listTemplate">

@@ -14,19 +14,25 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			this.model = model;
 
-			allImages = new ObservableCollection<ImageViewModel>(model.AllImages.Select(image => new ImageViewModel(image, () => model.GetImagePath(image))));
+			AllImages = new List<ImageViewModel>(model.AllImages.Select(image => new ImageViewModel(image, () => model.GetImagePath(image))));
+			DisplayedImages = new ObservableCollection<ImageViewModel>();
 
 			RemoveImageCommand = new DelegateCommand<object>(_ => RemoveImage(SelectedImage), _ => SelectedImage != null);
 			SearchCommand = new DelegateCommand<object>(_ => Search());
 		}
 
 		private readonly CollectionModel model;
-		private readonly ObservableCollection<ImageViewModel> allImages;
-		private ObservableCollection<ImageViewModel> filteredImages;
 		private readonly object modelLock = new object();
+		private List<ImageViewModel> filteredImages;
 
 		public string Name { get { return model.Name; } }
-		public ObservableCollection<ImageViewModel> ImageCollection { get { return filteredImages ?? allImages; } }
+		public List<ImageViewModel> AllImages { get; }
+
+		// Images are added to display only when requested by the view, to improve memory usage and loading speed.
+		// This also reduces the lag when the underlying collection changes while previous one is being loaded:
+		// the image loading cannot be cancelled and will finish before being discarded and before the loading for the new images starts.
+		// A virtualized panel in the view helps as well, by keeping loaded only the images which are actually visible.
+		public ObservableCollection<ImageViewModel> DisplayedImages { get; }
 
 		private ImageViewModel selectedImageField;
 		public ImageViewModel SelectedImage
@@ -81,7 +87,7 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			lock (modelLock)
 			{
-				return allImages.FirstOrDefault(i => i.Hash == hash);
+				return AllImages.FirstOrDefault(i => i.Hash == hash);
 			}
 		}
 
@@ -93,7 +99,9 @@ namespace Overmind.ImageManager.WindowsClient
 				ImageModel newImage = new ImageModel() { Hash = newImageHash, FileName = newImageName };
 				model.AddImage(newImage, newImageData);
 				ImageViewModel newImageViewModel = new ImageViewModel(newImage, () => model.GetImagePath(newImage));
-				allImages.Add(newImageViewModel);
+				AllImages.Insert(0, newImageViewModel);
+				if (filteredImages == null)
+					DisplayedImages.Insert(0, newImageViewModel);
 				return newImageViewModel;
 			}
 		}
@@ -103,8 +111,9 @@ namespace Overmind.ImageManager.WindowsClient
 			lock (modelLock)
 			{
 				model.RemoveImage(image.Model);
-				allImages.Remove(image);
+				AllImages.Remove(image);
 				filteredImages?.Remove(image);
+				DisplayedImages.Remove(image);
 			}
 
 			if (SelectedImage == image)
@@ -127,18 +136,37 @@ namespace Overmind.ImageManager.WindowsClient
 
 					if (searchResult != null)
 					{
-						IEnumerable<ImageViewModel> resultImages = allImages.Where(image => searchResult.Contains(image.Model));
-						filteredImages = new ObservableCollection<ImageViewModel>(resultImages);
+						IEnumerable<ImageViewModel> resultImages = AllImages.Where(image => searchResult.Contains(image.Model));
+						filteredImages = new List<ImageViewModel>(resultImages);
 					}
 				}
 			}
 			
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SearchError)));
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageCollection)));
-			
-			// The memory does not get reliably released when changing the displayed image collection.
-			// Manually calling the garbage collector here seems to help reduce the used memory as soon as possible.
-			GC.Collect();
+
+			if (SearchError == null)
+			{
+				DisplayedImages.Clear();
+				DisplayMore();
+
+				// The memory does not get reliably released when changing the displayed image collection.
+				// Manually calling the garbage collector here seems to help reduce the used memory as soon as possible.
+				GC.Collect();
+			}
+		}
+
+		public bool CanDisplayMore { get { return DisplayedImages.Count != (filteredImages ?? AllImages).Count; } }
+
+		public void DisplayMore()
+		{
+			IEnumerable<ImageViewModel> imagesToAdd = (filteredImages ?? AllImages).Skip(DisplayedImages.Count).Take(50);
+			foreach (ImageViewModel image in imagesToAdd)
+				DisplayedImages.Add(image);
+		}
+
+		public void ResetDisplay()
+		{
+			DisplayedImages.Clear();
 		}
 	}
 }

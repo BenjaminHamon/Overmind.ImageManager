@@ -1,40 +1,23 @@
 ﻿using Overmind.WpfExtensions;
 using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 
 namespace Overmind.ImageManager.WindowsClient.Downloads
 {
-	public class Downloader : IDisposable, INotifyPropertyChanged
+	public class Downloader : IDisposable
 	{
 		public Downloader(CollectionViewModel collection)
 		{
 			this.collection = collection;
 
-			AddDownloadCommand = new DelegateCommand<object>(_ => AddDownload(), _ => String.IsNullOrEmpty(AddDownloadUri) == false);
+			AddDownloadCommand = new DelegateCommand<string>(uri => AddDownload(uri));
 		}
 
 		private readonly CollectionViewModel collection;
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		private string addDownloadUriField;
-		public string AddDownloadUri
-		{
-			get { return addDownloadUriField; }
-			set
-			{
-				if (addDownloadUriField == value)
-					return;
-				addDownloadUriField = value;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AddDownloadUri)));
-				AddDownloadCommand.RaiseCanExecuteChanged();
-			}
-		}
-
 		public ObservableCollection<ImageDownload> DownloadCollection { get; } = new ObservableCollection<ImageDownload>();
 
-		public DelegateCommand<object> AddDownloadCommand { get; }
+		public DelegateCommand<string> AddDownloadCommand { get; }
 
 		public void Dispose()
 		{
@@ -42,9 +25,12 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 				download.Dispose();
 		}
 
-		private void AddDownload()
+		public void AddDownload(string uri)
 		{
-			ImageDownload newDownload = new ImageDownload(AddDownloadUri, collection);
+			if (String.IsNullOrEmpty(uri))
+				return;
+
+			ImageDownload newDownload = new ImageDownload(uri, collection);
 			DownloadCollection.Add(newDownload);
 			newDownload.Execute();
 		}

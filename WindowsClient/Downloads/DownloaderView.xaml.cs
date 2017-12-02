@@ -13,32 +13,43 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 			InitializeComponent();
 		}
 
-		private void CheckDraggedImageUri(object sender, DragEventArgs eventArguments)
+		private void CheckDragData(object sender, DragEventArgs eventArguments)
 		{
 			eventArguments.Effects = DragDropEffects.None;
 
-			if (eventArguments.Data.GetDataPresent(DataFormats.FileDrop))
-			{
-				IList<string> files = (IList<string>)eventArguments.Data.GetData(DataFormats.FileDrop);
-				if (files.Count == 1)
-					eventArguments.Effects = DragDropEffects.Copy;
-			}
-			else if (eventArguments.Data.GetDataPresent(DataFormats.Text))
-			{
-				string text = (string)eventArguments.Data.GetData(DataFormats.Text);
-				if (Uri.IsWellFormedUriString(text, UriKind.Absolute))
-					eventArguments.Effects = DragDropEffects.Copy;
-			}
+			if (eventArguments.Data.GetDataPresent(DataFormats.FileDrop)
+				|| eventArguments.Data.GetDataPresent(DataFormats.Text))
+				eventArguments.Effects = DragDropEffects.Copy;
 
 			eventArguments.Handled = true;
 		}
 
-		private void DropImageUri(object sender, DragEventArgs eventArguments)
+		private void TextBox_DropImageUri(object sender, DragEventArgs eventArguments)
 		{
+			Downloader downloader = (Downloader)DataContext;
+			TextBox textBox = (TextBox)sender;
+
 			if (eventArguments.Data.GetDataPresent(DataFormats.FileDrop))
-				newImageUri.Text = ((IList<string>)eventArguments.Data.GetData(DataFormats.FileDrop)).First();
+				textBox.Text = ((IList<string>)eventArguments.Data.GetData(DataFormats.FileDrop)).First();
 			else if (eventArguments.Data.GetDataPresent(DataFormats.Text))
-				newImageUri.Text = (string)eventArguments.Data.GetData(DataFormats.Text);
+				textBox.Text = (string)eventArguments.Data.GetData(DataFormats.Text);
+
+			eventArguments.Handled = true;
+		}
+
+		private void ListView_DropImageUri(object sender, DragEventArgs eventArguments)
+		{
+			Downloader downloader = (Downloader)DataContext;
+			IEnumerable<string> imageUriCollection = new List<string>();
+
+			if (eventArguments.Data.GetDataPresent(DataFormats.FileDrop))
+				imageUriCollection = (IEnumerable<string>)eventArguments.Data.GetData(DataFormats.FileDrop);
+			else if (eventArguments.Data.GetDataPresent(DataFormats.Text))
+				imageUriCollection = ((string)eventArguments.Data.GetData(DataFormats.Text))
+					.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+
+			foreach (string imageUri in imageUriCollection)
+				downloader.AddDownload(imageUri);
 
 			eventArguments.Handled = true;
 		}

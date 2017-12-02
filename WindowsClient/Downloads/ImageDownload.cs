@@ -15,12 +15,17 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		{
 			this.uriStringField = uriString;
 			this.collection = collection;
-
-			if ((uriString != null) && Uri.IsWellFormedUriString(uriString, UriKind.Absolute))
+			
+			// It would be nicer to make a check instead of catching the exception,
+			// but Uri.IsWellFormedUriString does not recognize local paths as valid URIs, unlike the URI constructor.
+			Uri uri = null;
+			try { uri = new Uri(uriString); } catch { }
+			
+			if (uri != null)
 			{
-				Uri uri = new Uri(uriString);
+				// Consider the URI as invalid if the resulting file name is invalid
 				IEnumerable<char> invalidCharacters = Path.GetInvalidFileNameChars();
-				if (Uri.UnescapeDataString(uri.Segments.Last()).Any(c => invalidCharacters.Contains(c) == false))
+				if (Uri.UnescapeDataString(uri.Segments.Last()).All(c => invalidCharacters.Contains(c) == false))
 					this.uri = uri;
 			}
 			

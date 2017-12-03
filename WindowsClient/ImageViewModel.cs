@@ -1,7 +1,7 @@
 ﻿using Overmind.ImageManager.Model;
 using Overmind.WpfExtensions;
 using System;
-using System.Linq;
+using System.Collections.Generic;
 
 namespace Overmind.ImageManager.WindowsClient
 {
@@ -19,18 +19,12 @@ namespace Overmind.ImageManager.WindowsClient
 		private readonly Func<string> getImagePath;
 		
 		public ImageModel Model { get { return model; } }
-		public string Name { get { return model.FileName; } }
 		public string FilePath { get { return getImagePath(); } }
-		public string Hash { get { return model.Hash; } }
-
+		public string Name { get { return model.FileName; } }
 		public string Title { get { return model.Title; } set { model.Title = value; } }
-
-		public string TagCollection
-		{
-			get { return String.Join(" ", model.TagCollection); }
-			set { model.TagCollection = value.Trim().Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList(); }
-		}
-
+		public List<string> TagCollection { get { return model.TagCollection; } set { model.TagCollection = value; } }
+		public string Hash { get { return model.Hash; } }
+		
 		public DelegateCommand<object> ViewCommand { get; }
 
 		public bool IsSearchMatch(Func<ImageModel, bool> queryFunction)

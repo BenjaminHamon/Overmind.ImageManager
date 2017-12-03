@@ -60,6 +60,7 @@
     <Compile Include="ImageView.xaml.cs">
       <DependentUpon>ImageView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ObservableString.cs" />
     <Compile Include="SlideShowView.xaml.cs">
       <DependentUpon>SlideShowView.xaml</DependentUpon>
     </Compile>
@@ -88,6 +89,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="TokenListView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="WindowsApplication.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -109,6 +114,9 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="StringToImageConverter.cs" />
+    <Compile Include="TokenListView.xaml.cs">
+      <DependentUpon>TokenListView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WindowsApplication.xaml.cs">
       <DependentUpon>WindowsApplication.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -147,6 +155,7 @@
     <Content Include="Credits.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\Icons\Remove.png" />
     <Resource Include="Resources\Icons\View.png" />
     <Resource Include="Resources\Icons\Cancel.png" />
     <Resource Include="Resources\Icons\Error.png" />

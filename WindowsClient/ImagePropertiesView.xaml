@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:globalization="clr-namespace:System.Globalization;assembly=mscorlib"
              xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:ImageViewModel}"
              d:DesignHeight="300" d:DesignWidth="300">
@@ -14,6 +15,17 @@
         </Style>
         <Style TargetType="TextBox">
             <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="5"/>
+            <Style.Triggers>
+                <Trigger Property="IsReadOnly" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="main:TokenListView">
+            <Style.Resources>
+                <Style TargetType="TextBox"/>
+            </Style.Resources>
         </Style>
     </UserControl.Resources>
 
@@ -28,21 +40,29 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Title"/>
             <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=Title}"/>
-            <TextBlock Grid.Row="1" Grid.Column="0" Text="Tags"/>
-            <main:TokenListView Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Path=TagCollection}" Margin="5" MinHeight="30">
-                <main:TokenListView.Resources>
-                    <Style TargetType="TextBox">
-                        <Setter Property="Margin" Value="0"/>
-                    </Style>
-                </main:TokenListView.Resources>
-            </main:TokenListView>
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="Hash"/>
-            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Path=Hash, Mode=OneWay}"
-                     IsReadOnly="True" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Subjects"/>
+            <main:TokenListView Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Path=SubjectCollection}" Margin="5" MinHeight="30"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Artists"/>
+            <main:TokenListView Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Path=ArtistCollection}" Margin="5" MinHeight="30"/>
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="Tags"/>
+            <main:TokenListView Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Path=TagCollection}" Margin="5" MinHeight="30"/>
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="Score"/>
+            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Path=Score}"/>
+            <TextBlock Grid.Row="5" Grid.Column="0" Text="Added on"/>
+            <TextBox Grid.Row="5" Grid.Column="1" IsReadOnly="True">
+                <Binding Path="AdditionDate" Mode="OneWay" StringFormat="g"
+                         ConverterCulture="{x:Static globalization:CultureInfo.CurrentCulture}"/>
+            </TextBox>
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="Hash"/>
+            <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Path=Hash, Mode=OneWay}" IsReadOnly="True"/>
             
         </Grid>
     </ScrollViewer>

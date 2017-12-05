@@ -22,7 +22,11 @@ namespace Overmind.ImageManager.WindowsClient
 		public string FilePath { get { return getImagePath(); } }
 		public string Name { get { return model.FileName; } }
 		public string Title { get { return model.Title; } set { model.Title = value; } }
+		public List<string> SubjectCollection { get { return model.SubjectCollection; } set { model.SubjectCollection = value; } }
+		public List<string> ArtistCollection { get { return model.ArtistCollection; } set { model.ArtistCollection = value; } }
 		public List<string> TagCollection { get { return model.TagCollection; } set { model.TagCollection = value; } }
+		public int Score { get { return model.Score; } set { model.Score = value; } }
+		public DateTime AdditionDate { get { return model.AdditionDate; } }
 		public string Hash { get { return model.Hash; } }
 		
 		public DelegateCommand<object> ViewCommand { get; }

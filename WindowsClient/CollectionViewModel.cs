@@ -96,7 +96,7 @@ namespace Overmind.ImageManager.WindowsClient
 			string newImageHash = ImageModel.CreateHash(newImageData);
 			lock (modelLock)
 			{
-				ImageModel newImage = new ImageModel() { Hash = newImageHash, FileName = newImageName };
+				ImageModel newImage = new ImageModel() { Hash = newImageHash, FileName = newImageName, AdditionDate = DateTime.Now };
 				model.AddImage(newImage, newImageData);
 				ImageViewModel newImageViewModel = new ImageViewModel(newImage, () => model.GetImagePath(newImage));
 				AllImages.Insert(0, newImageViewModel);

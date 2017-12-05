@@ -60,10 +60,6 @@
                 <KeyBinding Key="Enter" Command="{Binding Path=SelectedImage.ViewCommand}"/>
             </ListBox.InputBindings>
             <ListBox.Resources>
-                <Style TargetType="{x:Type ListBoxItem}">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                </Style>
                 <ItemsPanelTemplate x:Key="gridTemplate">
                     <WrapPanel/>
                 </ItemsPanelTemplate>
@@ -111,6 +107,12 @@
                     </Style.Triggers>
                 </Style>
             </ListBox.Style>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
         </ListBox>
     </Grid>
 </UserControl>

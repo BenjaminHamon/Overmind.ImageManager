@@ -93,7 +93,7 @@ namespace Overmind.ImageManager.WindowsClient
 		private void OpenSlideShow(object sender, RoutedEventArgs eventArguments)
 		{
 			CollectionViewModel viewModel = (CollectionViewModel)DataContext;
-			SlideShowViewModel slideShowViewModel = new SlideShowViewModel(viewModel.AllImages, new Random());
+			SlideShowViewModel slideShowViewModel = new SlideShowViewModel(viewModel.FilteredImages, new Random());
 			SlideShowView slideShowView = new SlideShowView() { DataContext = slideShowViewModel };
 			Window window = new Window() { Title = "SlideShow", Content = slideShowView };
 			window.Closed += (s, e) => slideShowViewModel.Dispose();

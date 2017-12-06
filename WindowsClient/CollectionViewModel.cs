@@ -14,7 +14,8 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			this.model = model;
 
-			AllImages = new List<ImageViewModel>(model.AllImages.Select(image => new ImageViewModel(image, () => model.GetImagePath(image))));
+			allImages = new List<ImageViewModel>(model.AllImages.Select(image => new ImageViewModel(image, () => model.GetImagePath(image))));
+			FilteredImages = allImages;
 			DisplayedImages = new ObservableCollection<ImageViewModel>();
 
 			RemoveImageCommand = new DelegateCommand<object>(_ => RemoveImage(SelectedImage), _ => SelectedImage != null);
@@ -22,11 +23,11 @@ namespace Overmind.ImageManager.WindowsClient
 		}
 
 		private readonly CollectionModel model;
+		private readonly List<ImageViewModel> allImages;
 		private readonly object modelLock = new object();
-		private List<ImageViewModel> filteredImages;
 
 		public string Name { get { return model.Name; } }
-		public List<ImageViewModel> AllImages { get; }
+		public List<ImageViewModel> FilteredImages { get; private set; }
 
 		// Images are added to display only when requested by the view, to improve memory usage and loading speed.
 		// This also reduces the lag when the underlying collection changes while previous one is being loaded:
@@ -87,7 +88,7 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			lock (modelLock)
 			{
-				return AllImages.FirstOrDefault(i => i.Hash == hash);
+				return allImages.FirstOrDefault(i => i.Hash == hash);
 			}
 		}
 
@@ -99,8 +100,8 @@ namespace Overmind.ImageManager.WindowsClient
 				ImageModel newImage = new ImageModel() { Hash = newImageHash, FileName = newImageName, AdditionDate = DateTime.Now };
 				model.AddImage(newImage, newImageData);
 				ImageViewModel newImageViewModel = new ImageViewModel(newImage, () => model.GetImagePath(newImage));
-				AllImages.Insert(0, newImageViewModel);
-				if (filteredImages == null)
+				allImages.Insert(0, newImageViewModel);
+				if (FilteredImages == allImages)
 					DisplayedImages.Insert(0, newImageViewModel);
 				return newImageViewModel;
 			}
@@ -111,8 +112,8 @@ namespace Overmind.ImageManager.WindowsClient
 			lock (modelLock)
 			{
 				model.RemoveImage(image.Model);
-				AllImages.Remove(image);
-				filteredImages?.Remove(image);
+				allImages.Remove(image);
+				FilteredImages?.Remove(image);
 				DisplayedImages.Remove(image);
 			}
 
@@ -127,7 +128,7 @@ namespace Overmind.ImageManager.WindowsClient
 				SearchError = null;
 
 				if (String.IsNullOrEmpty(SearchQuery))
-					filteredImages = null;
+					FilteredImages = allImages;
 				else
 				{
 					IEnumerable<ImageModel> searchResult = null;
@@ -136,8 +137,8 @@ namespace Overmind.ImageManager.WindowsClient
 
 					if (searchResult != null)
 					{
-						IEnumerable<ImageViewModel> resultImages = AllImages.Where(image => searchResult.Contains(image.Model));
-						filteredImages = new List<ImageViewModel>(resultImages);
+						IEnumerable<ImageViewModel> resultImages = allImages.Where(image => searchResult.Contains(image.Model));
+						FilteredImages = new List<ImageViewModel>(resultImages);
 					}
 				}
 			}
@@ -155,11 +156,11 @@ namespace Overmind.ImageManager.WindowsClient
 			}
 		}
 
-		public bool CanDisplayMore { get { return DisplayedImages.Count != (filteredImages ?? AllImages).Count; } }
+		public bool CanDisplayMore { get { return DisplayedImages.Count != (FilteredImages ?? allImages).Count; } }
 
 		public void DisplayMore()
 		{
-			IEnumerable<ImageViewModel> imagesToAdd = (filteredImages ?? AllImages).Skip(DisplayedImages.Count).Take(50);
+			IEnumerable<ImageViewModel> imagesToAdd = (FilteredImages ?? allImages).Skip(DisplayedImages.Count).Take(50);
 			foreach (ImageViewModel image in imagesToAdd)
 				DisplayedImages.Add(image);
 		}

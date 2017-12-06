@@ -48,6 +48,7 @@
     <Compile Include="CollectionData.cs" />
     <Compile Include="CollectionModel.cs" />
     <Compile Include="ImageModel.cs" />
+    <Compile Include="ImageQueryParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadOnlyCollectionModel.cs" />
     <Compile Include="Wallpapers\WallpaperConfiguration.cs" />

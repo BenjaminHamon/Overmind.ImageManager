@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using System;
@@ -57,7 +56,7 @@ namespace Overmind.ImageManager.Model
 							indexWriter.AddDocument(image.ToDocument());
 					}
 
-					QueryParser queryParser = new QueryParser(searchVersion, "any", searchAnalyser);
+					ImageQueryParser queryParser = new ImageQueryParser(searchVersion, "any", searchAnalyser);
 					queryParser.AllowLeadingWildcard = true;
 					query = queryParser.Parse(queryString);
 				}

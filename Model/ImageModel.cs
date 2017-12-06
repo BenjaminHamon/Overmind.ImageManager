@@ -58,7 +58,7 @@ namespace Overmind.ImageManager.Model
 				document.Add(new Field("artist", artist, Field.Store.NO, Field.Index.ANALYZED));
 			foreach (string tag in TagCollection)
 				document.Add(new Field("tag", tag, Field.Store.NO, Field.Index.ANALYZED));
-			document.Add(new Field("score", Score.ToString(), Field.Store.NO, Field.Index.NOT_ANALYZED));
+			document.Add(new NumericField("score", Field.Store.NO, true).SetIntValue(Score));
 			foreach (string searchableValue in GetSearchableValues())
 				document.Add(new Field("any", searchableValue, Field.Store.NO, Field.Index.ANALYZED));
 			document.Add(new Field("hash", Hash, Field.Store.YES, Field.Index.NOT_ANALYZED));

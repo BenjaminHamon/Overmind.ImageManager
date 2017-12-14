@@ -3,12 +3,21 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace Overmind.ImageManager.WindowsClient
 {
 	public partial class TokenListView : UserControl
 	{
+		static TokenListView()
+		{
+			FrameworkElementFactory textBoxFactory = new FrameworkElementFactory(typeof(TextBox));
+			textBoxFactory.SetBinding(TextBox.TextProperty, new Binding(nameof(ObservableString.Value)));
+			DataTemplate textBoxTemplate = new DataTemplate() { VisualTree = textBoxFactory };
+			TextBoxTemplateProperty.OverrideMetadata(typeof(TokenListView), new FrameworkPropertyMetadata(textBoxTemplate));
+		}
+
 		public TokenListView()
 		{
 			InitializeComponent();
@@ -25,6 +34,15 @@ namespace Overmind.ImageManager.WindowsClient
 			get { return (IEnumerable<string>)GetValue(ItemsSourceProperty); }
 			set { SetValue(ItemsSourceProperty, value); }
 		}
+
+		public DataTemplate TextBoxTemplate
+		{
+			get { return (DataTemplate)GetValue(TextBoxTemplateProperty); }
+			set { SetValue(TextBoxTemplateProperty, value); }
+		}
+		
+		public static readonly DependencyProperty TextBoxTemplateProperty =
+			DependencyProperty.Register(nameof(TextBoxTemplate), typeof(DataTemplate), typeof(TokenListView));
 		
 		private void AddItem(object sender, MouseButtonEventArgs eventArguments)
 		{
@@ -60,7 +78,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private void HandleItemLostFocus(object sender, RoutedEventArgs eventArguments)
 		{
-			TextBox textBox = (TextBox)sender;
+			TextBox textBox = VisualTreeExtensions.GetDescendant<TextBox>((UIElement)sender);
 			if (String.IsNullOrWhiteSpace(textBox.Text))
 				itemsControl.Items.Remove(textBox.DataContext);
 			UpdateSource();

@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
              mc:Ignorable="d" d:DesignHeight="100" d:DesignWidth="300"
              x:Name="tokenListView"  x:FieldModifier="private"
              BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
@@ -16,8 +15,8 @@
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <StackPanel d:DataContext="{d:DesignInstance Type=main:ObservableString}" Orientation="Horizontal" Margin="2">
-                    <TextBox Text="{Binding Path=Value}" LostFocus="HandleItemLostFocus"/>
+                <StackPanel Orientation="Horizontal" Margin="2">
+                    <ContentPresenter ContentTemplate="{Binding ElementName=tokenListView, Path=TextBoxTemplate}" LostFocus="HandleItemLostFocus"/>
                     <Grid KeyboardNavigation.TabNavigation="None">
                         <Button Click="RemoveItem">
                             <Image Source="/Resources/Icons/Remove.png" Height="18" Width="18"/>

@@ -51,6 +51,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutocompleteTextBox.xaml.cs">
+      <DependentUpon>AutocompleteTextBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Downloads\Downloader.cs" />
     <Compile Include="Downloads\DownloaderView.xaml.cs">
       <DependentUpon>DownloaderView.xaml</DependentUpon>
@@ -65,6 +68,10 @@
       <DependentUpon>SlideShowView.xaml</DependentUpon>
     </Compile>
     <Compile Include="SlideShowViewModel.cs" />
+    <Page Include="AutocompleteTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CollectionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

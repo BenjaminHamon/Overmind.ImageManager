@@ -159,8 +159,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 			if (SearchError == null)
 			{
-				DisplayedImages.Clear();
-				DisplayMore();
+				ResetDisplay();
 
 				// The memory does not get reliably released when changing the displayed image collection.
 				// Manually calling the garbage collector here seems to help reduce the used memory as soon as possible.

@@ -1,5 +1,6 @@
 ﻿using Overmind.WpfExtensions;
 using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,15 +29,23 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			if (eventArguments.OldValue != null)
 			{
-				INotifyPropertyChanged oldDataContext = (INotifyPropertyChanged)eventArguments.OldValue;
+				CollectionViewModel oldDataContext = (CollectionViewModel)eventArguments.OldValue;
+				oldDataContext.DisplayedImages.CollectionChanged -= ScrollToHome;
 				oldDataContext.PropertyChanged -= ScrollToSelection;
 			}
 
 			if (eventArguments.NewValue != null)
 			{
-				INotifyPropertyChanged newDataContext = (INotifyPropertyChanged)eventArguments.NewValue;
+				CollectionViewModel newDataContext = (CollectionViewModel)eventArguments.NewValue;
+				newDataContext.DisplayedImages.CollectionChanged += ScrollToHome;
 				newDataContext.PropertyChanged += ScrollToSelection;
 			}
+		}
+
+		private void ScrollToHome(object sender, NotifyCollectionChangedEventArgs eventArguments)
+		{
+			if (eventArguments.Action == NotifyCollectionChangedAction.Reset)
+				scrollViewer.ScrollToHome();
 		}
 
 		private void ScrollToSelection(object sender, PropertyChangedEventArgs eventArguments)

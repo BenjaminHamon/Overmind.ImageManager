@@ -46,7 +46,7 @@
                     <Button Click="ShowDownloader" Content="Add" Margin="5" Padding="5" MinWidth="50"/>
                     <Button Command="{Binding Path=RemoveImageCommand}" Content="Remove" Margin="5" Padding="5"/>
                 </StackPanel>
-                <DockPanel Grid.Row="1" DataContext="{Binding Path=SelectedImage}">
+                <DockPanel Grid.Row="1" DataContext="{Binding Path=SelectedImageProperties}">
                     <DockPanel.Style>
                         <Style TargetType="DockPanel">
                             <Style.Triggers>

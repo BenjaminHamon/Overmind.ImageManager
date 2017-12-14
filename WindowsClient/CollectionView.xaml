@@ -66,11 +66,13 @@
                 <DataTemplate x:Key="gridItemTemplate">
                     <!-- Transparent background to ensure the item register mouse hits everywhere -->
                     <!-- The container size is set so that the elements are aligned and so that the panel layout is correct whiile loading -->
-                    <Grid Background="Transparent" Height="150" Width="150">
+                    <Grid d:DataContext="{d:DesignInstance Type=main:ImageViewModel}"
+                          Background="Transparent" Height="150" Width="150">
                         <Grid.InputBindings>
                             <MouseBinding Gesture="LeftDoubleClick" Command="{Binding Path=ViewCommand}"/>
                         </Grid.InputBindings>
                         <Image Source="{Binding Path=FilePath, Converter={StaticResource imageConverter}, IsAsync=True}"
+                               ToolTip="{Binding Path=Name}" ToolTipService.InitialShowDelay="1000"
                                Margin="10" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Grid>
                 </DataTemplate>
@@ -79,7 +81,8 @@
                 </ItemsPanelTemplate>
                 <DataTemplate x:Key="listItemTemplate">
                     <!-- Transparent background to ensure the item register mouse hits everywhere -->
-                    <StackPanel Background="Transparent" Orientation="Horizontal">
+                    <StackPanel d:DataContext="{d:DesignInstance Type=main:ImageViewModel}"
+                                Background="Transparent" Orientation="Horizontal">
                         <StackPanel.InputBindings>
                             <MouseBinding Gesture="LeftDoubleClick" Command="{Binding Path=ViewCommand}"/>
                         </StackPanel.InputBindings>

@@ -43,9 +43,21 @@ namespace Overmind.ImageManager.WindowsClient
 			{
 				selectedImageField = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedImage)));
+				
+				SelectedImageProperties = selectedImageField == null ? null
+					: new ImagePropertiesViewModel(selectedImageField.Model, () => model.GetImagePath(selectedImageField.Model))
+				{
+					AllSubjects = model.AllImages.SelectMany(image => image.SubjectCollection).Distinct().OrderBy(x => x).ToList(),
+					AllArtists = model.AllImages.SelectMany(image => image.ArtistCollection).Distinct().OrderBy(x => x).ToList(),
+					AllTags = model.AllImages.SelectMany(image => image.TagCollection).Distinct().OrderBy(x => x).ToList(),
+				};
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedImageProperties)));
+
 				RemoveImageCommand.RaiseCanExecuteChanged();
 			}
 		}
+		
+		public ImagePropertiesViewModel SelectedImageProperties { get; private set; }
 
 		private string searchQueryField;
 		public string SearchQuery

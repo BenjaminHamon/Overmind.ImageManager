@@ -126,7 +126,7 @@ namespace Overmind.ImageManager.WindowsClient
 			else
 			{
 				string baseText = textBox.Text.Substring(0, textBox.CaretIndex);
-				IEnumerable<string> possibleValues = AllValues.Where(value => value.Contains(baseText));
+				IEnumerable<string> possibleValues = AllValues.Where(value => value.IndexOf(baseText, StringComparison.CurrentCultureIgnoreCase) >= 0);
 				listBox.ItemsSource = possibleValues.Take(DisplayLimit).ToList();
 			}
 

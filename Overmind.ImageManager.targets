@@ -1,0 +1,8 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PythonExecutable>python</PythonExecutable>
+  </PropertyGroup>
+  <Target Name="GenerateMetadataFiles" BeforeTargets="PrepareForBuild">
+    <Exec Command="$(PythonExecutable) $(SolutionDir)/generate_metadata_files.py $(AssemblyName)"/>
+  </Target>
+</Project>

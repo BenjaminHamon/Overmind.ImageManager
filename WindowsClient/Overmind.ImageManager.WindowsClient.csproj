@@ -51,6 +51,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\ProductInformation.cs">
+      <Link>Properties\ProductInformation.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="AutocompleteTextBox.xaml.cs">
       <DependentUpon>AutocompleteTextBox.xaml</DependentUpon>
     </Compile>
@@ -135,11 +141,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
@@ -175,4 +176,5 @@
     <Resource Include="Resources\Icons\Search.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)/Overmind.ImageManager.targets" />
 </Project>

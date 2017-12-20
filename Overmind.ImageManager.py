@@ -2,15 +2,11 @@
 
 
 import argparse
-import json
 import os
 import shutil
 import subprocess
 
-
-git_executable = "git"
-msbuild_2017_executable = "msbuild_2017"
-nuget_executable = "nuget"
+import environment
 
 
 verbose = False
@@ -40,16 +36,6 @@ def execute_commands(command_list):
 		build()
 
 
-def get_version():
-	with open("Version.json", "r") as version_file:
-		version = json.loads(version_file.read())
-	version["revision"] = subprocess.check_output([ git_executable, "rev-parse", "--verify", "--short=10", "HEAD" ]).decode("utf-8").strip()
-	version["branch"] = subprocess.check_output([ git_executable, "rev-parse", "--abbrev-ref", "HEAD" ]).decode("utf-8").strip()
-	version["full"] = version["full_format"].format(**version)
-	version["numeric"] = version["numeric_format"].format(**version)
-	return version
-
-
 def show_project_information():
 	print("{project_name} {project_version[full]} (Configuration: {configuration})".format(**globals()))
 	print("Script executing in {directory}".format(directory = os.getcwd()))
@@ -58,19 +44,37 @@ def show_project_information():
 
 def clean():
 	print("=== Clean ===")
-	directories_to_clean = [ "packages", ".build" ]
+
+	directories_to_clean = [
+		{ "name": "NuGet packages", "path": "packages" },
+		{ "name": "Build artifacts", "path": ".build" },
+	]
+
+	filesets_to_clean = [
+		{ "name": "Generated files", "files": [ "ProductInformation.cs" ] },
+	]
+
 	for directory in directories_to_clean:
-		if os.path.exists(directory):
-			print("Removing {directory}".format(directory = directory))
+		if os.path.exists(directory["path"]):
+			print("Removing directory {name} (Path: {path})".format(**directory))
 			if not test_run:
-			 	shutil.rmtree(directory)
+			 	shutil.rmtree(directory["path"])
+
+	for fileset in filesets_to_clean:
+		print("Removing fileset {name}".format(**fileset))
+		for file_path in fileset["files"]:
+			if os.path.exists(file_path):
+				print("  Removing {file_path}".format(file_path = file_path))
+				if not test_run:
+			 		os.remove(file_path)
+
 	print()
 
 
 def build():
 	print("=== Build ===")
 
-	nuget_command = [ nuget_executable, "restore" ]
+	nuget_command = [ environment.nuget_executable, "restore" ]
 	if verbose == False:
 		nuget_command += [ "-Verbosity", "quiet" ]
 	nuget_command += [ project + ".sln" ]
@@ -80,7 +84,7 @@ def build():
 		if verbose:
 			print()
 
-	msbuild_command = [ msbuild_2017_executable, "/m", "/nologo" ]
+	msbuild_command = [ environment.msbuild_2017_executable, "/m", "/nologo" ]
 	if verbose == False:
 		msbuild_command += [ "/v:Minimal" ]
 	msbuild_command += [ "/target:build" ]
@@ -102,6 +106,6 @@ if __name__ == "__main__":
 	test_run = arguments.test_run
 	configuration = arguments.configuration
 
-	project_version = get_version()
+	project_version = environment.get_version()
 	show_project_information()
 	execute_commands(arguments.command)

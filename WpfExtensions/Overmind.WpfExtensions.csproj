@@ -36,9 +36,15 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DelegateCommand.cs" />
+    <Compile Include="..\ProductInformation.cs">
+      <Link>Properties\ProductInformation.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DelegateCommand.cs" />
     <Compile Include="VisualTreeExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)/Overmind.ImageManager.targets" />
 </Project>

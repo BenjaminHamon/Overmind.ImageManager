@@ -5,8 +5,14 @@
 # Build
 .build/
 
+# Generated files
+/ProductInformation.cs
+
+# Python
+__pycache__/
+
 # NuGet
-packages/
+/packages/
 
 # Visual Studio
 .vs/

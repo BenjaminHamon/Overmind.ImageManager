@@ -1,10 +1,22 @@
 import json
+import logging
 import subprocess
 
 
 git_executable = "git"
 msbuild_2017_executable = "msbuild_2017"
 nuget_executable = "nuget"
+
+
+def configure_logging(verbose):
+	log_level = logging.DEBUG if verbose else logging.INFO
+	log_format = "[{levelname}] {message}"
+	logging.basicConfig(level = log_level, format = log_format, style = "{")
+	logging.addLevelName(logging.DEBUG, "Debug")
+	logging.addLevelName(logging.INFO, "Info")
+	logging.addLevelName(logging.WARNING, "Warning")
+	logging.addLevelName(logging.ERROR, "Error")
+	logging.addLevelName(logging.CRITICAL, "Critical")
 
 
 def get_version():

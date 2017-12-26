@@ -3,6 +3,7 @@
 
 import argparse
 import glob
+import logging
 import os
 import shutil
 import subprocess
@@ -42,13 +43,13 @@ def execute_commands(command_list):
 
 
 def show_project_information():
-	print("{project_name} {project_version[full]} (Configuration: {configuration})".format(**globals()))
-	print("Script executing in {directory} {test_run}".format(directory = os.getcwd(), test_run = "(TEST RUN)" if test_run else ''))
-	print()
+	logging.info("%s %s (Configuration: %s)" % (project_name, project_version["full"], configuration))
+	logging.info("Script executing in %s %s" % (os.getcwd(), "(TEST RUN)" if test_run else ''))
+	logging.info("")
 
 
 def clean():
-	print("=== Clean ===")
+	logging.info("=== Clean ===")
 
 	directories_to_clean = [
 		{ "name": "NuGet packages", "path": "packages" },
@@ -61,33 +62,32 @@ def clean():
 
 	for directory in directories_to_clean:
 		if os.path.exists(directory["path"]):
-			print("Removing directory {name} (Path: {path})".format(**directory))
+			logging.info("Removing directory %s (Path: %s)" % (directory["name"], directory["path"]))
 			if not test_run:
 			 	shutil.rmtree(directory["path"])
 
 	for fileset in filesets_to_clean:
-		print("Removing fileset {name}".format(**fileset))
+		logging.info("Removing fileset %s" % fileset["name"])
 		for file_path in fileset["files"]:
 			if os.path.exists(file_path):
-				print("  Removing {file_path}".format(file_path = file_path))
+				logging.info("  Removing %s" % file_path)
 				if not test_run:
 			 		os.remove(file_path)
 
-	print()
+	logging.info("")
 
 
 def build():
-	print("=== Build ===")
+	logging.info("=== Build ===")
 
 	nuget_command = [ environment.nuget_executable, "restore" ]
 	if verbose == False:
 		nuget_command += [ "-Verbosity", "quiet" ]
 	nuget_command += [ project + ".sln" ]
-	print("+ " + " ".join(nuget_command))
+	logging.info("+ %s" % " ".join(nuget_command))
 	if not test_run:
 		subprocess.check_call(nuget_command)
-		if verbose:
-			print()
+		logging.debug("")
 
 	msbuild_command = [ environment.msbuild_2017_executable, "/m", "/nologo" ]
 	if verbose == False:
@@ -95,15 +95,15 @@ def build():
 	msbuild_command += [ "/target:build" ]
 	msbuild_command += [ "/p:Configuration=" + configuration ]
 	msbuild_command += [ project + ".sln" ]
-	print("+ " + " ".join(msbuild_command))
+	logging.info("+ %s" % " ".join(msbuild_command))
 	if not test_run:
 		subprocess.check_call(msbuild_command)
 
-	print()
+	logging.info("")
 
 
 def package():
-	print("=== Package ===")
+	logging.info("=== Package ===")
 
 	for application in application_list:
 		source_directory = ".build/" + application + "/bin/" + configuration
@@ -114,26 +114,24 @@ def package():
 		if not test_run and not os.path.exists(destination_directory):
 			os.makedirs(destination_directory)
 
-		print("Packaging {application} to {package_path}".format(application = application, package_path = destination_directory + "/" + package_name))
+		logging.info("Creating package for %s (Path: %s)" % (application, destination_directory + "/" + package_name))
 		source_file_list = fileset_to_list(source_directory, get_package_fileset(application, configuration))
 		if not source_file_list:
-			raise Exception("Package files could not be found ({directory})".format(directory = source_directory))
-		if test_run and verbose:
+			raise Exception("Package files could not be found (Source: %s)" % source_directory)
+		if test_run:
 			for source_file in source_file_list:
-				print("  Adding {file}".format(file = source_file))
+				logging.debug("  Adding %s" % source_file)
 		else:
 			with zipfile.ZipFile(destination_directory + "/" + package_name + ".tmp", "w", zipfile.ZIP_DEFLATED) as package_file:
 				for source_file in source_file_list:
-					if verbose:
-						print("  Adding {file}".format(file = source_file))
+					logging.debug("  Adding %s" % source_file)
 					package_file.write(source_file, project + "." + application + "/" + source_file[len(source_directory) + 1 : ])
 			shutil.move(destination_directory + "/" + package_name + ".tmp", destination_directory + "/" + package_name)
 
-		if verbose:
-			print()
+		logging.debug("")
 
 	if not verbose:
-		print()
+		logging.info("")
 
 
 def fileset_to_list(directory, fileset):
@@ -141,7 +139,7 @@ def fileset_to_list(directory, fileset):
 	for file_pattern in fileset:
 		matched_file_list = glob.glob(directory + "/" + file_pattern)
 		if not matched_file_list:
-			print("No matches for {pattern}".format(pattern = file_pattern))
+			logging.info("No matches for %s in %s" % (file_pattern, directory))
 		all_files += matched_file_list
 	return all_files
 
@@ -163,6 +161,7 @@ if __name__ == "__main__":
 	verbose = arguments.verbose
 	test_run = arguments.test_run
 	configuration = arguments.configuration
+	environment.configure_logging(arguments.verbose)
 
 	project_version = environment.get_version()
 	show_project_information()

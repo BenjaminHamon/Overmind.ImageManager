@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using Hardcodet.Wpf.TaskbarNotification;
+using Newtonsoft.Json;
 using Overmind.ImageManager.Model;
 using Overmind.ImageManager.Model.Wallpapers;
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
 
@@ -31,12 +33,31 @@ namespace Overmind.ImageManager.WallpaperService
 		private void Application_Startup(object sender, StartupEventArgs eventArguments)
 		{
 			MainWindow = new WallpaperServiceView() { DataContext = serviceViewModel };
-			MainWindow.Show();
+			MainWindow.Closing += HideMainWindow;
+			TaskbarIcon notificationIcon = (TaskbarIcon)FindResource("NotificationIcon");
+			notificationIcon.DataContext = serviceViewModel;
 		}
 
-		private void Application_Exit(object sender, ExitEventArgs e)
+		private void Application_Exit(object sender, ExitEventArgs eventArguments)
 		{
 			serviceViewModel.Dispose();
+		}
+
+		private void ShowMainWindow(object sender, RoutedEventArgs eventArguments)
+		{
+			MainWindow.Show();
+			MainWindow.Activate();
+		}
+
+		private void HideMainWindow(object sender, CancelEventArgs eventArguments)
+		{
+			MainWindow.Hide();
+			eventArguments.Cancel = true;
+		}
+
+		private void ExitApplication(object sender, RoutedEventArgs eventArguments)
+		{
+			Shutdown();
 		}
 	}
 }

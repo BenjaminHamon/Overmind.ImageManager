@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:main="clr-namespace:Overmind.ImageManager.WallpaperService"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:WallpaperServiceViewModel}"
-        Title="Overmind Wallpaper Service" Width="300" SizeToContent="Height" ResizeMode="CanMinimize">
+        Title="{Binding Path=ApplicationTitle}" Width="300" SizeToContent="Height" ResizeMode="NoResize">
     
     <Window.Resources>
         <Style TargetType="Button">

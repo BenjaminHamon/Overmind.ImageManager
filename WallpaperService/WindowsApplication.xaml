@@ -1,9 +1,34 @@
 ﻿<Application x:Class="Overmind.ImageManager.WallpaperService.WindowsApplication"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             Startup="Application_Startup"
-             Exit="Application_Exit">
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:taskbar="http://www.hardcodet.net/taskbar"
+             xmlns:main="clr-namespace:Overmind.ImageManager.WallpaperService"
+             mc:Ignorable="d"
+             Startup="Application_Startup" Exit="Application_Exit" ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
-        
+        <taskbar:TaskbarIcon x:Key="NotificationIcon" d:DataContext="{d:DesignInstance Type=main:WallpaperServiceViewModel}"
+                             IconSource="/Resources/Logo.ico" ToolTipText="{Binding Path=ApplicationTitle}" TrayMouseDoubleClick="ShowMainWindow">
+            <taskbar:TaskbarIcon.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Click="ShowMainWindow">
+                        <MenuItem.Header>
+                            <TextBlock Text="Show" FontWeight="Bold"/>
+                        </MenuItem.Header>
+                    </MenuItem>
+                    <MenuItem Command="{Binding Path=NextWallpaperCommand}">
+                        <MenuItem.Header>
+                            <TextBlock Text="Next Wallpaper"/>
+                        </MenuItem.Header>
+                    </MenuItem>
+                    <MenuItem Click="ExitApplication">
+                        <MenuItem.Header>
+                            <TextBlock Text="Exit"/>
+                        </MenuItem.Header>
+                    </MenuItem>
+                </ContextMenu>
+            </taskbar:TaskbarIcon.ContextMenu>
+        </taskbar:TaskbarIcon>
     </Application.Resources>
 </Application>

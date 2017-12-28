@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Overmind.WpfExtensions;
+using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,6 +13,33 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		public DownloaderView()
 		{
 			InitializeComponent();
+			
+			scrollViewer = VisualTreeExtensions.GetDescendant<ScrollViewer>(listView);
+
+			DataContextChanged += HandleDataContextChanged;
+		}
+
+		private readonly ScrollViewer scrollViewer;
+
+		private void HandleDataContextChanged(object sender, DependencyPropertyChangedEventArgs eventArguments)
+		{
+			if (eventArguments.OldValue != null)
+			{
+				Downloader oldDataContext = (Downloader)eventArguments.OldValue;
+				oldDataContext.DownloadCollection.CollectionChanged -= ScrollToEnd;
+			}
+
+			if (eventArguments.NewValue != null)
+			{
+				Downloader newDataContext = (Downloader)eventArguments.NewValue;
+				newDataContext.DownloadCollection.CollectionChanged += ScrollToEnd;
+			}
+		}
+
+		private void ScrollToEnd(object sender, NotifyCollectionChangedEventArgs eventArguments)
+		{
+			if (eventArguments.Action == NotifyCollectionChangedAction.Add)
+				scrollViewer.ScrollToEnd();
 		}
 
 		private void CheckDragData(object sender, DragEventArgs eventArguments)

@@ -36,8 +36,8 @@
                     CommandParameter="{Binding ElementName=newImageUri, Path=Text}"
                     Content="Add" Margin="5" Padding="5" MinWidth="50"/>
         </Grid>
-        <ListView Grid.Row="1" Margin="5" ItemsSource="{Binding Path=DownloadCollection}"
-                   AllowDrop="True" PreviewDragEnter="CheckDragData" PreviewDragOver="CheckDragData" PreviewDrop="ListView_DropImageUri">
+        <ListView x:Name="listView" x:FieldModifier="private" Grid.Row="1" Margin="5" ItemsSource="{Binding Path=DownloadCollection}"
+                  AllowDrop="True" PreviewDragEnter="CheckDragData" PreviewDragOver="CheckDragData" PreviewDrop="ListView_DropImageUri">
             <ListView.Resources>
                 <Style TargetType="Button">
                     <Style.Resources>

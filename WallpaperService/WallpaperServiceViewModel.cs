@@ -92,7 +92,8 @@ namespace Overmind.ImageManager.WallpaperService
 			// Sometimes the Win32 call fails and there is no error code.
 
 			string savePath = Path.Combine(wallpaperStorage, "Wallpaper.bmp");
-			Image.FromFile(imagePath).Save(savePath, ImageFormat.Bmp);
+			using (Image image = Image.FromFile(imagePath))
+				image.Save(savePath, ImageFormat.Bmp);
 			WindowsWallpaper.Set(savePath);
 		}
 	}

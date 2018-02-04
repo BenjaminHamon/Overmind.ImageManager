@@ -57,6 +57,7 @@
     <Compile Include="..\ProductInformation.cs">
       <Link>Properties\ProductInformation.cs</Link>
     </Compile>
+    <Compile Include="CollectionQuery.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

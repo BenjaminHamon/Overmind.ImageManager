@@ -30,25 +30,25 @@
                 </ComboBoxItem>
             </ComboBox>
             <Button DockPanel.Dock="Left" Content="SlideShow" Click="OpenSlideShow" Margin="5" Padding="5,0"/>
-            <Button DockPanel.Dock="Right" Command="{Binding Path=SearchCommand}" Margin="5">
+            <Button DockPanel.Dock="Right" Command="{Binding Path=ExecuteQueryCommand}" Margin="5">
                 <Image Source="/Resources/Icons/Search.png" Height="24" Width="24"/>
             </Button>
             <Border BorderThickness="1" Margin="5" VerticalAlignment="Center">
                 <Border.Style>
                     <Style TargetType="Border">
                         <Setter Property="BorderBrush" Value="Red"/>
-                        <Setter Property="ToolTip" Value="{Binding Path=SearchError}"/>
+                        <Setter Property="ToolTip" Value="{Binding Path=Query.Error}"/>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding Path=SearchError}" Value="{x:Null}">
+                            <DataTrigger Binding="{Binding Path=Query.Error}" Value="{x:Null}">
                                 <Setter Property="BorderBrush" Value="Transparent"/>
                                 <Setter Property="ToolTip" Value="{x:Null}"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </Border.Style>
-                <TextBox DockPanel.Dock="Right" Text="{Binding Path=SearchQuery, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox DockPanel.Dock="Right" Text="{Binding Path=Query.Search, UpdateSourceTrigger=PropertyChanged}">
                     <TextBox.InputBindings>
-                        <KeyBinding Key="Enter" Command="{Binding Path=SearchCommand}"/>
+                        <KeyBinding Key="Enter" Command="{Binding Path=ExecuteQueryCommand}"/>
                     </TextBox.InputBindings>
                 </TextBox>
             </Border>

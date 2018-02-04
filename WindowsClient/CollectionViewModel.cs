@@ -15,11 +15,14 @@ namespace Overmind.ImageManager.WindowsClient
 			this.model = model;
 
 			allImages = new List<ImageViewModel>(model.AllImages.Select(image => new ImageViewModel(image, () => model.GetImagePath(image))));
-			FilteredImages = allImages;
+			Query = new CollectionQuery();
+			FilteredImages = new List<ImageViewModel>(allImages);
 			DisplayedImages = new ObservableCollection<ImageViewModel>();
 
+			ExecuteQuery();
+
 			RemoveImageCommand = new DelegateCommand<object>(_ => RemoveImage(SelectedImage), _ => SelectedImage != null);
-			SearchCommand = new DelegateCommand<object>(_ => Search());
+			ExecuteQueryCommand = new DelegateCommand<object>(_ => ExecuteQuery());
 		}
 
 		private readonly CollectionModel model;
@@ -27,6 +30,7 @@ namespace Overmind.ImageManager.WindowsClient
 		private readonly object modelLock = new object();
 
 		public string Name { get { return model.Name; } }
+		public CollectionQuery Query { get; }
 		public List<ImageViewModel> FilteredImages { get; private set; }
 
 		// Images are added to display only when requested by the view, to improve memory usage and loading speed.
@@ -59,23 +63,6 @@ namespace Overmind.ImageManager.WindowsClient
 		
 		public ImagePropertiesViewModel SelectedImageProperties { get; private set; }
 
-		private string searchQueryField;
-		public string SearchQuery
-		{
-			get { return searchQueryField; }
-			set
-			{
-				if (searchQueryField == value)
-					return;
-				searchQueryField = value;
-				SearchError = null;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SearchQuery)));
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SearchError)));
-			}
-		}
-		
-		public string SearchError { get; private set; }
-
 		public void Save()
 		{
 			lock (modelLock)
@@ -94,7 +81,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		public DelegateCommand<object> RemoveImageCommand { get; }
-		public DelegateCommand<object> SearchCommand { get; }
+		public DelegateCommand<object> ExecuteQueryCommand { get; }
 
 		public ImageViewModel GetImage(string hash)
 		{
@@ -113,8 +100,8 @@ namespace Overmind.ImageManager.WindowsClient
 				model.AddImage(newImage, newImageData);
 				ImageViewModel newImageViewModel = new ImageViewModel(newImage, () => model.GetImagePath(newImage));
 				allImages.Insert(0, newImageViewModel);
-				if (FilteredImages == allImages)
-					DisplayedImages.Insert(0, newImageViewModel);
+				FilteredImages.Insert(0, newImageViewModel);
+				DisplayedImages.Insert(0, newImageViewModel);
 				return newImageViewModel;
 			}
 		}
@@ -133,31 +120,24 @@ namespace Overmind.ImageManager.WindowsClient
 				SelectedImage = null;
 		}
 
-		private void Search()
+		private void ExecuteQuery()
 		{
 			lock (modelLock)
 			{
-				SearchError = null;
+				Query.Error = null;
 
-				if (String.IsNullOrEmpty(SearchQuery))
-					FilteredImages = allImages;
-				else
+				try
 				{
-					IEnumerable<ImageModel> searchResult = null;
-					try { searchResult = model.SearchAdvanced(SearchQuery); }
-					catch (Exception exception) { SearchError = exception.Message; }
-
-					if (searchResult != null)
-					{
-						IEnumerable<ImageViewModel> resultImages = allImages.Where(image => searchResult.Contains(image.Model));
-						FilteredImages = new List<ImageViewModel>(resultImages);
-					}
+					IEnumerable<ImageViewModel> resultImages = Query.Execute(model, allImages);
+					FilteredImages = new List<ImageViewModel>(resultImages);
+				}
+				catch (Exception exception)
+				{
+					Query.Error = exception.Message;
 				}
 			}
-			
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SearchError)));
 
-			if (SearchError == null)
+			if (Query.Error == null)
 			{
 				ResetDisplay();
 

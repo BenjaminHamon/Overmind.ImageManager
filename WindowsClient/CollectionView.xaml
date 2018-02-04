@@ -1,14 +1,21 @@
 ﻿<UserControl x:Class="Overmind.ImageManager.WindowsClient.CollectionView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:CollectionViewModel}"
              d:DesignHeight="300" d:DesignWidth="500">
+    
     <UserControl.Resources>
         <main:StringToImageConverter x:Key="imageConverter" MaxHeight="150" MaxWidth="150"/>
+        <CollectionViewSource Source="{Binding Path=DisplayedImages}" x:Key="DisplayedImagesProxy">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="Group"/>
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
     </UserControl.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -54,7 +61,7 @@
             </Border>
         </DockPanel>
         <ListBox Grid.Row="1" x:Name="listBox" x:FieldModifier="private"
-                 ItemsSource="{Binding Path=DisplayedImages}" SelectedItem="{Binding Path=SelectedImage}"
+                 ItemsSource="{Binding Source={StaticResource DisplayedImagesProxy}}" SelectedItem="{Binding Path=SelectedImage}"
                  Margin="5" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListBox.InputBindings>
                 <KeyBinding Key="Enter" Command="{Binding Path=SelectedImage.ViewCommand}"/>
@@ -110,6 +117,28 @@
                     </Style.Triggers>
                 </Style>
             </ListBox.Style>
+            <ListBox.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                                        <Expander IsExpanded="True">
+                                            <Expander.Header>
+                                                <TextBlock Text="{Binding Path=Name}" FontWeight="Bold"/>
+                                            </Expander.Header>
+                                            <Expander.Content>
+                                                <ItemsPresenter/>
+                                            </Expander.Content>
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+            </ListBox.GroupStyle>
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -118,4 +147,5 @@
             </ListBox.ItemContainerStyle>
         </ListBox>
     </Grid>
+    
 </UserControl>

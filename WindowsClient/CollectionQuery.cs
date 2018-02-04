@@ -39,6 +39,11 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public IEnumerable<ImageViewModel> Execute(CollectionModel model, IEnumerable<ImageViewModel> allImages)
 		{
+			Func<ImageModel, string> groupQuery = image => "#All";
+
+			foreach (ImageViewModel image in allImages)
+				image.Group = groupQuery(image.Model);
+
 			IEnumerable<ImageViewModel> resultImages = allImages;
 
 			if (String.IsNullOrEmpty(Search) == false)
@@ -46,6 +51,8 @@ namespace Overmind.ImageManager.WindowsClient
 				IEnumerable<ImageModel> searchResult = model.SearchAdvanced(Search);
 				resultImages = resultImages.Where(image => searchResult.Contains(image.Model));
 			}
+
+			resultImages = resultImages.OrderBy(image => image.Group);
 
 			return new List<ImageViewModel>(resultImages);
 		}

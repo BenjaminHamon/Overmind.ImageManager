@@ -16,12 +16,14 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private readonly ImageModel model;
 		private readonly Func<string> getImagePath;
-		
+
 		public ImageModel Model { get { return model; } }
 		public string FilePath { get { return getImagePath(); } }
 		public string Name { get { return model.FileName; } }
 		public string Hash { get { return model.Hash; } }
-		
+
+		public string Group { get; set; }
+
 		public DelegateCommand<object> ViewCommand { get; }
 	}
 }

@@ -6,7 +6,7 @@
              xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:CollectionViewModel}"
              d:DesignHeight="300" d:DesignWidth="500">
-    
+
     <UserControl.Resources>
         <main:StringToImageConverter x:Key="imageConverter" MaxHeight="150" MaxWidth="150"/>
         <CollectionViewSource Source="{Binding Path=DisplayedImages}" x:Key="DisplayedImagesProxy">
@@ -15,32 +15,41 @@
             </CollectionViewSource.GroupDescriptions>
         </CollectionViewSource>
     </UserControl.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <DockPanel Grid.Row="0">
-            <ComboBox DockPanel.Dock="Left" x:Name="layoutComboBox" x:FieldModifier="private" SelectedValuePath="Tag" Margin="5">
-                <ComboBoxItem Tag="Grid" IsSelected="True">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="/Resources/Icons/Grid.png" Height="24" Width="24"/>
-                        <TextBlock Text="Grid" Margin="5" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </ComboBoxItem>
-                <ComboBoxItem Tag="List">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="/Resources/Icons/List.png" Height="24" Width="24"/>
-                        <TextBlock Text="List" Margin="5" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </ComboBoxItem>
-            </ComboBox>
-            <Button DockPanel.Dock="Left" Content="SlideShow" Click="OpenSlideShow" Margin="5" Padding="5,0"/>
-            <Button DockPanel.Dock="Right" Command="{Binding Path=ExecuteQueryCommand}" Margin="5">
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <ComboBox x:Name="layoutComboBox" x:FieldModifier="private" SelectedValuePath="Tag" Margin="5">
+                    <ComboBoxItem Tag="Grid" IsSelected="True">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Resources/Icons/Grid.png" Height="24" Width="24"/>
+                            <TextBlock Text="Grid" Margin="5" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ComboBoxItem>
+                    <ComboBoxItem Tag="List">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Resources/Icons/List.png" Height="24" Width="24"/>
+                            <TextBlock Text="List" Margin="5" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </ComboBoxItem>
+                </ComboBox>
+                <Button DockPanel.Dock="Left" Content="SlideShow" Click="OpenSlideShow" Margin="5" Padding="5,0"/>
+            </StackPanel>
+            <Button Grid.Column="2" Command="{Binding Path=ExecuteQueryCommand}" Margin="5">
                 <Image Source="/Resources/Icons/Search.png" Height="24" Width="24"/>
             </Button>
-            <Border BorderThickness="1" Margin="5" VerticalAlignment="Center">
+            <Border Grid.Column="1" BorderThickness="1" Margin="5" VerticalAlignment="Center">
                 <Border.Style>
                     <Style TargetType="Border">
                         <Setter Property="BorderBrush" Value="Red"/>
@@ -53,14 +62,37 @@
                         </Style.Triggers>
                     </Style>
                 </Border.Style>
-                <TextBox DockPanel.Dock="Right" Text="{Binding Path=Query.Search, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox Text="{Binding Path=Query.SearchExpression, UpdateSourceTrigger=PropertyChanged}">
                     <TextBox.InputBindings>
                         <KeyBinding Key="Enter" Command="{Binding Path=ExecuteQueryCommand}"/>
                     </TextBox.InputBindings>
                 </TextBox>
             </Border>
-        </DockPanel>
-        <ListBox Grid.Row="1" x:Name="listBox" x:FieldModifier="private"
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Margin" Value="5"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                </Style>
+                <Style TargetType="TextBox">
+                    <Setter Property="Margin" Value="5"/>
+                </Style>
+            </Grid.Resources>
+            <TextBlock Grid.Column="0" Text="Group by"/>
+            <TextBox Grid.Column="1" Text="{Binding Path=Query.GroupByExpression}"/>
+            <TextBlock Grid.Column="2" Text="Order by"/>
+            <TextBox Grid.Column="3" Text="{Binding Path=Query.OrderByExpression}"/>
+        </Grid>
+
+        <ListBox Grid.Row="2" x:Name="listBox" x:FieldModifier="private"
                  ItemsSource="{Binding Source={StaticResource DisplayedImagesProxy}}" SelectedItem="{Binding Path=SelectedImage}"
                  Margin="5" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListBox.InputBindings>
@@ -146,6 +178,7 @@
                 </Style>
             </ListBox.ItemContainerStyle>
         </ListBox>
+
     </Grid>
-    
+
 </UserControl>

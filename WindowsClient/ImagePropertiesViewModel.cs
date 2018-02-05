@@ -28,6 +28,7 @@ namespace Overmind.ImageManager.WindowsClient
 		public List<string> TagCollection { get { return model.TagCollection; } set { model.TagCollection = value; } }
 		public int Score { get { return model.Score; } set { model.Score = value; } }
 		public DateTime AdditionDate { get { return model.AdditionDate; } }
+		public Uri Source { get { return model.Source; } set { model.Source = value; } }
 		public string Hash { get { return model.Hash; } }
 
 		public List<string> AllSubjects { get; set; } = new List<string>();

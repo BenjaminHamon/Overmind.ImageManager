@@ -144,7 +144,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 				}
 				else
 				{
-					Image = collection.AddImage(Name, eventArguments.Result);
+					Image = collection.AddImage(Name, uri, eventArguments.Result);
 					Success = true;
 				}
 			}

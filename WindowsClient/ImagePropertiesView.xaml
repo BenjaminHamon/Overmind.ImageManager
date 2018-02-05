@@ -6,7 +6,7 @@
              xmlns:globalization="clr-namespace:System.Globalization;assembly=mscorlib"
              xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:ImagePropertiesViewModel}"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="400" d:DesignWidth="300">
     
     <UserControl.Resources>
         <Style TargetType="TextBlock">
@@ -39,6 +39,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -93,8 +94,10 @@
                 <Binding Path="AdditionDate" Mode="OneWay" StringFormat="g"
                          ConverterCulture="{x:Static globalization:CultureInfo.CurrentCulture}"/>
             </TextBox>
-            <TextBlock Grid.Row="6" Grid.Column="0" Text="Hash"/>
-            <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Path=Hash, Mode=OneWay}" IsReadOnly="True"/>
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="Source"/>
+            <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Path=Source}" TextWrapping="Wrap"/>
+            <TextBlock Grid.Row="7" Grid.Column="0" Text="Hash"/>
+            <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding Path=Hash, Mode=OneWay}" IsReadOnly="True"/>
             
         </Grid>
     </ScrollViewer>

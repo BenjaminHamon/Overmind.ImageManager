@@ -29,6 +29,8 @@ namespace Overmind.ImageManager.Model
 		public int Score { get; set; }
 		[DataMember]
 		public DateTime AdditionDate { get; set; }
+		[DataMember]
+		public Uri Source { get; set; }
 
 		public static string CreateHash(byte[] imageData)
 		{

@@ -91,13 +91,13 @@ namespace Overmind.ImageManager.WindowsClient
 			}
 		}
 
-		public ImageViewModel AddImage(string newImageName, byte[] newImageData)
+		public ImageViewModel AddImage(string fileName, Uri source, byte[] data)
 		{
-			string newImageHash = ImageModel.CreateHash(newImageData);
+			string hash = ImageModel.CreateHash(data);
 			lock (modelLock)
 			{
-				ImageModel newImage = new ImageModel() { Hash = newImageHash, FileName = newImageName, AdditionDate = DateTime.Now };
-				model.AddImage(newImage, newImageData);
+				ImageModel newImage = new ImageModel() { Hash = hash, FileName = fileName, AdditionDate = DateTime.Now, Source = source };
+				model.AddImage(newImage, data);
 				ImageViewModel newImageViewModel = new ImageViewModel(newImage, () => model.GetImagePath(newImage)) { Group = "#New" };
 				allImages.Insert(0, newImageViewModel);
 				FilteredImages.Insert(0, newImageViewModel);

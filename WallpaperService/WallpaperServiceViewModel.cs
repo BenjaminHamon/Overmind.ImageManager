@@ -4,7 +4,6 @@ using Overmind.WpfExtensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -88,12 +87,8 @@ namespace Overmind.ImageManager.WallpaperService
 
 		private void SetWallpaper(string imagePath)
 		{
-			// It is possible to use jpg or png, but it seems only bmp always works.
-			// Sometimes the Win32 call fails and there is no error code.
-
-			string savePath = Path.Combine(wallpaperStorage, "Wallpaper.bmp");
-			using (Image image = Image.FromFile(imagePath))
-				image.Save(savePath, ImageFormat.Bmp);
+			string savePath = Path.Combine(wallpaperStorage, "Wallpaper.jpg");
+			WindowsWallpaper.Save(imagePath, savePath, ImageFormat.Jpeg, 100);
 			WindowsWallpaper.Set(savePath);
 		}
 	}

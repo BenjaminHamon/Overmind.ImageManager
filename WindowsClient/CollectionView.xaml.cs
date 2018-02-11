@@ -17,8 +17,7 @@ namespace Overmind.ImageManager.WindowsClient
 			scrollViewer = VisualTreeExtensions.GetDescendant<ScrollViewer>(listBox);
 
 			DataContextChanged += HandleDataContextChanged;
-			DataContextChanged += (s, e) => ResetDisplay();
-			layoutComboBox.SelectionChanged += (s, e) => ResetDisplay();
+			layoutComboBox.SelectionChanged += (s, e) => ((CollectionViewModel)DataContext)?.ResetDisplay();
 			scrollViewer.ScrollChanged += (s, e) => ScheduleTryDisplayMore();
 		}
 
@@ -30,22 +29,25 @@ namespace Overmind.ImageManager.WindowsClient
 			if (eventArguments.OldValue != null)
 			{
 				CollectionViewModel oldDataContext = (CollectionViewModel)eventArguments.OldValue;
-				oldDataContext.DisplayedImages.CollectionChanged -= ScrollToHome;
+				oldDataContext.DisplayedImages.CollectionChanged -= HandleCollectionReset;
 				oldDataContext.PropertyChanged -= ScrollToSelection;
 			}
 
 			if (eventArguments.NewValue != null)
 			{
 				CollectionViewModel newDataContext = (CollectionViewModel)eventArguments.NewValue;
-				newDataContext.DisplayedImages.CollectionChanged += ScrollToHome;
+				newDataContext.DisplayedImages.CollectionChanged += HandleCollectionReset;
 				newDataContext.PropertyChanged += ScrollToSelection;
 			}
 		}
 
-		private void ScrollToHome(object sender, NotifyCollectionChangedEventArgs eventArguments)
+		private void HandleCollectionReset(object sender, NotifyCollectionChangedEventArgs eventArguments)
 		{
 			if (eventArguments.Action == NotifyCollectionChangedAction.Reset)
+			{
 				scrollViewer.ScrollToHome();
+				ScheduleTryDisplayMore();
+			}
 		}
 
 		private void ScrollToSelection(object sender, PropertyChangedEventArgs eventArguments)
@@ -56,16 +58,6 @@ namespace Overmind.ImageManager.WindowsClient
 				if (viewModel.DisplayedImages.Contains(viewModel.SelectedImage))
 					listBox.ScrollIntoView(viewModel.SelectedImage);
 			}
-		}
-		
-		private void ResetDisplay()
-		{
-			if (DataContext == null)
-				return;
-
-			CollectionViewModel viewModel = (CollectionViewModel)DataContext;
-			viewModel.ResetDisplay();
-			ScheduleTryDisplayMore();
 		}
 
 		// TryDisplayMore may be invoked several times in a row, but it needs to wait for the view properties to update.

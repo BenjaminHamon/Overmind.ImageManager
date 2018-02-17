@@ -49,11 +49,15 @@ namespace Overmind.ImageManager.Model
 		{
 			Directory.CreateDirectory(collectionPath);
 			string jsonPath = Path.Combine(collectionPath, ImageCollectionFileName);
-			
+
+			foreach (ImageModel image in removedImages)
+				File.Delete(Path.Combine(collectionPath, image.FileName));
+
 			foreach (ImageModel image in collectionData.Images)
 			{
 				string temporaryPath = Path.Combine(collectionPath, DataProvider.TemporaryDirectory, image.FileNameInStorage);
 				string finalPath = Path.Combine(collectionPath, image.FileName);
+
 				if (File.Exists(temporaryPath))
 				{
 					File.Move(temporaryPath, finalPath);
@@ -72,9 +76,6 @@ namespace Overmind.ImageManager.Model
 			using (StreamWriter streamWriter = new StreamWriter(jsonPath))
 			using (JsonWriter jsonWriter = new JsonTextWriter(streamWriter))
 				serializer.Serialize(jsonWriter, collectionData.Images);
-
-			foreach (ImageModel image in removedImages)
-				File.Delete(Path.Combine(collectionPath, image.FileName));
 		}
 
 		public string GetImagePath(string collectionPath, ImageModel image)

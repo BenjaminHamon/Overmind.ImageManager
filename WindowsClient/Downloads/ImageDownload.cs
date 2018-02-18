@@ -3,6 +3,7 @@ using Overmind.WpfExtensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -15,12 +16,12 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		{
 			this.uriStringField = uriString;
 			this.collection = collection;
-			
+
 			// It would be nicer to make a check instead of catching the exception,
 			// but Uri.IsWellFormedUriString does not recognize local paths as valid URIs, unlike the URI constructor.
 			Uri uri = null;
 			try { uri = new Uri(uriString); } catch { }
-			
+
 			if (uri != null)
 			{
 				// Consider the URI as invalid if the resulting file name is invalid
@@ -28,7 +29,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 				if (Uri.UnescapeDataString(uri.Segments.Last()).All(c => invalidCharacters.Contains(c) == false))
 					this.uri = uri;
 			}
-			
+
 			CancelCommand = new DelegateCommand<object>(_ => Cancel(), _ => IsDownloading);
 			SelectCommand = new DelegateCommand<object>(_ => Select(), _ => Image != null);
 		}
@@ -40,7 +41,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		private readonly object downloadLock = new object();
 
 		public event PropertyChangedEventHandler PropertyChanged;
-		
+
 		public string UriString { get { return uri == null ? uriStringField : uri.ToString(); } }
 		public string Name { get { return uri == null ? UriString : Uri.UnescapeDataString(uri.Segments.Last()); } }
 
@@ -77,7 +78,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 				{
 					IsDownloading = false;
 					Completed = true;
-					StatusMessage = "Invalid URI";
+					StatusMessage = "The URI is invalid";
 				}
 				else
 				{
@@ -122,34 +123,38 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 				IsDownloading = false;
 				webClient.Dispose();
 				webClient = null;
-			}
 
-			if (eventArguments.Error != null)
-			{
-				Exception exception = eventArguments.Error;
-				while (exception != null)
+				if (eventArguments.Error != null)
 				{
-					if (StatusMessage != null)
-						StatusMessage += Environment.NewLine;
-					StatusMessage += exception.Message;
-					exception = exception.InnerException;
+					Exception exception = eventArguments.Error;
+					while (exception != null)
+					{
+						if (StatusMessage != null)
+							StatusMessage += Environment.NewLine;
+						StatusMessage += exception.Message;
+						exception = exception.InnerException;
+					}
 				}
-			}
-			else
-			{
-				Image = collection.GetImage(ImageModel.CreateHash(eventArguments.Result));
-				if (Image != null)
+				else if (IsImage(eventArguments.Result) == false)
 				{
-					StatusMessage = "Image already exists in the collection";
+					StatusMessage = "The file is not an image";
 				}
 				else
 				{
-					Image = collection.AddImage(Name, uri, eventArguments.Result);
-					Success = true;
+					Image = collection.GetImage(ImageModel.CreateHash(eventArguments.Result));
+					if (Image != null)
+					{
+						StatusMessage = "The image already exists in the collection";
+					}
+					else
+					{
+						Image = collection.AddImage(Name, uri, eventArguments.Result);
+						Success = true;
+					}
 				}
-			}
 
-			Completed = true;
+				Completed = true;
+			}
 
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsDownloading)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Completed)));
@@ -172,6 +177,20 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		private void Select()
 		{
 			collection.SelectedImage = Image;
+		}
+
+		private bool IsImage(byte[] data)
+		{
+			try
+			{
+				using (MemoryStream stream = new MemoryStream(data))
+				using (Image imageObject = System.Drawing.Image.FromStream(stream))
+					return true;
+			}
+			catch (ArgumentException)
+			{
+				return false;
+			}
 		}
 	}
 }

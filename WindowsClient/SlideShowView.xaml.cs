@@ -16,7 +16,7 @@ namespace Overmind.ImageManager.WindowsClient
 			if (e.Key == Key.Enter)
 			{
 				BindingOperations.GetBindingExpression((TextBox)sender, TextBox.TextProperty).UpdateSource();
-				Focus();
+				Focus(); // Move focus back to the user control so that the input bindings work
 			}
 		}
 	}

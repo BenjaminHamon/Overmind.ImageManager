@@ -49,6 +49,8 @@ namespace Overmind.ImageManager.WindowsClient
 				if (currentImageField == value)
 					return;
 				currentImageField = value;
+				if (IsRunning)
+					cycleTimer.Change(interval, interval);
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentImage)));
 			}
 		}
@@ -80,11 +82,8 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			lock (cycleLock)
 			{
-				if (CurrentImage == imageCollection.First())
-					CurrentImage = imageCollection.Last();
-				else
-					CurrentImage = imageCollection[imageCollection.IndexOf(CurrentImage) - 1];
-				cycleTimer.Change(interval, interval);
+				CurrentImage = CurrentImage == imageCollection.First() ?
+					imageCollection.Last() : imageCollection[imageCollection.IndexOf(CurrentImage) - 1];
 			}
 		}
 
@@ -92,11 +91,8 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			lock (cycleLock)
 			{
-				if (CurrentImage == imageCollection.Last())
-					CurrentImage = imageCollection.First();
-				else
-					CurrentImage = imageCollection[imageCollection.IndexOf(CurrentImage) + 1];
-				cycleTimer.Change(interval, interval);
+				CurrentImage = CurrentImage == imageCollection.Last() ?
+					CurrentImage = imageCollection.First() : imageCollection[imageCollection.IndexOf(CurrentImage) + 1];
 			}
 		}
 	}

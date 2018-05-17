@@ -1,4 +1,5 @@
 import argparse
+import logging
 import os
 
 import environment
@@ -30,6 +31,9 @@ if __name__ == "__main__":
 
 	arguments = parse_arguments()
 	project = arguments.project
+
+	environment.configure_logging(logging.INFO)
 	project_version = environment.get_version()
-	print("{project} version {project_version[full]}".format(**locals()))
+
+	logging.info("{project} version {project_version[full]}".format(**locals()))
 	write_product_information(project_version)

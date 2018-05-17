@@ -8,8 +8,7 @@ msbuild_2017_executable = "msbuild_2017"
 nuget_executable = "nuget"
 
 
-def configure_logging(verbose):
-	log_level = logging.DEBUG if verbose else logging.INFO
+def configure_logging(log_level):
 	log_format = "[{levelname}] {message}"
 	logging.basicConfig(level = log_level, format = log_format, style = "{")
 	logging.addLevelName(logging.DEBUG, "Debug")

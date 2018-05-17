@@ -43,8 +43,8 @@ def execute_commands(command_list):
 
 
 def show_project_information():
-	logging.info("%s %s (Configuration: %s)" % (project_name, project_version["full"], configuration))
-	logging.info("Script executing in %s %s" % (os.getcwd(), "(TEST RUN)" if test_run else ''))
+	logging.info("%s %s (Configuration: %s)", project_name, project_version["full"], configuration)
+	logging.info("Script executing in %s %s", os.getcwd(), "(TEST RUN)" if test_run else '')
 	logging.info("")
 
 
@@ -62,15 +62,15 @@ def clean():
 
 	for directory in directories_to_clean:
 		if os.path.exists(directory["path"]):
-			logging.info("Removing directory %s (Path: %s)" % (directory["name"], directory["path"]))
+			logging.info("Removing directory %s (Path: %s)", directory["name"], directory["path"])
 			if not test_run:
 			 	shutil.rmtree(directory["path"])
 
 	for fileset in filesets_to_clean:
-		logging.info("Removing fileset %s" % fileset["name"])
+		logging.info("Removing fileset %s", fileset["name"])
 		for file_path in fileset["files"]:
 			if os.path.exists(file_path):
-				logging.info("  Removing %s" % file_path)
+				logging.info("  Removing %s", file_path)
 				if not test_run:
 			 		os.remove(file_path)
 
@@ -84,7 +84,7 @@ def build():
 	if verbose == False:
 		nuget_command += [ "-Verbosity", "quiet" ]
 	nuget_command += [ project + ".sln" ]
-	logging.info("+ %s" % " ".join(nuget_command))
+	logging.info("+ %s", " ".join(nuget_command))
 	if not test_run:
 		subprocess.check_call(nuget_command)
 		logging.debug("")
@@ -95,7 +95,7 @@ def build():
 	msbuild_command += [ "/target:build" ]
 	msbuild_command += [ "/p:Configuration=" + configuration ]
 	msbuild_command += [ project + ".sln" ]
-	logging.info("+ %s" % " ".join(msbuild_command))
+	logging.info("+ %s", " ".join(msbuild_command))
 	if not test_run:
 		subprocess.check_call(msbuild_command)
 
@@ -114,17 +114,17 @@ def package():
 		if not test_run and not os.path.exists(destination_directory):
 			os.makedirs(destination_directory)
 
-		logging.info("Creating package for %s (Path: %s)" % (application, destination_directory + "/" + package_name))
+		logging.info("Creating package for %s (Path: %s)", application, destination_directory + "/" + package_name)
 		source_file_list = fileset_to_list(source_directory, get_package_fileset(application, configuration))
 		if not source_file_list:
 			raise Exception("Package files could not be found (Source: %s)" % source_directory)
 		if test_run:
 			for source_file in source_file_list:
-				logging.debug("  Adding %s" % source_file)
+				logging.debug("  Adding %s", source_file)
 		else:
 			with zipfile.ZipFile(destination_directory + "/" + package_name + ".tmp", "w", zipfile.ZIP_DEFLATED) as package_file:
 				for source_file in source_file_list:
-					logging.debug("  Adding %s" % source_file)
+					logging.debug("  Adding %s", source_file)
 					package_file.write(source_file, project + "." + application + "/" + source_file[len(source_directory) + 1 : ])
 			shutil.move(destination_directory + "/" + package_name + ".tmp", destination_directory + "/" + package_name)
 
@@ -139,7 +139,7 @@ def fileset_to_list(directory, fileset):
 	for file_pattern in fileset:
 		matched_file_list = glob.glob(directory + "/" + file_pattern)
 		if not matched_file_list:
-			logging.info("No matches for %s in %s" % (file_pattern, directory))
+			logging.info("No matches for %s in %s", file_pattern, directory)
 		all_files += matched_file_list
 	return all_files
 
@@ -161,8 +161,9 @@ if __name__ == "__main__":
 	verbose = arguments.verbose
 	test_run = arguments.test_run
 	configuration = arguments.configuration
-	environment.configure_logging(arguments.verbose)
 
+	environment.configure_logging(logging.DEBUG if verbose else logging.INFO)
 	project_version = environment.get_version()
+
 	show_project_information()
 	execute_commands(arguments.command)

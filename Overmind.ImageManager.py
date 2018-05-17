@@ -14,6 +14,7 @@ import environment
 
 verbose = False
 test_run = False
+env = {}
 
 project = "Overmind.ImageManager"
 project_name = "Overmind Image Manager"
@@ -80,7 +81,7 @@ def clean():
 def build():
 	logging.info("=== Build ===")
 
-	nuget_command = [ environment.nuget_executable, "restore" ]
+	nuget_command = [ env["nuget_executable"], "restore" ]
 	if verbose == False:
 		nuget_command += [ "-Verbosity", "quiet" ]
 	nuget_command += [ project + ".sln" ]
@@ -89,11 +90,12 @@ def build():
 		subprocess.check_call(nuget_command)
 		logging.debug("")
 
-	msbuild_command = [ environment.msbuild_2017_executable, "/m", "/nologo" ]
+	msbuild_command = [ env["msbuild_2017_executable"], "/m", "/nologo" ]
 	if verbose == False:
 		msbuild_command += [ "/v:Minimal" ]
 	msbuild_command += [ "/target:build" ]
 	msbuild_command += [ "/p:Configuration=" + configuration ]
+	msbuild_command += [ "/p:PythonExecutable=" + env["python3_executable"] ]
 	msbuild_command += [ project + ".sln" ]
 	logging.info("+ %s", " ".join(msbuild_command))
 	if not test_run:
@@ -163,7 +165,8 @@ if __name__ == "__main__":
 	configuration = arguments.configuration
 
 	environment.configure_logging(logging.DEBUG if verbose else logging.INFO)
-	project_version = environment.get_version()
+	env = environment.load_environment()
+	project_version = environment.get_version(env)
 
 	show_project_information()
 	execute_commands(arguments.command)

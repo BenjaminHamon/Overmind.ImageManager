@@ -33,7 +33,8 @@ if __name__ == "__main__":
 	project = arguments.project
 
 	environment.configure_logging(logging.INFO)
-	project_version = environment.get_version()
+	env = environment.load_environment()
+	project_version = environment.get_version(env)
 
 	logging.info("{project} version {project_version[full]}".format(**locals()))
 	write_product_information(project_version)

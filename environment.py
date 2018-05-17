@@ -1,11 +1,7 @@
 import json
 import logging
+import os
 import subprocess
-
-
-git_executable = "git"
-msbuild_2017_executable = "msbuild_2017"
-nuget_executable = "nuget"
 
 
 def configure_logging(log_level):
@@ -18,11 +14,34 @@ def configure_logging(log_level):
 	logging.addLevelName(logging.CRITICAL, "Critical")
 
 
-def get_version():
+def create_default_environment():
+	return {
+		"git_executable": "git",
+		"msbuild_2017_executable": "msbuild_2017",
+		"nuget_executable": "nuget",
+		"python3_executable": "python3",
+	}
+
+
+def load_environment():
+	env = create_default_environment()
+	env.update(_load_environment_transform(os.path.join(os.path.expanduser("~"), ".overmind", "environment.json")))
+	env.update(_load_environment_transform("environment.json"))
+	return env
+
+
+def _load_environment_transform(transform_file_path):
+	if not os.path.exists(transform_file_path):
+		return {}
+	with open(transform_file_path) as transform_file:
+		return json.load(transform_file)
+
+
+def get_version(env):
 	with open("Version.json", "r") as version_file:
 		version = json.loads(version_file.read())
-	version["revision"] = subprocess.check_output([ git_executable, "rev-parse", "--verify", "--short=10", "HEAD" ]).decode("utf-8").strip()
-	version["branch"] = subprocess.check_output([ git_executable, "rev-parse", "--abbrev-ref", "HEAD" ]).decode("utf-8").strip()
+	version["revision"] = subprocess.check_output([ env["git_executable"], "rev-parse", "--verify", "--short=10", "HEAD" ]).decode("utf-8").strip()
+	version["branch"] = subprocess.check_output([ env["git_executable"], "rev-parse", "--abbrev-ref", "HEAD" ]).decode("utf-8").strip()
 	version["full"] = version["full_format"].format(**version)
 	version["numeric"] = version["numeric_format"].format(**version)
 	return version

@@ -1,6 +1,7 @@
 ﻿using Overmind.WpfExtensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -63,6 +64,10 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private void AddItem()
 		{
+			// Ensure the focus event is handled before adding an item,
+			// so that the source does not get updated with an empty item.
+			itemsControl.Focus();
+
 			int itemIndex = itemsControl.Items.Add(new ObservableString());
 			UIElement itemElement = (UIElement)itemsControl.ItemContainerGenerator.ContainerFromIndex(itemIndex);
 			TextBox textBox = VisualTreeExtensions.GetDescendant<TextBox>(itemElement);
@@ -87,12 +92,7 @@ namespace Overmind.ImageManager.WindowsClient
 		private void UpdateSource()
 		{
 			isUpdatingSource = true;
-
-			List<string> newList = new List<string>();
-			foreach (ObservableString item in itemsControl.Items)
-				newList.Add(item.Value);
-			ItemsSource = newList;
-
+			ItemsSource = itemsControl.Items.Cast<ObservableString>().Select(item => item.Value).ToList();
 			isUpdatingSource = false;
 		}
 

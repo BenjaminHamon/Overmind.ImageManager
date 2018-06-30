@@ -1,6 +1,6 @@
 {
 	"major": 1,
 	"minor": 0,
-	"full_format": "{major}.{minor}.{revision}-{branch}",
+	"full_format": "{major}.{minor}-{revision}",
 	"numeric_format": "{major}.{minor}"
 }

@@ -7,7 +7,7 @@
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug")]
 #else
- [assembly: AssemblyConfiguration("Release")]
+[assembly: AssemblyConfiguration("Release")]
 #endif
 
 [assembly: AssemblyVersion("{assembly_version}")]

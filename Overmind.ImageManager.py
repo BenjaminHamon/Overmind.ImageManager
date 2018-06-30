@@ -110,8 +110,8 @@ def package():
 	for application in application_list:
 		source_directory = ".build/" + application + "/bin/" + configuration
 		destination_directory = ".build/" + application + "/packages"
-		package_information = { "project": project, "application": application, "version": project_version["full"], "configuration": configuration.lower() }
-		package_name = "{project}.{application}-{version}-{configuration}.zip".format(**package_information)
+		package_information = { "project": project, "application": application, "version": project_version["full"], "configuration": configuration }
+		package_name = "{project}.{application}_{version}_{configuration}.zip".format(**package_information)
 
 		if not test_run and not os.path.exists(destination_directory):
 			os.makedirs(destination_directory)

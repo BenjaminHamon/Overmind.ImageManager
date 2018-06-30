@@ -40,7 +40,7 @@ def _load_environment_transform(transform_file_path):
 def get_version(env):
 	with open("Version.json", "r") as version_file:
 		version = json.loads(version_file.read())
-	version["revision"] = subprocess.check_output([ env["git_executable"], "rev-parse", "--verify", "--short=10", "HEAD" ]).decode("utf-8").strip()
+	version["revision"] = subprocess.check_output([ env["git_executable"], "rev-parse", "--short=10", "HEAD" ]).decode("utf-8").strip()
 	version["branch"] = subprocess.check_output([ env["git_executable"], "rev-parse", "--abbrev-ref", "HEAD" ]).decode("utf-8").strip()
 	version["full"] = version["full_format"].format(**version)
 	version["numeric"] = version["numeric_format"].format(**version)

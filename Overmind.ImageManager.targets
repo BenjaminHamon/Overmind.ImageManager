@@ -3,6 +3,6 @@
     <PythonExecutable>python</PythonExecutable>
   </PropertyGroup>
   <Target Name="GenerateMetadataFiles" BeforeTargets="PrepareForBuild">
-    <Exec Command="$(PythonExecutable) $(SolutionDir)/generate_metadata_files.py $(AssemblyName)"/>
+    <Exec Command="$(PythonExecutable) $(SolutionDir)/Scripts/main.py --verbosity warning metadata"/>
   </Target>
 </Project>

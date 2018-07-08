@@ -5,8 +5,8 @@
 # Build
 .build/
 
-# Generated files
-/ProductInformation.cs
+# Build artifacts
+.artifacts/
 
 # Python
 __pycache__/

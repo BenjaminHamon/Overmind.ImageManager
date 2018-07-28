@@ -1,5 +1,6 @@
 import argparse
 import glob
+import json
 import logging
 import os
 import shutil
@@ -52,7 +53,7 @@ def run(environment, configuration, arguments):
 		verify(local_artifact_path)
 		logging.info("")
 	if "upload" in arguments.artifact_commands:
-		upload(local_artifact_path, remote_artifact_path, arguments.simulate)
+		upload(local_artifact_path, remote_artifact_path, arguments.simulate, arguments.results)
 		logging.info("")
 
 
@@ -96,7 +97,7 @@ def verify(artifact_path):
 			raise RuntimeError('Artifact package is corrupted')
 
 
-def upload(local_artifact_path, remote_artifact_path, simulate):
+def upload(local_artifact_path, remote_artifact_path, simulate, result_file_path):
 	logging.info("Uploading artifact '%s' to '%s'", local_artifact_path, remote_artifact_path)
 
 	remote_artifact_directory = os.path.dirname(remote_artifact_path)
@@ -107,6 +108,12 @@ def upload(local_artifact_path, remote_artifact_path, simulate):
 		shutil.copyfile(local_artifact_path + ".zip", remote_artifact_path + ".zip.tmp")
 		shutil.move(remote_artifact_path + ".zip.tmp", remote_artifact_path + ".zip")
 
+	if result_file_path:
+		results = load_results(result_file_path)
+		results["artifacts"].append({ "name": os.path.basename(remote_artifact_path), "path": remote_artifact_path })
+		if not simulate:
+			save_results(result_file_path, results)
+
 
 def list_files(fileset, parameters):
 	all_files = []
@@ -114,3 +121,17 @@ def list_files(fileset, parameters):
 	for file_pattern in fileset["file_patterns"]:
 		all_files += glob.glob(os.path.join(path_in_workspace, file_pattern.format(**parameters)))
 	return path_in_workspace, sorted(file_path.replace("\\", "/") for file_path in all_files)
+
+
+def load_results(result_file_path):
+	if not os.path.isfile(result_file_path):
+		return { "artifacts": [] }
+	with open(result_file_path, "r") as result_file:
+		return json.load(result_file)
+
+
+def save_results(result_file_path, result_data):
+	if not os.path.isdir(os.path.dirname(result_file_path)):
+		os.makedirs(os.path.dirname(result_file_path))
+	with open(result_file_path, "w") as result_file:
+		json.dump(result_data, result_file, indent = 4)

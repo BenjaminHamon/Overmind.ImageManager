@@ -13,7 +13,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		public DownloaderView()
 		{
 			InitializeComponent();
-			
+
 			scrollViewer = VisualTreeExtensions.GetDescendant<ScrollViewer>(listView);
 
 			DataContextChanged += HandleDataContextChanged;

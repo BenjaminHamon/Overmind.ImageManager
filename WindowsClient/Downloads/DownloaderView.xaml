@@ -70,7 +70,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Image ToolTip="{Binding Path=StatusMessage}" Height="18" Width="18" RenderOptions.BitmapScalingMode="HighQuality"
-                                       Visibility="{Binding Path=Completed, Converter={StaticResource VisibilityConverter}}">
+                                       Visibility="{Binding Path=IsCompleted, Converter={StaticResource VisibilityConverter}}">
                                     <Image.Style>
                                         <Style TargetType="Image">
                                             <Setter Property="Source" Value="/Resources/Icons/Error.png"/>
@@ -92,7 +92,11 @@
                                     <Button Command="{Binding Path=CancelCommand}" ToolTip="Cancel">
                                         <Image Source="/Resources/Icons/Cancel.png"/>
                                     </Button>
-                                    <Button Command="{Binding Path=SelectCommand}" ToolTip="Select">
+                                    <!-- Using ElementName instead of RelativeSource breaks the command parameter binding.
+                                         The parameter is null during the first CanExecute invocation.
+                                         See https://stackoverflow.com/questions/335849/wpf-commandparameter-is-null-first-time-canexecute-is-called -->
+                                    <Button Command="{Binding RelativeSource={RelativeSource AncestorType=downloads:DownloaderView}, Path=DataContext.SelectImageCommand}"
+                                            CommandParameter="{Binding}" ToolTip="Select">
                                         <Image Source="/Resources/Icons/View.png"/>
                                     </Button>
                                 </StackPanel>

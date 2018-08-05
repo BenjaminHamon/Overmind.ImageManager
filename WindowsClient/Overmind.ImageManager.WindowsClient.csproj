@@ -69,7 +69,7 @@
     <Compile Include="Downloads\DownloaderView.xaml.cs">
       <DependentUpon>DownloaderView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Downloads\ImageDownload.cs" />
+    <Compile Include="Downloads\ObservableDownload.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="ImageView.xaml.cs">
       <DependentUpon>ImageView.xaml</DependentUpon>

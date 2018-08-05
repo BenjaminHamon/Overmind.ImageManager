@@ -14,6 +14,10 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			InitializeComponent();
 
+			// In design mode, the view model casts fail, which breaks the design view of MainView in Visual Studio
+			if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
+				return;
+
 			scrollViewer = VisualTreeExtensions.GetDescendant<ScrollViewer>(listBox);
 
 			DataContextChanged += HandleDataContextChanged;

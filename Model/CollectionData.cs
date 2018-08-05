@@ -4,6 +4,6 @@ namespace Overmind.ImageManager.Model
 {
 	public class CollectionData
 	{
-		public List<ImageModel> Images { get; set; }
+		public List<ImageModel> Images { get; set; } = new List<ImageModel>();
 	}
 }

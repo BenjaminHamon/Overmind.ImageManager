@@ -56,16 +56,19 @@ namespace Overmind.ImageManager.Model
 			foreach (ImageModel image in collectionData.Images)
 			{
 				string temporaryPath = Path.Combine(collectionPath, DataProvider.TemporaryDirectory, image.FileNameInStorage);
+				string oldPath = Path.Combine(collectionPath, image.FileNameInStorage);
 				string finalPath = Path.Combine(collectionPath, image.FileName);
 
 				if (File.Exists(temporaryPath))
 				{
+					if (File.Exists(oldPath))
+						File.Delete(oldPath);
+
 					File.Move(temporaryPath, finalPath);
 					image.FileNameInStorage = image.FileName;
 				}
 				else if (image.FileNameInStorage != image.FileName)
 				{
-					string oldPath = Path.Combine(collectionPath, image.FileNameInStorage);
 					File.Move(oldPath, finalPath);
 					image.FileNameInStorage = image.FileName;
 				}

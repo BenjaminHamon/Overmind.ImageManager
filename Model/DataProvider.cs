@@ -67,10 +67,17 @@ namespace Overmind.ImageManager.Model
 					File.Move(temporaryPath, finalPath);
 					image.FileNameInStorage = image.FileName;
 				}
-				else if (image.FileNameInStorage != image.FileName)
+				else if (File.Exists(oldPath))
 				{
-					File.Move(oldPath, finalPath);
-					image.FileNameInStorage = image.FileName;
+					if (image.FileNameInStorage != image.FileName)
+					{
+						File.Move(oldPath, finalPath);
+						image.FileNameInStorage = image.FileName;
+					}
+				}
+				else
+				{
+					System.Diagnostics.Trace.TraceWarning("[DataProvider] File not found: {0}", oldPath);
 				}
 			}
 

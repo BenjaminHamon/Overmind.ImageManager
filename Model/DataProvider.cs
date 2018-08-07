@@ -11,12 +11,14 @@ namespace Overmind.ImageManager.Model
 		public const string ImageCollectionFileName = "images.json";
 		private const string TemporaryDirectory = ".temporary";
 
-		public DataProvider(JsonSerializer serializer)
+		public DataProvider(JsonSerializer serializer, FileNameFormatter fileNameFormatter)
 		{
 			this.serializer = serializer;
+			this.fileNameFormatter = fileNameFormatter;
 		}
 
 		private readonly JsonSerializer serializer;
+		private readonly FileNameFormatter fileNameFormatter;
 
 		public CollectionData CreateCollection(string collectionPath)
 		{
@@ -55,6 +57,8 @@ namespace Overmind.ImageManager.Model
 
 			foreach (ImageModel image in collectionData.Images)
 			{
+				image.FileName = fileNameFormatter.Format(image);
+
 				string temporaryPath = Path.Combine(collectionPath, DataProvider.TemporaryDirectory, image.FileNameInStorage);
 				string oldPath = Path.Combine(collectionPath, image.FileNameInStorage);
 				string finalPath = Path.Combine(collectionPath, image.FileName);

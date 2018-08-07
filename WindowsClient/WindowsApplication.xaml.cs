@@ -21,10 +21,11 @@ namespace Overmind.ImageManager.WindowsClient
 		public WindowsApplication()
 		{
 			JsonSerializer serializer = new JsonSerializer() { Formatting = Formatting.Indented };
-			DataProvider dataProvider = new DataProvider(serializer);
+			FileNameFormatter fileNameFormatter = new FileNameFormatter();
+			DataProvider dataProvider = new DataProvider(serializer, fileNameFormatter);
 			mainViewModel = new MainViewModel(dataProvider);
 		}
-		
+
 		private readonly MainViewModel mainViewModel;
 
 		private void Application_Startup(object sender, StartupEventArgs e)

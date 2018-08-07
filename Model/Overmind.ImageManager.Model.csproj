@@ -46,6 +46,7 @@
     <Compile Include="..\.build\Shared\Metadata\ProductInformation.cs">
       <Link>Properties\ProductInformation.cs</Link>
     </Compile>
+    <Compile Include="FileNameFormatter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

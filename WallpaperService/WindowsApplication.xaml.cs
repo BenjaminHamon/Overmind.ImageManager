@@ -23,11 +23,11 @@ namespace Overmind.ImageManager.WallpaperService
 		{
 			string configurationDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
 			JsonSerializer serializer = new JsonSerializer() { Formatting = Formatting.Indented };
-			DataProvider dataProvider = new DataProvider(serializer);
+			DataProvider dataProvider = new DataProvider(serializer, null);
 			WallpaperConfigurationProvider configurationProvider = new WallpaperConfigurationProvider(serializer, configurationDirectory);
 			serviceViewModel = new WallpaperServiceViewModel(configurationProvider, dataProvider, configurationDirectory);
 		}
-		
+
 		private readonly WallpaperServiceViewModel serviceViewModel;
 
 		private void Application_Startup(object sender, StartupEventArgs eventArguments)

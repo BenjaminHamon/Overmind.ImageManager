@@ -27,7 +27,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		public Action<byte[]> DataVerificationHook { get; set; }
 
 		public event PropertyChangedEventHandler PropertyChanged;
-		public event Action<ObservableDownload> DownloadCompleted;
+		public event Action<ObservableDownload, byte[]> DownloadCompleted;
 
 		public bool IsDownloading { get; private set; }
 		public bool IsCompleted { get; private set; }
@@ -37,8 +37,6 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		public double TotalSize { get; private set; }
 		public double Progress { get; private set; }
 		public double ProgressPercentage { get { return TotalSize != 0 ? 100 * Progress / TotalSize : 0; } }
-
-		public byte[] DownloadedData { get; private set; }
 
 		public DelegateCommand<object> CancelCommand { get; }
 
@@ -55,7 +53,6 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 				StatusMessage = null;
 				TotalSize = 0;
 				Progress = 0;
-				DownloadedData = null;
 
 				try
 				{
@@ -114,12 +111,14 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 				webClient.Dispose();
 				webClient = null;
 
+				byte[] downloadData = null;
+
 				try
 				{
 					if (eventArguments.Error != null)
 						throw eventArguments.Error;
+					downloadData = eventArguments.Result;
 					DataVerificationHook?.Invoke(eventArguments.Result);
-					DownloadedData = eventArguments.Result;
 					Success = true;
 				}
 				catch (Exception exception)
@@ -129,7 +128,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 				IsCompleted = true;
 
-				DownloadCompleted?.Invoke(this);
+				DownloadCompleted?.Invoke(this, downloadData);
 			}
 
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsDownloading)));

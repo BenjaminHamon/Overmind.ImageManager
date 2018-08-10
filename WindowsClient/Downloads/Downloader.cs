@@ -1,6 +1,7 @@
 ﻿using Overmind.ImageManager.Model;
 using Overmind.WpfExtensions;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
@@ -20,6 +21,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		private readonly CollectionViewModel collection;
 
 		public ObservableCollection<ObservableDownload> DownloadCollection { get; } = new ObservableCollection<ObservableDownload>();
+		private Dictionary<ObservableDownload, ImageViewModel> downloadToImageDictionary = new Dictionary<ObservableDownload, ImageViewModel>();
 
 		public DelegateCommand<string> AddDownloadCommand { get; }
 		public DelegateCommand<ObservableDownload> SelectImageCommand { get; }
@@ -71,28 +73,31 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 			}
 		}
 
-		private void HandleDownloadCompleted(ObservableDownload download)
+		private void HandleDownloadCompleted(ObservableDownload download, byte[] downloadData)
 		{
 			download.DownloadCompleted -= HandleDownloadCompleted;
 
 			if (download.Success)
-				collection.AddImage(download.Name, download.Uri, download.DownloadedData);
+				collection.AddImage(download.Name, download.Uri, downloadData);
+			if (downloadData != null)
+			{
+				ImageViewModel image = collection.GetImage(ImageModel.CreateHash(downloadData));
+				if (image != null)
+					downloadToImageDictionary[download] = image;
+			}
 
 			SelectImageCommand.RaiseCanExecuteChanged();
 		}
 
 		private bool CanSelectImage(ObservableDownload download)
 		{
-			return download.DownloadedData != null;
+			return downloadToImageDictionary.ContainsKey(download);
 		}
 
 		private void SelectImage(ObservableDownload download)
 		{
-			if (download.DownloadedData == null)
-				return;
-
-			string hash = ImageModel.CreateHash(download.DownloadedData);
-			collection.SelectedImage = collection.GetImage(hash);
+			if (downloadToImageDictionary.ContainsKey(download))
+				collection.SelectedImage = downloadToImageDictionary[download];
 		}
 	}
 }

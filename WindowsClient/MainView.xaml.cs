@@ -34,7 +34,6 @@ namespace Overmind.ImageManager.WindowsClient
 
 			MainViewModel viewModel = (MainViewModel)DataContext;
 			viewModel.CreateCollectionCommand.Execute(collectionPath);
-
 		}
 
 		private void LoadCollection(object sender, RoutedEventArgs e)
@@ -48,6 +47,23 @@ namespace Overmind.ImageManager.WindowsClient
 			viewModel.LoadCollectionCommand.Execute(Path.GetDirectoryName(fileDialog.FileName));
 		}
 
+		private void ExportQuery(object sender, RoutedEventArgs eventArguments)
+		{
+			CommonOpenFileDialog fileDialog = new CommonOpenFileDialog("Export Query") { IsFolderPicker = true };
+			if (fileDialog.ShowDialog() != CommonFileDialogResult.Ok)
+				return;
+
+			string collectionPath = fileDialog.FileName;
+			if (Directory.Exists(fileDialog.FileName) && Directory.EnumerateFileSystemEntries(fileDialog.FileName).Any())
+			{
+				MessageBox.Show("Directory is not empty", "Export Query", MessageBoxButton.OK, MessageBoxImage.Error);
+				return;
+			}
+
+			MainViewModel viewModel = (MainViewModel)DataContext;
+			viewModel.ExportQuery(collectionPath);
+		}
+
 		private void ShowDownloader(object sender, RoutedEventArgs eventArguments)
 		{
 			if (downloaderWindow == null)
@@ -55,7 +71,7 @@ namespace Overmind.ImageManager.WindowsClient
 				DownloaderView downloaderView = new DownloaderView();
 				Binding dataContextBinding = new Binding() { Source = DataContext, Path = new PropertyPath(nameof(MainViewModel.Downloader)) };
 				BindingOperations.SetBinding(downloaderView, DataContextProperty, dataContextBinding);
-				
+
 				downloaderWindow = new Window() { Title = "Downloads - " + WindowsApplication.Name, Content = downloaderView };
 				downloaderWindow.Closed += (s, e) => downloaderWindow = null;
 				downloaderWindow.Show();

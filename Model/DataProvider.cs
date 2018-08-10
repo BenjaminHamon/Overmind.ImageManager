@@ -53,7 +53,7 @@ namespace Overmind.ImageManager.Model
 			string jsonPath = Path.Combine(collectionPath, ImageCollectionFileName);
 
 			foreach (ImageModel image in removedImages)
-				File.Delete(Path.Combine(collectionPath, image.FileName));
+				File.Delete(Path.Combine(collectionPath, image.FileNameInStorage));
 
 			foreach (ImageModel image in collectionData.Images)
 			{
@@ -90,6 +90,18 @@ namespace Overmind.ImageManager.Model
 			using (StreamWriter streamWriter = new StreamWriter(jsonPath))
 			using (JsonWriter jsonWriter = new JsonTextWriter(streamWriter))
 				serializer.Serialize(jsonWriter, collectionData.Images);
+		}
+
+		public void ExportCollection(string sourceCollectionPath, string destinationCollectionPath, CollectionData collectionData)
+		{
+			if (Directory.Exists(destinationCollectionPath) && Directory.EnumerateFileSystemEntries(destinationCollectionPath).Any())
+				throw new ArgumentException("Directory is not empty", nameof(destinationCollectionPath));
+
+			Directory.CreateDirectory(destinationCollectionPath);
+			foreach (ImageModel image in collectionData.Images)
+				File.Copy(Path.Combine(sourceCollectionPath, image.FileNameInStorage), Path.Combine(destinationCollectionPath, image.FileNameInStorage));
+
+			SaveCollection(destinationCollectionPath, collectionData, new List<ImageModel>());
 		}
 
 		public string GetImagePath(string collectionPath, ImageModel image)

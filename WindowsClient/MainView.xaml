@@ -19,6 +19,8 @@
                 <MenuItem Header="Open collection" Click="LoadCollection"/>
                 <MenuItem Header="Save collection" Command="{Binding Path=SaveCollectionCommand}"/>
                 <MenuItem Header="Close collection" Command="{Binding Path=CloseCollectionCommand}"/>
+                <Separator/>
+                <MenuItem Header="Export query" Click="ExportQuery" IsEnabled="{Binding Path=CanExportQuery}"/>
             </MenuItem>
         </Menu>
 

@@ -25,7 +25,7 @@ namespace Overmind.ImageManager.Model
 		protected readonly CollectionData data;
 		protected readonly string storagePath;
 
-		public string Name { get { return storagePath; } }
+		public string StoragePath { get { return storagePath; } }
 		public IEnumerable<ImageModel> AllImages { get { return data.Images; } }
 
 		public string GetImagePath(ImageModel image)

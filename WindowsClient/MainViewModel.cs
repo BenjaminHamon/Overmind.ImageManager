@@ -3,6 +3,7 @@ using Overmind.ImageManager.WindowsClient.Downloads;
 using Overmind.WpfExtensions;
 using System;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Overmind.ImageManager.WindowsClient
 {
@@ -39,8 +40,11 @@ namespace Overmind.ImageManager.WindowsClient
 				if (activeCollectionField == value)
 					return;
 				activeCollectionField = value;
+
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ApplicationTitle)));
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActiveCollection)));
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanExportQuery)));
+
 				SaveCollectionCommand.RaiseCanExecuteChanged();
 				CloseCollectionCommand.RaiseCanExecuteChanged();
 			}
@@ -87,6 +91,15 @@ namespace Overmind.ImageManager.WindowsClient
 			ActiveCollection = null;
 			Downloader.Dispose();
 			Downloader = null;
+		}
+
+		public bool CanExportQuery { get { return ActiveCollection != null; } }
+
+		public void ExportQuery(string collectionPath)
+		{
+			CollectionData collectionData = new CollectionData();
+			collectionData.Images = ActiveCollection.FilteredImages.Select(image => image.Model).ToList();
+			dataProvider.ExportCollection(ActiveCollection.StoragePath, collectionPath, collectionData);
 		}
 	}
 }

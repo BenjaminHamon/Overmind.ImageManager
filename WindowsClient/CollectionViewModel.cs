@@ -29,7 +29,8 @@ namespace Overmind.ImageManager.WindowsClient
 		private readonly List<ImageViewModel> allImages;
 		private readonly object modelLock = new object();
 
-		public string Name { get { return model.Name; } }
+		public string Name { get { return model.StoragePath; } }
+		public string StoragePath { get { return model.StoragePath; } }
 		public CollectionQuery Query { get; }
 		public List<ImageViewModel> FilteredImages { get; private set; }
 

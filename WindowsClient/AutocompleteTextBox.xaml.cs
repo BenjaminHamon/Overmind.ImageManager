@@ -78,9 +78,9 @@ namespace Overmind.ImageManager.WindowsClient
 				}
 				else if ((eventArguments.Key == Key.Space) || (eventArguments.Key == Key.Enter) || (eventArguments.Key == Key.Tab))
 				{
-					if (listBox.SelectedValue != null)
+					if (listBox.SelectedItem != null)
 					{
-						SetTextValue((string)listBox.SelectedValue);
+						SetTextValue((string)listBox.SelectedItem);
 						if (eventArguments.Key == Key.Space)
 							eventArguments.Handled = true;
 					}
@@ -90,7 +90,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private void SelectValue(object sender, MouseButtonEventArgs eventArguments)
 		{
-			listBox.SelectedValue = ((FrameworkElement)sender).DataContext;
+			listBox.SelectedItem = ((FrameworkElement)sender).DataContext;
 			eventArguments.Handled = true;
 		}
 

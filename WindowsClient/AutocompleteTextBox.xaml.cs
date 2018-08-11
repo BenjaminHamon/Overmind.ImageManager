@@ -76,7 +76,7 @@ namespace Overmind.ImageManager.WindowsClient
 					listBox.SelectedIndex = newIndex;
 					eventArguments.Handled = true;
 				}
-				else if ((eventArguments.Key == Key.Space) || (eventArguments.Key == Key.Enter) || (eventArguments.Key == Key.Tab))
+				else if ((eventArguments.Key == Key.Enter) || (eventArguments.Key == Key.Tab))
 				{
 					if (listBox.SelectedItem != null)
 					{

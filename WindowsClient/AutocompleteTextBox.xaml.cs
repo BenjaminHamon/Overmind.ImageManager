@@ -96,7 +96,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private void SetTextValue(object sender, MouseButtonEventArgs eventArguments)
 		{
-			SetTextValue(((TextBlock)sender).Text);
+			SetTextValue((string)((FrameworkElement)sender).DataContext);
 			eventArguments.Handled = true;
 		}
 

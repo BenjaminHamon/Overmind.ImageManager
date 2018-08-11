@@ -15,11 +15,13 @@
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="Focusable" Value="False"/>
+                        <EventSetter Event="PreviewMouseDown" Handler="SelectValue"/>
+                        <EventSetter Event="MouseUp" Handler="SetTextValue"/>
                     </Style>
                 </ListBox.ItemContainerStyle>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding}" Padding="5" MouseDown="SelectValue" MouseUp="SetTextValue"/>
+                        <TextBlock Text="{Binding}" Padding="5"/>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>

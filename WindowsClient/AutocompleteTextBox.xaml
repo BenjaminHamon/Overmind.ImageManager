@@ -9,9 +9,8 @@
         <TextBox x:Name="textBox" x:FieldModifier="private" Text="{Binding ElementName=userControl, Path=Text}"
                  PreviewKeyDown="HandleInput" TextChanged="RefreshList" SelectionChanged="RefreshList"/>
         <Popup x:Name="popup" x:FieldModifier="private">
-            <!-- ListBox selection is handled manually to avoid a LostFocus event which would close the popup -->
-            <ListBox x:Name="listBox" x:FieldModifier="private"
-                     MinWidth="{Binding ElementName=userControl, Path=ActualWidth}">
+            <!-- The TextBox needs to keep the focus, so the ListBox is not focusable and its input and selection are handled manually -->
+            <ListBox x:Name="listBox" x:FieldModifier="private" MaxHeight="190" MinWidth="300">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="Focusable" Value="False"/>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Overmind.WpfExtensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -13,22 +14,25 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			InitializeComponent();
 
+			scrollViewer = VisualTreeExtensions.GetDescendant<ScrollViewer>(listBox);
+
 			Loaded += (s, e) => { parentWindow = Window.GetWindow(this); if (parentWindow != null) parentWindow.Deactivated += ClosePopup; };
 			Unloaded += (s, e) => { if (parentWindow != null) parentWindow.Deactivated -= ClosePopup; };
 		}
 
+		private readonly ScrollViewer scrollViewer;
 		private Window parentWindow;
-		
+
 		public static readonly DependencyProperty TextProperty =
 			DependencyProperty.Register(nameof(Text), typeof(string), typeof(AutocompleteTextBox),
 				new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-		
+
 		public string Text
 		{
 			get { return (string)GetValue(TextProperty); }
 			set { SetValue(TextProperty, value); }
 		}
-		
+
 		public static readonly DependencyProperty AllValuesProperty =
 			DependencyProperty.Register(nameof(AllValues), typeof(IEnumerable<string>), typeof(AutocompleteTextBox),
 				new PropertyMetadata(OnAllValuesUpdated));
@@ -39,14 +43,15 @@ namespace Overmind.ImageManager.WindowsClient
 			set { SetValue(AllValuesProperty, value); }
 		}
 
-		public int DisplayLimit { get; set; } = 10;
-
 		private void HandleInput(object sender, KeyEventArgs eventArguments)
 		{
 			if ((Keyboard.Modifiers == ModifierKeys.Control) && (eventArguments.Key == Key.Space))
 			{
 				if (listBox.HasItems)
+				{
 					popup.IsOpen = true;
+					ResetSelection();
+				}
 
 				eventArguments.Handled = true;
 				return;
@@ -66,6 +71,7 @@ namespace Overmind.ImageManager.WindowsClient
 					if (newIndex < 0)
 						newIndex = listBox.Items.Count - 1;
 					listBox.SelectedIndex = newIndex;
+					listBox.ScrollIntoView(listBox.SelectedItem);
 					eventArguments.Handled = true;
 				}
 				else if (eventArguments.Key == Key.Down)
@@ -74,6 +80,7 @@ namespace Overmind.ImageManager.WindowsClient
 					if (newIndex >= listBox.Items.Count)
 						newIndex = 0;
 					listBox.SelectedIndex = newIndex;
+					listBox.ScrollIntoView(listBox.SelectedItem);
 					eventArguments.Handled = true;
 				}
 				else if ((eventArguments.Key == Key.Enter) || (eventArguments.Key == Key.Tab))
@@ -126,12 +133,32 @@ namespace Overmind.ImageManager.WindowsClient
 			else
 			{
 				string baseText = textBox.Text.Substring(0, textBox.CaretIndex);
-				IEnumerable<string> possibleValues = AllValues.Where(value => value.IndexOf(baseText, StringComparison.CurrentCultureIgnoreCase) >= 0);
-				listBox.ItemsSource = possibleValues.Take(DisplayLimit).ToList();
+				List<string> possibleValues = AllValues.Where(value => value.IndexOf(baseText, StringComparison.CurrentCultureIgnoreCase) >= 0).ToList();
+				listBox.ItemsSource = possibleValues;
+
+				if (popup.IsOpen)
+					ResetSelection();
 			}
 
 			if (listBox.HasItems == false)
 				popup.IsOpen = false;
+		}
+
+		private void ResetSelection()
+		{
+			string baseText = textBox.Text.Substring(0, textBox.CaretIndex);
+			string firstMatch = listBox.Items.Cast<string>().FirstOrDefault(value => value.StartsWith(baseText, StringComparison.CurrentCultureIgnoreCase));
+			listBox.SelectedItem = firstMatch ?? listBox.Items.Cast<string>().FirstOrDefault();
+
+			if (listBox.SelectedItem == null)
+			{
+				scrollViewer.ScrollToHome();
+			}
+			else
+			{
+				scrollViewer.ScrollToEnd();
+				listBox.ScrollIntoView(listBox.SelectedItem);
+			}
 		}
 
 		private void ClosePopup(object sender, EventArgs eventArguments)

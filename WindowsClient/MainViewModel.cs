@@ -17,6 +17,10 @@ namespace Overmind.ImageManager.WindowsClient
 			LoadCollectionCommand = new DelegateCommand<string>(path => ChangeCollection(dataProvider.LoadCollection(path), path));
 			SaveCollectionCommand = new DelegateCommand<object>(_ => ActiveCollection.Save(), _ => ActiveCollection != null);
 			CloseCollectionCommand = new DelegateCommand<object>(_ => CloseCollection(), _ => ActiveCollection != null);
+
+			ViewImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) WindowsApplication.ViewImage(image); });
+			OpenImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) WindowsApplication.OpenImageExternally(image, "open"); });
+			EditImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) WindowsApplication.OpenImageExternally(image, "edit"); });
 		}
 
 		private readonly DataProvider dataProvider;
@@ -70,10 +74,15 @@ namespace Overmind.ImageManager.WindowsClient
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
+
 		public DelegateCommand<string> CreateCollectionCommand { get; }
 		public DelegateCommand<string> LoadCollectionCommand { get; }
 		public DelegateCommand<object> SaveCollectionCommand { get; }
 		public DelegateCommand<object> CloseCollectionCommand { get; }
+
+		public DelegateCommand<ImageViewModel> ViewImageCommand { get; }
+		public DelegateCommand<ImageViewModel> OpenImageCommand { get; }
+		public DelegateCommand<ImageViewModel> EditImageCommand { get; }
 
 		private void ChangeCollection(CollectionData collectionData, string collectionPath)
 		{

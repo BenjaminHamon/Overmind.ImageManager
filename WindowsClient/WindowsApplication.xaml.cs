@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Overmind.ImageManager.Model;
 using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -50,6 +51,20 @@ namespace Overmind.ImageManager.WindowsClient
 				Window imageWindow = new ImageView() { DataContext = image };
 				imageWindow.Show();
 			}));
+		}
+
+		public static void OpenImageExternally(ImageViewModel image, string mode)
+		{
+			ProcessStartInfo processInformation = new ProcessStartInfo() { FileName = image.FilePath, Verb = mode };
+
+			try
+			{
+				using (Process process = Process.Start(processInformation)) { }
+			}
+			catch (Exception exception)
+			{
+				Trace.TraceError("[Application] Failed to open image in external process: {0}", exception);
+			}
 		}
 	}
 }

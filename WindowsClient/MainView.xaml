@@ -26,13 +26,13 @@
             </MenuItem>
         </Menu>
 
-        <Grid Grid.Row="1" DataContext="{Binding Path=ActiveCollection}">
+        <Grid Grid.Row="1">
             <Grid.Style>
                 <Style TargetType="Grid">
                     <Style.Triggers>
-                        <Trigger Property="DataContext" Value="{x:Null}">
+                        <DataTrigger Binding="{Binding Path=ActiveCollection}" Value="{x:Null}">
                             <Setter Property="IsEnabled" Value="False"/>
-                        </Trigger>
+                        </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </Grid.Style>
@@ -41,7 +41,7 @@
                 <ColumnDefinition Width="400"/>
             </Grid.ColumnDefinitions>
 
-            <main:CollectionView Grid.Row="2"/>
+            <main:CollectionView Grid.Row="2" DataContext="{Binding Path=ActiveCollection}"/>
 
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
@@ -55,15 +55,16 @@
                     <Button Click="ShowDownloader" Content="Add Images" Margin="5" Padding="5"/>
                 </StackPanel>
 
-                <Image Grid.Row="1" DataContext="{Binding Path=SelectedImage}"
-                       Source="{Binding Path=FilePath, Converter={StaticResource DefaultImageConverter}}"
+                <Image Grid.Row="1" Source="{Binding Path=ActiveCollection.SelectedImage.FilePath, Converter={StaticResource DefaultImageConverter}}"
                        Margin="5" MaxHeight="200" RenderOptions.BitmapScalingMode="HighQuality">
                     <Image.InputBindings>
-                        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding Path=ViewCommand}"/>
+                        <MouseBinding Gesture="LeftDoubleClick"
+                                      Command="{Binding Path=ViewImageCommand}"
+                                      CommandParameter="{Binding Path=ActiveCollection.SelectedImage}"/>
                     </Image.InputBindings>
                 </Image>
 
-                <main:ImagePropertiesView Grid.Row="2" DataContext="{Binding Path=SelectedImageProperties}" Margin="5">
+                <main:ImagePropertiesView Grid.Row="2" DataContext="{Binding Path=ActiveCollection.SelectedImageProperties}" Margin="5">
                     <main:ImagePropertiesView.Style>
                         <Style TargetType="main:ImagePropertiesView">
                             <Style.Triggers>
@@ -79,7 +80,7 @@
                     <Grid.Style>
                         <Style TargetType="Grid">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=SelectedImage}" Value="{x:Null}">
+                                <DataTrigger Binding="{Binding Path=ActiveCollection.SelectedImage}" Value="{x:Null}">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                 </DataTrigger>
                             </Style.Triggers>
@@ -97,11 +98,19 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" Orientation="Horizontal">
-                        <Button Content="Open"/>
-                        <Button Content="Edit"/>
+                        <Button Content="Open"
+                                Command="{Binding Path=OpenImageCommand}"
+                                CommandParameter="{Binding Path=ActiveCollection.SelectedImage}"/>
+                        <Button Content="Edit"
+                                Command="{Binding Path=EditImageCommand}"
+                                CommandParameter="{Binding Path=ActiveCollection.SelectedImage}"/>
                         <Button Content="Restart Download"/>
                     </StackPanel>
-                    <Button Grid.Column="2" Content="Remove" Command="{Binding Path=RemoveImageCommand}"/>
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                        <Button Content="Remove"
+                                Command="{Binding Path=ActiveCollection.RemoveImageCommand}"
+                                CommandParameter="{Binding Path=ActiveCollection.SelectedImage}"/>
+                    </StackPanel>
                 </Grid>
 
             </Grid>

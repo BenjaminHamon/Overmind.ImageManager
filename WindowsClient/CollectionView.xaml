@@ -46,9 +46,6 @@
                 </ComboBox>
                 <Button DockPanel.Dock="Left" Content="SlideShow" Click="OpenSlideShow" Margin="5" Padding="5,0"/>
             </StackPanel>
-            <Button Grid.Column="2" Command="{Binding Path=ExecuteQueryCommand}" Margin="5">
-                <Image Source="/Resources/Icons/Search.png" Height="24" Width="24"/>
-            </Button>
             <Border Grid.Column="1" BorderThickness="1" Margin="5" VerticalAlignment="Center">
                 <Border.Style>
                     <Style TargetType="Border">
@@ -68,6 +65,9 @@
                     </TextBox.InputBindings>
                 </TextBox>
             </Border>
+            <Button Grid.Column="2" Command="{Binding Path=ExecuteQueryCommand}" Margin="5">
+                <Image Source="/Resources/Icons/Search.png" Height="24" Width="24"/>
+            </Button>
         </Grid>
 
         <Grid Grid.Row="1">
@@ -96,7 +96,7 @@
                  ItemsSource="{Binding Source={StaticResource DisplayedImagesProxy}}" SelectedItem="{Binding Path=SelectedImage}"
                  Margin="5" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListBox.InputBindings>
-                <KeyBinding Key="Enter" Command="{Binding Path=SelectedImage.ViewCommand}"/>
+                <KeyBinding Key="Enter" Command="{Binding Path=ViewImageCommand}" CommandParameter="{Binding Path=SelectedImage}"/>
             </ListBox.InputBindings>
             <ListBox.Resources>
                 <ItemsPanelTemplate x:Key="gridTemplate">
@@ -108,7 +108,9 @@
                     <Grid d:DataContext="{d:DesignInstance Type=main:ImageViewModel}"
                           Background="Transparent" Height="150" Width="150">
                         <Grid.InputBindings>
-                            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding Path=ViewCommand}"/>
+                            <MouseBinding Gesture="LeftDoubleClick"
+                                          Command="{Binding ElementName=listBox, Path=DataContext.ViewImageCommand}"
+                                          CommandParameter="{Binding}"/>
                         </Grid.InputBindings>
                         <Image Source="{Binding Path=FilePath, Converter={StaticResource imageConverter}, IsAsync=True}"
                                ToolTip="{Binding Path=Name}" ToolTipService.InitialShowDelay="1000"
@@ -123,7 +125,9 @@
                     <StackPanel d:DataContext="{d:DesignInstance Type=main:ImageViewModel}"
                                 Background="Transparent" Orientation="Horizontal">
                         <StackPanel.InputBindings>
-                            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding Path=ViewCommand}"/>
+                            <MouseBinding Gesture="LeftDoubleClick"
+                                          Command="{Binding ElementName=listBox, Path=DataContext.ViewImageCommand}"
+                                          CommandParameter="{Binding}"/>
                         </StackPanel.InputBindings>
                         <ContentPresenter Margin="5" Height="32" Width="32">
                             <ContentPresenter.Content>
@@ -180,5 +184,4 @@
         </ListBox>
 
     </Grid>
-
 </UserControl>

@@ -1,5 +1,4 @@
 ﻿using Overmind.ImageManager.Model;
-using Overmind.WpfExtensions;
 using System;
 
 namespace Overmind.ImageManager.WindowsClient
@@ -10,8 +9,6 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			this.model = model;
 			this.getImagePath = getImagePath;
-
-			ViewCommand = new DelegateCommand<object>(_ => WindowsApplication.ViewImage(this));
 		}
 
 		private readonly ImageModel model;
@@ -23,7 +20,5 @@ namespace Overmind.ImageManager.WindowsClient
 		public string Hash { get { return model.Hash; } }
 
 		public string Group { get; set; }
-
-		public DelegateCommand<object> ViewCommand { get; }
 	}
 }

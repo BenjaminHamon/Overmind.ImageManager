@@ -1,5 +1,4 @@
 ﻿using Overmind.ImageManager.Model;
-using Overmind.WpfExtensions;
 using System;
 using System.Collections.Generic;
 
@@ -12,14 +11,12 @@ namespace Overmind.ImageManager.WindowsClient
 			this.model = model;
 			this.getImagePath = getImagePath;
 			displayViewModel = new ImageViewModel(model, getImagePath);
-
-			ViewCommand = new DelegateCommand<object>(_ => WindowsApplication.ViewImage(displayViewModel));
 		}
 
 		private readonly ImageModel model;
 		private readonly Func<string> getImagePath;
 		private readonly ImageViewModel displayViewModel;
-		
+
 		public string FilePath { get { return getImagePath(); } }
 		public string Name { get { return model.FileName; } }
 		public string Title { get { return model.Title; } set { model.Title = value; } }
@@ -34,7 +31,5 @@ namespace Overmind.ImageManager.WindowsClient
 		public List<string> AllSubjects { get; set; } = new List<string>();
 		public List<string> AllArtists { get; set; } = new List<string>();
 		public List<string> AllTags { get; set; } = new List<string>();
-		
-		public DelegateCommand<object> ViewCommand { get; }
 	}
 }

@@ -21,7 +21,8 @@ namespace Overmind.ImageManager.WindowsClient
 
 			ExecuteQuery();
 
-			RemoveImageCommand = new DelegateCommand<object>(_ => RemoveImage(SelectedImage), _ => SelectedImage != null);
+			ViewImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) WindowsApplication.ViewImage(image); });
+			RemoveImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) RemoveImage(image); });
 			ExecuteQueryCommand = new DelegateCommand<object>(_ => ExecuteQuery());
 		}
 
@@ -48,7 +49,7 @@ namespace Overmind.ImageManager.WindowsClient
 			{
 				selectedImageField = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedImage)));
-				
+
 				SelectedImageProperties = selectedImageField == null ? null
 					: new ImagePropertiesViewModel(selectedImageField.Model, () => model.GetImagePath(selectedImageField.Model))
 				{
@@ -57,11 +58,9 @@ namespace Overmind.ImageManager.WindowsClient
 					AllTags = model.AllImages.SelectMany(image => image.TagCollection).Distinct().OrderBy(x => x).ToList(),
 				};
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedImageProperties)));
-
-				RemoveImageCommand.RaiseCanExecuteChanged();
 			}
 		}
-		
+
 		public ImagePropertiesViewModel SelectedImageProperties { get; private set; }
 
 		public void Save()
@@ -81,7 +80,8 @@ namespace Overmind.ImageManager.WindowsClient
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
-		public DelegateCommand<object> RemoveImageCommand { get; }
+		public DelegateCommand<ImageViewModel> ViewImageCommand { get; }
+		public DelegateCommand<ImageViewModel> RemoveImageCommand { get; }
 		public DelegateCommand<object> ExecuteQueryCommand { get; }
 
 		public ImageViewModel GetImage(string hash)

@@ -5,12 +5,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:MainViewModel}"
-             d:DesignHeight="300" d:DesignWidth="1000">
+             d:DesignHeight="500" d:DesignWidth="1000">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+
         <!-- IsFocusScope is set to ensure any active control lose focus and gets its binding updated
              See https://stackoverflow.com/questions/57493/wpf-databind-before-saving -->
         <Menu Grid.Row="0" FocusManager.IsFocusScope="False">
@@ -38,34 +40,70 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="400"/>
             </Grid.ColumnDefinitions>
+
             <main:CollectionView Grid.Row="2"/>
+
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+
                 <StackPanel Grid.Row="0" Orientation="Horizontal">
-                    <Button Click="ShowDownloader" Content="Add" Margin="5" Padding="5" MinWidth="50"/>
-                    <Button Command="{Binding Path=RemoveImageCommand}" Content="Remove" Margin="5" Padding="5"/>
+                    <Button Click="ShowDownloader" Content="Add Images" Margin="5" Padding="5"/>
                 </StackPanel>
-                <DockPanel Grid.Row="1" DataContext="{Binding Path=SelectedImageProperties}">
-                    <DockPanel.Style>
-                        <Style TargetType="DockPanel">
+
+                <Image Grid.Row="1" DataContext="{Binding Path=SelectedImage}"
+                       Source="{Binding Path=FilePath, Converter={StaticResource DefaultImageConverter}}"
+                       Margin="5" MaxHeight="200" RenderOptions.BitmapScalingMode="HighQuality">
+                    <Image.InputBindings>
+                        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding Path=ViewCommand}"/>
+                    </Image.InputBindings>
+                </Image>
+
+                <main:ImagePropertiesView Grid.Row="2" DataContext="{Binding Path=SelectedImageProperties}" Margin="5">
+                    <main:ImagePropertiesView.Style>
+                        <Style TargetType="main:ImagePropertiesView">
                             <Style.Triggers>
                                 <Trigger Property="DataContext" Value="{x:Null}">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
-                    </DockPanel.Style>
-                    <Image DockPanel.Dock="Top" Source="{Binding Path=FilePath, Converter={StaticResource DefaultImageConverter}}"
-                           Margin="5" MaxHeight="200" RenderOptions.BitmapScalingMode="HighQuality">
-                        <Image.InputBindings>
-                            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding Path=ViewCommand}"/>
-                        </Image.InputBindings>
-                    </Image>
-                    <main:ImagePropertiesView DockPanel.Dock="Top" Margin="5"/>
-                </DockPanel>
+                    </main:ImagePropertiesView.Style>
+                </main:ImagePropertiesView>
+
+                <Grid Grid.Row="3">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=SelectedImage}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid.Resources>
+                        <Style TargetType="Button">
+                            <Setter Property="Margin" Value="5"/>
+                            <Setter Property="Padding" Value="5"/>
+                            <Setter Property="MinWidth" Value="50"/>
+                        </Style>
+                    </Grid.Resources>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <Button Content="Open"/>
+                        <Button Content="Edit"/>
+                        <Button Content="Restart Download"/>
+                    </StackPanel>
+                    <Button Grid.Column="2" Content="Remove" Command="{Binding Path=RemoveImageCommand}"/>
+                </Grid>
+
             </Grid>
         </Grid>
     </Grid>

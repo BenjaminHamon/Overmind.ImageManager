@@ -4,8 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:downloads="clr-namespace:Overmind.ImageManager.WindowsClient.Downloads"
-             mc:Ignorable="d" d:DesignHeight="200" d:DesignWidth="400"
+             mc:Ignorable="d" d:DesignHeight="400" d:DesignWidth="600"
              d:DataContext="{d:DesignInstance Type=downloads:Downloader}">
+
     <UserControl.Style>
         <Style TargetType="UserControl">
             <Style.Triggers>
@@ -15,30 +16,34 @@
             </Style.Triggers>
         </Style>
     </UserControl.Style>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBox Grid.Column="0" x:Name="newImageUri" x:FieldModifier="private" Margin="5" VerticalAlignment="Center"
-                     PreviewDragEnter="CheckDragData" PreviewDragOver="CheckDragData" PreviewDrop="TextBox_DropImageUri">
+                     PreviewDragEnter="CheckDragData" PreviewDragOver="CheckDragData" PreviewDrop="DropUri_FromTextBox">
                 <TextBox.InputBindings>
-                    <KeyBinding Key="Enter" Command="{Binding Path=AddDownloadCommand}"
-                                CommandParameter="{Binding ElementName=newImageUri, Path=Text}"/>
+                    <KeyBinding Key="Enter" Command="{Binding Path=AddDownloadCommand}" CommandParameter="{Binding ElementName=newImageUri, Path=Text}"/>
                 </TextBox.InputBindings>
             </TextBox>
-            <Button Grid.Column="1" Command="{Binding Path=AddDownloadCommand}"
-                    CommandParameter="{Binding ElementName=newImageUri, Path=Text}"
-                    Content="Add" Margin="5" Padding="5" MinWidth="50"/>
+            <Button Grid.Column="1" Content="Add" Margin="5" Padding="5" MinWidth="50"
+                    Command="{Binding Path=AddDownloadCommand}" CommandParameter="{Binding ElementName=newImageUri, Path=Text}"/>
         </Grid>
+
         <ListView x:Name="listView" x:FieldModifier="private" Grid.Row="1" Margin="5" ItemsSource="{Binding Path=DownloadCollection}"
-                  AllowDrop="True" PreviewDragEnter="CheckDragData" PreviewDragOver="CheckDragData" PreviewDrop="ListView_DropImageUri">
+                  AllowDrop="True" PreviewDragEnter="CheckDragData" PreviewDragOver="CheckDragData" PreviewDrop="DropUri_FromListView">
             <ListView.Resources>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
                 <Style TargetType="Button">
                     <Style.Resources>
                         <Style TargetType="Image">
@@ -51,7 +56,7 @@
             </ListView.Resources>
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Name" Width="200">
+                    <GridViewColumn Header="Name" Width="300">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=Name}" ToolTip="{Binding Path=UriString}"/>
@@ -85,7 +90,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn>
+                    <GridViewColumn Width="50">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -106,5 +111,6 @@
                 </GridView>
             </ListView.View>
         </ListView>
+
     </Grid>
 </UserControl>

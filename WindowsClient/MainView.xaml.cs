@@ -72,7 +72,14 @@ namespace Overmind.ImageManager.WindowsClient
 				Binding dataContextBinding = new Binding() { Source = DataContext, Path = new PropertyPath(nameof(MainViewModel.Downloader)) };
 				BindingOperations.SetBinding(downloaderView, DataContextProperty, dataContextBinding);
 
-				downloaderWindow = new Window() { Title = "Downloads - " + WindowsApplication.Name, Content = downloaderView };
+				downloaderWindow = new Window()
+				{
+					Title = "Downloads - " + WindowsApplication.Name,
+					Content = downloaderView,
+					Height = 400,
+					Width = 600,
+				};
+
 				downloaderWindow.Closed += (s, e) => downloaderWindow = null;
 				downloaderWindow.Show();
 			}

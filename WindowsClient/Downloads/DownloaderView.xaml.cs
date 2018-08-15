@@ -53,7 +53,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 			eventArguments.Handled = true;
 		}
 
-		private void TextBox_DropImageUri(object sender, DragEventArgs eventArguments)
+		private void DropUri_FromTextBox(object sender, DragEventArgs eventArguments)
 		{
 			Downloader downloader = (Downloader)DataContext;
 			TextBox textBox = (TextBox)sender;
@@ -66,7 +66,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 			eventArguments.Handled = true;
 		}
 
-		private void ListView_DropImageUri(object sender, DragEventArgs eventArguments)
+		private void DropUri_FromListView(object sender, DragEventArgs eventArguments)
 		{
 			Downloader downloader = (Downloader)DataContext;
 			IEnumerable<string> imageUriCollection = new List<string>();

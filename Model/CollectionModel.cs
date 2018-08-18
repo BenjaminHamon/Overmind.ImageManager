@@ -18,7 +18,6 @@ namespace Overmind.ImageManager.Model
 			if (existingImage != null)
 				throw new InvalidOperationException("An image with the same hash already exists");
 
-			dataProvider.AddImage(storagePath, newImage, newImageData);
 			data.Images.Add(newImage);
 		}
 
@@ -27,6 +26,11 @@ namespace Overmind.ImageManager.Model
 			bool removed = data.Images.Remove(image);
 			if (removed)
 				removedImages.Add(image);
+		}
+
+		public void WriteImageFile(ImageModel image, byte[] imageData)
+		{
+			dataProvider.WriteImageFile(storagePath, image, imageData);
 		}
 
 		public void Save()

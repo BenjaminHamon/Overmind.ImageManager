@@ -1,10 +1,11 @@
 ﻿using Overmind.ImageManager.Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Overmind.ImageManager.WindowsClient
 {
-	public class ImagePropertiesViewModel
+	public class ImagePropertiesViewModel : INotifyPropertyChanged
 	{
 		public ImagePropertiesViewModel(ImageModel model, Func<string> getImagePath)
 		{
@@ -31,5 +32,14 @@ namespace Overmind.ImageManager.WindowsClient
 		public List<string> AllSubjects { get; set; } = new List<string>();
 		public List<string> AllArtists { get; set; } = new List<string>();
 		public List<string> AllTags { get; set; } = new List<string>();
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		public void NotifyFileChanged()
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FilePath)));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Hash)));
+		}
 	}
 }

@@ -24,7 +24,8 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		public string UriString { get { return Uri == null ? uriStringField : Uri.ToString(); } }
 		public string Name { get { return Uri == null ? uriStringField : Uri.UnescapeDataString(Uri.Segments.Last()); } }
 
-		public Action<byte[]> DataVerificationHook { get; set; }
+		public Action<ObservableDownload, byte[]> DataVerificationHook { get; set; }
+		public Action<ObservableDownload, byte[]> DataConsumer { get; set; }
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		public event Action<ObservableDownload, byte[]> DownloadCompleted;
@@ -118,7 +119,8 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 					if (eventArguments.Error != null)
 						throw eventArguments.Error;
 					downloadData = eventArguments.Result;
-					DataVerificationHook?.Invoke(eventArguments.Result);
+					DataVerificationHook?.Invoke(this, downloadData);
+					DataConsumer?.Invoke(this, downloadData);
 					Success = true;
 				}
 				catch (Exception exception)

@@ -95,16 +95,38 @@ namespace Overmind.ImageManager.WindowsClient
 		public ImageViewModel AddImage(string fileName, Uri source, byte[] data)
 		{
 			string hash = ImageModel.CreateHash(data);
+
 			lock (modelLock)
 			{
 				ImageModel newImage = new ImageModel() { Hash = hash, FileName = fileName, AdditionDate = DateTime.Now, Source = source };
 				model.AddImage(newImage, data);
+				model.WriteImageFile(newImage, data);
+
 				ImageViewModel newImageViewModel = new ImageViewModel(newImage, () => model.GetImagePath(newImage)) { Group = "#New" };
 				allImages.Insert(0, newImageViewModel);
 				FilteredImages.Insert(0, newImageViewModel);
 				DisplayedImages.Insert(0, newImageViewModel);
 				return newImageViewModel;
 			}
+		}
+
+		public void UpdateImageFile(ImageViewModel image, byte[] data)
+		{
+			string hash = ImageModel.CreateHash(data);
+
+			lock (modelLock)
+			{
+				if (allImages.Contains(image) == false)
+					throw new InvalidOperationException("Original image does not exist in the collection");
+
+				image.Model.Hash = hash;
+				model.WriteImageFile(image.Model, data);
+
+				image.NotifyFileChanged();
+				if (SelectedImage == image)
+					SelectedImageProperties.NotifyFileChanged();
+			}
+
 		}
 
 		private void RemoveImage(ImageViewModel image)

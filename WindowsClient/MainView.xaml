@@ -104,7 +104,9 @@
                         <Button Content="Edit"
                                 Command="{Binding Path=EditImageCommand}"
                                 CommandParameter="{Binding Path=ActiveCollection.SelectedImage}"/>
-                        <Button Content="Restart Download"/>
+                        <Button Content="Restart Download"
+                                Command="{Binding Path=RestartDownloadCommand}"
+                                CommandParameter="{Binding Path=ActiveCollection.SelectedImage}"/>
                     </StackPanel>
                     <StackPanel Grid.Column="2" Orientation="Horizontal">
                         <Button Content="Remove"

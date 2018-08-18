@@ -106,13 +106,13 @@ namespace Overmind.ImageManager.Model
 
 		public string GetImagePath(string collectionPath, ImageModel image)
 		{
-			string imagePath = Path.Combine(collectionPath, DataProvider.TemporaryDirectory, image.FileNameInStorage);
-			if (File.Exists(imagePath))
-				return imagePath;
+			string temporaryPath = Path.Combine(collectionPath, DataProvider.TemporaryDirectory, image.FileNameInStorage);
+			if (File.Exists(temporaryPath))
+				return temporaryPath;
 			return Path.Combine(collectionPath, image.FileName);
 		}
 
-		public void AddImage(string collectionPath, ImageModel image, byte[] imageData)
+		public void WriteImageFile(string collectionPath, ImageModel image, byte[] imageData)
 		{
 			string temporaryDirectory = Path.Combine(collectionPath, DataProvider.TemporaryDirectory);
 			Directory.CreateDirectory(temporaryDirectory);

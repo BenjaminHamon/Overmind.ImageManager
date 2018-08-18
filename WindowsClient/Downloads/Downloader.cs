@@ -34,12 +34,23 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 		public void AddDownload(string uri)
 		{
+			AddDownload(uri, (download, downloadData) => collection.AddImage(download.Name, download.Uri, downloadData));
+		}
+
+		public void RestartDownload(ImageViewModel image)
+		{
+			AddDownload(image.Model.Source.ToString(), (download, downloadData) => collection.UpdateImageFile(image, downloadData));
+		}
+
+		private void AddDownload(string uri, Action<ObservableDownload, byte[]> consumer)
+		{
 			if (String.IsNullOrEmpty(uri))
 				return;
 
 			ObservableDownload newDownload = new ObservableDownload(uri)
 			{
 				DataVerificationHook = VerifyData,
+				DataConsumer = consumer,
 			};
 
 			DownloadCollection.Add(newDownload);
@@ -48,15 +59,24 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 			newDownload.Execute();
 		}
 
-		private void VerifyData(byte[] downloadData)
+		private void VerifyData(ObservableDownload download, byte[] downloadData)
 		{
 			if (IsImage(downloadData) == false)
 				throw new InvalidOperationException("The file is not an image");
+		}
 
-			string hash = ImageModel.CreateHash(downloadData);
-			ImageViewModel existingImage = collection.GetImage(hash);
-			if (existingImage != null)
-				throw new InvalidOperationException("The image already exists in the collection");
+		private void HandleDownloadCompleted(ObservableDownload download, byte[] downloadData)
+		{
+			download.DownloadCompleted -= HandleDownloadCompleted;
+
+			if (downloadData != null)
+			{
+				ImageViewModel image = collection.GetImage(ImageModel.CreateHash(downloadData));
+				if (image != null)
+					downloadToImageDictionary[download] = image;
+
+				SelectImageCommand.RaiseCanExecuteChanged();
+			}
 		}
 
 		private bool IsImage(byte[] data)
@@ -71,22 +91,6 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 			{
 				return false;
 			}
-		}
-
-		private void HandleDownloadCompleted(ObservableDownload download, byte[] downloadData)
-		{
-			download.DownloadCompleted -= HandleDownloadCompleted;
-
-			if (download.Success)
-				collection.AddImage(download.Name, download.Uri, downloadData);
-			if (downloadData != null)
-			{
-				ImageViewModel image = collection.GetImage(ImageModel.CreateHash(downloadData));
-				if (image != null)
-					downloadToImageDictionary[download] = image;
-			}
-
-			SelectImageCommand.RaiseCanExecuteChanged();
 		}
 
 		private bool CanSelectImage(ObservableDownload download)

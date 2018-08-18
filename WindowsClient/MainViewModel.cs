@@ -21,6 +21,7 @@ namespace Overmind.ImageManager.WindowsClient
 			ViewImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) WindowsApplication.ViewImage(image); });
 			OpenImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) WindowsApplication.OpenImageExternally(image, "open"); });
 			EditImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) WindowsApplication.OpenImageExternally(image, "edit"); });
+			RestartDownloadCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) Downloader.RestartDownload(image); });
 		}
 
 		private readonly DataProvider dataProvider;
@@ -83,6 +84,7 @@ namespace Overmind.ImageManager.WindowsClient
 		public DelegateCommand<ImageViewModel> ViewImageCommand { get; }
 		public DelegateCommand<ImageViewModel> OpenImageCommand { get; }
 		public DelegateCommand<ImageViewModel> EditImageCommand { get; }
+		public DelegateCommand<ImageViewModel> RestartDownloadCommand { get; }
 
 		private void ChangeCollection(CollectionData collectionData, string collectionPath)
 		{

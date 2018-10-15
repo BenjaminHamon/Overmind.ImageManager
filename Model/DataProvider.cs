@@ -117,6 +117,7 @@ namespace Overmind.ImageManager.Model
 			string temporaryDirectory = Path.Combine(collectionPath, DataProvider.TemporaryDirectory);
 			Directory.CreateDirectory(temporaryDirectory);
 
+			image.FileName = fileNameFormatter.Format(image);
 			string temporaryPath = Path.Combine(temporaryDirectory, image.FileName);
 			File.WriteAllBytes(temporaryPath, imageData);
 			image.FileNameInStorage = image.FileName;

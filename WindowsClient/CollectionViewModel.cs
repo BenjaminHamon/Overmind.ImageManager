@@ -98,6 +98,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 			lock (modelLock)
 			{
+				// FileName will be set by WriteImageFile but an initial value is required to determine the file extension
 				ImageModel newImage = new ImageModel() { Hash = hash, FileName = fileName, AdditionDate = DateTime.Now, Source = source };
 				model.AddImage(newImage, data);
 				model.WriteImageFile(newImage, data);

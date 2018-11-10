@@ -15,9 +15,15 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			FrameworkElementFactory textBoxFactory = new FrameworkElementFactory(typeof(TextBox));
 			textBoxFactory.SetBinding(TextBox.TextProperty, new Binding(nameof(ObservableString.Value)));
-			DataTemplate textBoxTemplate = new DataTemplate() { VisualTree = textBoxFactory };
-			TextBoxTemplateProperty.OverrideMetadata(typeof(TokenListView), new FrameworkPropertyMetadata(textBoxTemplate));
+
+			ItemsSourceProperty = DependencyProperty.Register(nameof(ItemsSource), typeof(IEnumerable<string>), typeof(TokenListView),
+				new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnItemsSourceUpdated));
+			TextBoxTemplateProperty = DependencyProperty.Register(nameof(TextBoxTemplate), typeof(DataTemplate), typeof(TokenListView),
+				new FrameworkPropertyMetadata(new DataTemplate() { VisualTree = textBoxFactory }));
 		}
+
+		public static readonly DependencyProperty ItemsSourceProperty;
+		public static readonly DependencyProperty TextBoxTemplateProperty;
 
 		public TokenListView()
 		{
@@ -25,10 +31,6 @@ namespace Overmind.ImageManager.WindowsClient
 		}
 
 		private bool isUpdatingSource;
-
-		public static readonly DependencyProperty ItemsSourceProperty =
-			DependencyProperty.Register(nameof(ItemsSource), typeof(IEnumerable<string>), typeof(TokenListView),
-				new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnItemsSourceUpdated));
 
 		public IEnumerable<string> ItemsSource
 		{
@@ -41,10 +43,7 @@ namespace Overmind.ImageManager.WindowsClient
 			get { return (DataTemplate)GetValue(TextBoxTemplateProperty); }
 			set { SetValue(TextBoxTemplateProperty, value); }
 		}
-		
-		public static readonly DependencyProperty TextBoxTemplateProperty =
-			DependencyProperty.Register(nameof(TextBoxTemplate), typeof(DataTemplate), typeof(TokenListView));
-		
+
 		private void AddItem(object sender, MouseButtonEventArgs eventArguments)
 		{
 			if (eventArguments.OriginalSource is Border)

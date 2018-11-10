@@ -34,7 +34,9 @@ namespace Overmind.ImageManager.WallpaperService
 		{
 			MainWindow = new WallpaperServiceView() { DataContext = serviceViewModel };
 			MainWindow.Closing += HideMainWindow;
-			TaskbarIcon notificationIcon = (TaskbarIcon)FindResource("NotificationIcon");
+
+			// FIXME: The NotificationIcon bindings throw exceptions on initialization (but still work).
+			TaskbarIcon notificationIcon = (TaskbarIcon)Resources["NotificationIcon"];
 			notificationIcon.DataContext = serviceViewModel;
 		}
 

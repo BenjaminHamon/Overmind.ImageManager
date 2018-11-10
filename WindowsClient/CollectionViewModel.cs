@@ -152,8 +152,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 				try
 				{
-					IEnumerable<ImageViewModel> resultImages = Query.Execute(model, allImages);
-					FilteredImages = new List<ImageViewModel>(resultImages);
+					FilteredImages = Query.Execute(model, allImages).ToList();
 				}
 				catch (Exception exception)
 				{

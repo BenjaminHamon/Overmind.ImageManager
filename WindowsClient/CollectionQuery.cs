@@ -69,7 +69,7 @@ namespace Overmind.ImageManager.WindowsClient
 			}
 		}
 
-		public IEnumerable<ImageViewModel> Execute(CollectionModel model, IEnumerable<ImageViewModel> allImages)
+		public ICollection<ImageViewModel> Execute(CollectionModel model, IEnumerable<ImageViewModel> allImages)
 		{
 			Func<ImageModel, string> groupQuery = CreateGroupQuery(GroupByExpression);
 			foreach (ImageViewModel image in allImages)
@@ -79,7 +79,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 			if (String.IsNullOrEmpty(SearchExpression) == false)
 			{
-				IEnumerable<ImageModel> searchResult = model.SearchAdvanced(SearchExpression);
+				ICollection<ImageModel> searchResult = model.SearchAdvanced(SearchExpression);
 				resultImages = resultImages.Where(image => searchResult.Contains(image.Model));
 			}
 

@@ -26,21 +26,21 @@ namespace Overmind.ImageManager.Model
 		protected readonly string storagePath;
 
 		public string StoragePath { get { return storagePath; } }
-		public IEnumerable<ImageModel> AllImages { get { return data.Images; } }
+		public IReadOnlyCollection<ImageModel> AllImages { get { return data.Images; } }
 
 		public string GetImagePath(ImageModel image)
 		{
 			return dataProvider.GetImagePath(storagePath, image);
 		}
 
-		public IEnumerable<ImageModel> SearchSimple(string queryString)
+		public ICollection<ImageModel> SearchSimple(string queryString)
 		{
 			List<Regex> queryRegexes = queryString.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
 				.Select(element => new Regex("^" + Regex.Escape(element).Replace("\\*", ".*") + "$")).ToList();
-			return AllImages.Where(image => queryRegexes.All(regex => image.GetSearchableValues().Any(value => regex.IsMatch(value))));
+			return AllImages.Where(image => queryRegexes.All(regex => image.GetSearchableValues().Any(value => regex.IsMatch(value)))).ToList();
 		}
-		
-		public IEnumerable<ImageModel> SearchAdvanced(string queryString)
+
+		public ICollection<ImageModel> SearchAdvanced(string queryString)
 		{
 			List<string> resultHashes;
 
@@ -69,7 +69,7 @@ namespace Overmind.ImageManager.Model
 				}
 			}
 
-			return AllImages.Where(image => resultHashes.Contains(image.Hash));
+			return AllImages.Where(image => resultHashes.Contains(image.Hash)).ToList();
 		}
 	}
 }

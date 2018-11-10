@@ -17,8 +17,8 @@ namespace Overmind.ImageManager.Model.Wallpapers
 
 		private readonly JsonSerializer serializer;
 		private readonly string configurationDirectory;
-		
-		public IEnumerable<WallpaperConfiguration> LoadConfiguration()
+
+		public ICollection<WallpaperConfiguration> LoadConfiguration()
 		{
 			string path = Path.Combine(configurationDirectory, ConfigurationFile);
 
@@ -27,7 +27,7 @@ namespace Overmind.ImageManager.Model.Wallpapers
 
 			using (StreamReader streamReader = new StreamReader(path))
 			using (JsonReader jsonReader = new JsonTextReader(streamReader))
-				return serializer.Deserialize<IEnumerable<WallpaperConfiguration>>(jsonReader);
+				return serializer.Deserialize<List<WallpaperConfiguration>>(jsonReader);
 		}
 
 		public string LoadActiveConfiguration()

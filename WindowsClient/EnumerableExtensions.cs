@@ -9,8 +9,8 @@ namespace Overmind.ImageManager.WindowsClient
 		// See https://stackoverflow.com/questions/5807128/an-extension-method-on-ienumerable-needed-for-shuffling
 		public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source, Random random)
 		{
-			if (source == null) throw new ArgumentNullException("source");
-			if (random == null) throw new ArgumentNullException("rng");
+			if (source == null) throw new ArgumentNullException(nameof(source));
+			if (random == null) throw new ArgumentNullException(nameof(random));
 
 			return source.ShuffleIterator(random);
 		}

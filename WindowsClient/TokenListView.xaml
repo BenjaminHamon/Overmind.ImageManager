@@ -15,14 +15,14 @@
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <StackPanel Orientation="Horizontal" Margin="2">
-                    <ContentPresenter ContentTemplate="{Binding ElementName=tokenListView, Path=TextBoxTemplate}" LostFocus="HandleItemLostFocus"/>
-                    <Grid KeyboardNavigation.TabNavigation="None">
+                <DockPanel Margin="2" MaxWidth="{Binding ElementName=tokenListView, Path=ActualWidth}">
+                    <Grid DockPanel.Dock="Right" KeyboardNavigation.TabNavigation="None">
                         <Button Click="RemoveItem">
                             <Image Source="/Resources/Icons/Remove.png" Height="18" Width="18"/>
                         </Button>
                     </Grid>
-                </StackPanel>
+                    <ContentPresenter ContentTemplate="{Binding ElementName=tokenListView, Path=TextBoxTemplate}" LostFocus="HandleItemLostFocus"/>
+                </DockPanel>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
     </ItemsControl>

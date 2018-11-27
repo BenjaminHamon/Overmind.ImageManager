@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Windows;
 
 namespace Overmind.ImageManager.WallpaperService
 {
@@ -24,6 +25,7 @@ namespace Overmind.ImageManager.WallpaperService
 			
 			ApplyConfigurationCommand = new DelegateCommand<object>(_ => ApplyConfiguration());
 			NextWallpaperCommand = new DelegateCommand<object>(_ => wallpaperService.CycleNow(), _ => wallpaperService != null);
+			CopyWallpaperHashCommand = new DelegateCommand<object>(_ => Clipboard.SetText(wallpaperService.CurrentWallpaper.Hash), _ => wallpaperService != null);
 
 			ApplyConfiguration();
 		}
@@ -53,6 +55,7 @@ namespace Overmind.ImageManager.WallpaperService
 		
 		public DelegateCommand<object> ApplyConfigurationCommand { get; }
 		public DelegateCommand<object> NextWallpaperCommand { get; }
+		public DelegateCommand<object> CopyWallpaperHashCommand { get; }
 
 		public void Dispose()
 		{
@@ -70,6 +73,7 @@ namespace Overmind.ImageManager.WallpaperService
 				wallpaperService.Dispose();
 				wallpaperService = null;
 				NextWallpaperCommand.RaiseCanExecuteChanged();
+				CopyWallpaperHashCommand.RaiseCanExecuteChanged();
 			}
 
 			WallpaperConfiguration configuration = ActiveConfiguration;
@@ -81,6 +85,7 @@ namespace Overmind.ImageManager.WallpaperService
 			Action<ImageModel> setWallpaperAction = image => SetWallpaper(collectionModel.GetImagePath(image));
 			wallpaperService = WallpaperServiceInstance.CreateInstance(collectionModel, configuration, setWallpaperAction, new Random());
 			NextWallpaperCommand.RaiseCanExecuteChanged();
+			CopyWallpaperHashCommand.RaiseCanExecuteChanged();
 
 			configurationProvider.SaveActiveConfiguration(configuration.Name);
 		}

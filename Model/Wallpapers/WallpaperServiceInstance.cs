@@ -40,7 +40,7 @@ namespace Overmind.ImageManager.Model.Wallpapers
 		private readonly object cycleLock = new object();
 
 		private bool isRunning;
-		private ImageModel currentWallpaper;
+		public ImageModel CurrentWallpaper { get; private set; }
 
 		public void Dispose()
 		{
@@ -73,8 +73,8 @@ namespace Overmind.ImageManager.Model.Wallpapers
 							newWallpaper = collectionCopy.Single();
 						else
 						{
-							if (currentWallpaper != null)
-								collectionCopy.Remove(currentWallpaper);
+							if (CurrentWallpaper != null)
+								collectionCopy.Remove(CurrentWallpaper);
 							newWallpaper = collectionCopy[random.Next(collectionCopy.Count)];
 						}
 					}
@@ -84,7 +84,7 @@ namespace Overmind.ImageManager.Model.Wallpapers
 						System.Diagnostics.Trace.TraceInformation("Setting wallpaper to {0}", newWallpaper.FileName);
 
 						setSystemWallpaper(newWallpaper);
-						currentWallpaper = newWallpaper;
+						CurrentWallpaper = newWallpaper;
 					}
 				}
 				catch (Exception exception)

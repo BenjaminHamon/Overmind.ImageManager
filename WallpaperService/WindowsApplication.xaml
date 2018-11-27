@@ -22,6 +22,11 @@
                             <TextBlock Text="Next Wallpaper"/>
                         </MenuItem.Header>
                     </MenuItem>
+                    <MenuItem Command="{Binding Path=CopyWallpaperHashCommand}">
+                        <MenuItem.Header>
+                            <TextBlock Text="Copy Wallpaper Hash"/>
+                        </MenuItem.Header>
+                    </MenuItem>
                     <MenuItem Click="ExitApplication">
                         <MenuItem.Header>
                             <TextBlock Text="Exit"/>

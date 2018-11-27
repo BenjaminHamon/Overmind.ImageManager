@@ -34,7 +34,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 		public void AddDownload(string uri)
 		{
-			AddDownload(uri, (download, downloadData) => collection.AddImage(download.Name, download.Uri, downloadData));
+			AddDownload(uri, (download, downloadData) => collection.AddImage(download.Uri, downloadData));
 		}
 
 		public void RestartDownload(ImageViewModel image)

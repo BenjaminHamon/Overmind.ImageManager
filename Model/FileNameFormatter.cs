@@ -19,13 +19,16 @@ namespace Overmind.ImageManager.Model
 		public int ArtistSizeLimit { get; set; } = 30;
 		public Func<string, string> TextTransform { get; set; }
 
-		public string Format(ImageModel image)
+		public string Format(ImageModel image, string fileExtension = null)
 		{
+			if (String.IsNullOrEmpty(fileExtension))
+				fileExtension = Path.GetExtension(image.FileName).TrimStart('.');
+
 			string titleElement = FormatElement(new List<string>() { image.Title }, TitleSizeLimit)
 				?? FormatElement(image.SubjectCollection, TitleSizeLimit) ?? TitleDefaultValue;
 			string artistElement = FormatElement(image.ArtistCollection, ArtistSizeLimit) ?? ArtistDefaultValue;
 			List<string> allElements = new List<string>() { titleElement, artistElement, image.Hash };
-			return String.Join(ElementSeparator, allElements) + Path.GetExtension(image.FileName);
+			return String.Join(ElementSeparator, allElements) + "." + fileExtension;
 		}
 
 		private string FormatElement(IEnumerable<string> valueCollection, int sizeLimit)

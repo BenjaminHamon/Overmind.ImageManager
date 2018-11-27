@@ -12,7 +12,7 @@ namespace Overmind.ImageManager.Model
 
 		private readonly List<ImageModel> removedImages = new List<ImageModel>();
 
-		public void AddImage(ImageModel newImage, byte[] newImageData)
+		public void AddImage(ImageModel newImage)
 		{
 			ImageModel existingImage = data.Images.FirstOrDefault(image => image.Hash == newImage.Hash);
 			if (existingImage != null)

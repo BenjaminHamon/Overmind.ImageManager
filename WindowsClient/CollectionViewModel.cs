@@ -92,15 +92,14 @@ namespace Overmind.ImageManager.WindowsClient
 			}
 		}
 
-		public ImageViewModel AddImage(string fileName, Uri source, byte[] data)
+		public ImageViewModel AddImage(Uri source, byte[] data)
 		{
 			string hash = ImageModel.CreateHash(data);
 
 			lock (modelLock)
 			{
-				// FileName will be set by WriteImageFile but an initial value is required to determine the file extension
-				ImageModel newImage = new ImageModel() { Hash = hash, FileName = fileName, AdditionDate = DateTime.Now, Source = source };
-				model.AddImage(newImage, data);
+				ImageModel newImage = new ImageModel() { Hash = hash, AdditionDate = DateTime.Now, Source = source };
+				model.AddImage(newImage);
 				model.WriteImageFile(newImage, data);
 
 				ImageViewModel newImageViewModel = new ImageViewModel(newImage, () => model.GetImagePath(newImage)) { Group = "#New" };

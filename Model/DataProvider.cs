@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 
@@ -114,10 +116,16 @@ namespace Overmind.ImageManager.Model
 
 		public void WriteImageFile(string collectionPath, ImageModel image, byte[] imageData)
 		{
+			string fileExtension;
+
+			using (MemoryStream stream = new MemoryStream(imageData))
+			using (Image imageObject = Image.FromStream(stream))
+				fileExtension = new ImageFormatConverter().ConvertToString(imageObject.RawFormat).ToLower();
+
 			string temporaryDirectory = Path.Combine(collectionPath, DataProvider.TemporaryDirectory);
 			Directory.CreateDirectory(temporaryDirectory);
 
-			image.FileName = fileNameFormatter.Format(image);
+			image.FileName = fileNameFormatter.Format(image, fileExtension);
 			string temporaryPath = Path.Combine(temporaryDirectory, image.FileName);
 			File.WriteAllBytes(temporaryPath, imageData);
 			image.FileNameInStorage = image.FileName;

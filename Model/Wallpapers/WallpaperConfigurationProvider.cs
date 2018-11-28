@@ -6,8 +6,8 @@ namespace Overmind.ImageManager.Model.Wallpapers
 {
 	public class WallpaperConfigurationProvider
 	{
-		private const string ConfigurationFile = "Wallpapers.json";
-		private const string ActiveConfigurationFile = "Wallpaper.active.txt";
+		private const string ConfigurationFile = "WallpaperService.json";
+		private const string ActiveConfigurationFile = "WallpaperService.active.txt";
 
 		public WallpaperConfigurationProvider(JsonSerializer serializer, string configurationDirectory)
 		{

@@ -12,21 +12,35 @@
                              IconSource="/Resources/Logo.ico" ToolTipText="{Binding Path=ApplicationTitle}" TrayMouseDoubleClick="ShowMainWindow">
             <taskbar:TaskbarIcon.ContextMenu>
                 <ContextMenu>
+                    <ContextMenu.Resources>
+                        <Style TargetType="Image">
+                            <Setter Property="Height" Value="16"/>
+                            <Setter Property="Width" Value="16"/>
+                        </Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Margin" Value="5,0,0,0"/>
+                        </Style>
+                    </ContextMenu.Resources>
                     <MenuItem Click="ShowMainWindow">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Logo.png"/>
+                        </MenuItem.Icon>
                         <MenuItem.Header>
-                            <TextBlock Text="Show" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding Path=ApplicationTitle}" FontWeight="Bold"/>
                         </MenuItem.Header>
                     </MenuItem>
+                    <Separator Margin="0,-3"/>
                     <MenuItem Command="{Binding Path=NextWallpaperCommand}">
                         <MenuItem.Header>
-                            <TextBlock Text="Next Wallpaper"/>
+                            <TextBlock Text="Next wallpaper"/>
                         </MenuItem.Header>
                     </MenuItem>
                     <MenuItem Command="{Binding Path=CopyWallpaperHashCommand}">
                         <MenuItem.Header>
-                            <TextBlock Text="Copy Wallpaper Hash"/>
+                            <TextBlock Text="Copy wallpaper hash"/>
                         </MenuItem.Header>
                     </MenuItem>
+                    <Separator Margin="0,-3"/>
                     <MenuItem Click="ExitApplication">
                         <MenuItem.Header>
                             <TextBlock Text="Exit"/>

@@ -92,6 +92,9 @@
     <Resource Include="..\Resources\Logo.ico">
       <Link>Resources\Logo.ico</Link>
     </Resource>
+    <Resource Include="..\Resources\Logo.png">
+      <Link>Resources\Logo.png</Link>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)/Overmind.ImageManager.targets" />

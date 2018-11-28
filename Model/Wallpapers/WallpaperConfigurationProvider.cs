@@ -18,6 +18,11 @@ namespace Overmind.ImageManager.Model.Wallpapers
 		private readonly JsonSerializer serializer;
 		private readonly string configurationDirectory;
 
+		public string GetConfigurationPath()
+		{
+			return Path.Combine(configurationDirectory, ConfigurationFile);
+		}
+
 		public ICollection<WallpaperConfiguration> LoadConfiguration()
 		{
 			string path = Path.Combine(configurationDirectory, ConfigurationFile);

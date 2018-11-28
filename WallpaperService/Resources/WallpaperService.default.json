@@ -1,0 +1,10 @@
+[
+	// Wallpaper configuration example
+	//
+	// {
+	//   "Name": "Wallpapers",
+	//   "CollectionPath": "E:/Pictures/MyCollection",
+	//   "ImageQuery": "tag:'Desktop Wallpaper'",
+	//   "CyclePeriod": "00:05:00",
+	// },
+]

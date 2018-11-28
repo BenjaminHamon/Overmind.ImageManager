@@ -40,6 +40,16 @@
                             <TextBlock Text="Copy wallpaper hash"/>
                         </MenuItem.Header>
                     </MenuItem>
+                    <MenuItem Command="{Binding Path=EditConfigurationCommand}">
+                        <MenuItem.Header>
+                            <TextBlock Text="Edit configuration"/>
+                        </MenuItem.Header>
+                    </MenuItem>
+                    <MenuItem Command="{Binding Path=ReloadConfigurationCommand}">
+                        <MenuItem.Header>
+                            <TextBlock Text="Reload configuration"/>
+                        </MenuItem.Header>
+                    </MenuItem>
                     <Separator Margin="0,-3"/>
                     <MenuItem Click="ExitApplication">
                         <MenuItem.Header>

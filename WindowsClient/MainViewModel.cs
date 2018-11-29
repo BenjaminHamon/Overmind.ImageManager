@@ -14,6 +14,8 @@ namespace Overmind.ImageManager.WindowsClient
 			this.application = application;
 			this.dataProvider = dataProvider;
 
+			ExitApplicationCommand = new DelegateCommand<object>(_ => application.Shutdown());
+
 			CreateCollectionCommand = new DelegateCommand<string>(path => ChangeCollection(dataProvider.CreateCollection(path), path));
 			LoadCollectionCommand = new DelegateCommand<string>(path => ChangeCollection(dataProvider.LoadCollection(path), path));
 			SaveCollectionCommand = new DelegateCommand<object>(_ => ActiveCollection.Save(), _ => ActiveCollection != null);
@@ -78,6 +80,8 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
+		public DelegateCommand<object> ExitApplicationCommand { get; }
+
 		public DelegateCommand<string> CreateCollectionCommand { get; }
 		public DelegateCommand<string> LoadCollectionCommand { get; }
 		public DelegateCommand<object> SaveCollectionCommand { get; }
@@ -87,6 +91,11 @@ namespace Overmind.ImageManager.WindowsClient
 		public DelegateCommand<ImageViewModel> OpenImageCommand { get; }
 		public DelegateCommand<ImageViewModel> EditImageCommand { get; }
 		public DelegateCommand<ImageViewModel> RestartDownloadCommand { get; }
+
+		public bool IsActiveCollectionSaved()
+		{
+			return false;
+		}
 
 		private void ChangeCollection(CollectionData collectionData, string collectionPath)
 		{

@@ -8,11 +8,15 @@ namespace Overmind.ImageManager.WindowsClient
 		public MainWindow()
 		{
 			InitializeComponent();
+
+			Closing += ExitApplication;
 		}
 
 		private void ExitApplication(object sender, CancelEventArgs eventArguments)
 		{
-			Application.Current.Shutdown();
+			mainView.ExitApplication(sender, eventArguments);
+			if (eventArguments.Cancel == false)
+				Closing -= ExitApplication;
 		}
 	}
 }

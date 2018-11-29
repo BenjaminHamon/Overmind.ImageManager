@@ -5,6 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:MainViewModel}"
-        Title="{Binding Path=ApplicationTitle}" Closing="ExitApplication">
-    <main:MainView DataContext="{Binding}"/>
+        Title="{Binding Path=ApplicationTitle}">
+    <main:MainView x:Name="mainView" x:FieldModifier="private" DataContext="{Binding}"/>
 </Window>

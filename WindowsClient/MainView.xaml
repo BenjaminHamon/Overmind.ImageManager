@@ -19,6 +19,13 @@
                 </Style>
             </Style.Resources>
         </Style>
+        <Style x:Key="ActiveCollectionMenuItemStyle" TargetType="MenuItem" BasedOn="{StaticResource InnerMenuItemStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=ActiveCollection}" Value="{x:Null}">
+                    <Setter Property="IsEnabled" Value="False"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </UserControl.Resources>
 
     <Grid>
@@ -34,7 +41,7 @@
                 <MenuItem Header="New collection" Style="{StaticResource InnerMenuItemStyle}" Click="CreateCollection"/>
                 <MenuItem Header="Open collection" Style="{StaticResource InnerMenuItemStyle}" Click="LoadCollection"/>
                 <MenuItem Header="Save collection" Style="{StaticResource InnerMenuItemStyle}" Command="{Binding Path=SaveCollectionCommand}"/>
-                <MenuItem Header="Close collection" Style="{StaticResource InnerMenuItemStyle}" Command="{Binding Path=CloseCollectionCommand}"/>
+                <MenuItem Header="Close collection" Style="{StaticResource ActiveCollectionMenuItemStyle}" Click="CloseCollection"/>
                 <Separator Margin="0,-3"/>
                 <MenuItem Header="Export query" Style="{StaticResource InnerMenuItemStyle}" Click="ExportQuery" IsEnabled="{Binding Path=CanExportQuery}"/>
                 <Separator Margin="0,-3"/>

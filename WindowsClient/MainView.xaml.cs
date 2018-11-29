@@ -2,11 +2,14 @@
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Overmind.ImageManager.Model;
 using Overmind.ImageManager.WindowsClient.Downloads;
+using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using WPFCustomMessageBox;
 
 namespace Overmind.ImageManager.WindowsClient
 {
@@ -17,10 +20,16 @@ namespace Overmind.ImageManager.WindowsClient
 			InitializeComponent();
 		}
 
+		private MainViewModel viewModel { get { return (MainViewModel)DataContext; } }
+
 		private Window downloaderWindow;
 
-		private void CreateCollection(object sender, RoutedEventArgs eventArguments)
+		private void CreateCollection(object sender, EventArgs eventArguments)
 		{
+			CloseCollection(sender, eventArguments);
+			if (viewModel.ActiveCollection != null)
+				return;
+
 			CommonOpenFileDialog fileDialog = new CommonOpenFileDialog("Create Collection") { IsFolderPicker = true };
 			if (fileDialog.ShowDialog() != CommonFileDialogResult.Ok)
 				return;
@@ -32,22 +41,55 @@ namespace Overmind.ImageManager.WindowsClient
 				return;
 			}
 
-			MainViewModel viewModel = (MainViewModel)DataContext;
 			viewModel.CreateCollectionCommand.Execute(collectionPath);
 		}
 
-		private void LoadCollection(object sender, RoutedEventArgs e)
+		private void LoadCollection(object sender, EventArgs eventArguments)
 		{
+			CloseCollection(sender, eventArguments);
+			if (viewModel.ActiveCollection != null)
+				return;
+
 			OpenFileDialog fileDialog = new OpenFileDialog();
 			fileDialog.Filter = "Collection|" + DataProvider.ImageCollectionFileName;
 			if (fileDialog.ShowDialog() == false)
 				return;
 
-			MainViewModel viewModel = (MainViewModel)DataContext;
 			viewModel.LoadCollectionCommand.Execute(Path.GetDirectoryName(fileDialog.FileName));
 		}
 
-		private void ExportQuery(object sender, RoutedEventArgs eventArguments)
+		private void CloseCollection(object sender, EventArgs eventArguments)
+		{
+			if (viewModel.ActiveCollection == null)
+				return;
+
+			if (viewModel.IsActiveCollectionSaved())
+			{
+				viewModel.CloseCollectionCommand.Execute(null);
+			}
+			else
+			{
+				MessageBoxResult result = CustomMessageBox.ShowYesNoCancel(
+					"Save changes before closing?", "Closing collection", "Save and close", "Close without saving", "Cancel closing", MessageBoxImage.Warning);
+
+				if (result == MessageBoxResult.Yes)
+				{
+					viewModel.SaveCollectionCommand.Execute(null);
+					viewModel.CloseCollectionCommand.Execute(null);
+				}
+				else if (result == MessageBoxResult.No)
+				{
+					viewModel.CloseCollectionCommand.Execute(null);
+				}
+				else
+				{
+					if (eventArguments is CancelEventArgs)
+						((CancelEventArgs)eventArguments).Cancel = true;
+				}
+			}
+		}
+
+		private void ExportQuery(object sender, EventArgs eventArguments)
 		{
 			CommonOpenFileDialog fileDialog = new CommonOpenFileDialog("Export Query") { IsFolderPicker = true };
 			if (fileDialog.ShowDialog() != CommonFileDialogResult.Ok)
@@ -60,8 +102,16 @@ namespace Overmind.ImageManager.WindowsClient
 				return;
 			}
 
-			MainViewModel viewModel = (MainViewModel)DataContext;
 			viewModel.ExportQuery(collectionPath);
+		}
+
+		internal void ExitApplication(object sender, EventArgs eventArguments)
+		{
+			CloseCollection(sender, eventArguments);
+			if (viewModel.ActiveCollection != null)
+				return;
+
+			viewModel.ExitApplicationCommand.Execute(null);
 		}
 
 		private void ShowDownloader(object sender, RoutedEventArgs eventArguments)
@@ -89,11 +139,6 @@ namespace Overmind.ImageManager.WindowsClient
 					downloaderWindow.WindowState = WindowState.Normal;
 				downloaderWindow.Activate();
 			}
-		}
-
-		private void ExitApplication(object sender, RoutedEventArgs eventArguments)
-		{
-			System.Windows.Application.Current.Shutdown();
 		}
 	}
 }

@@ -9,8 +9,9 @@ namespace Overmind.ImageManager.WindowsClient
 {
 	public class MainViewModel : INotifyPropertyChanged, IDisposable
 	{
-		public MainViewModel(DataProvider dataProvider)
+		public MainViewModel(WindowsApplication application, DataProvider dataProvider)
 		{
+			this.application = application;
 			this.dataProvider = dataProvider;
 
 			CreateCollectionCommand = new DelegateCommand<string>(path => ChangeCollection(dataProvider.CreateCollection(path), path));
@@ -18,12 +19,13 @@ namespace Overmind.ImageManager.WindowsClient
 			SaveCollectionCommand = new DelegateCommand<object>(_ => ActiveCollection.Save(), _ => ActiveCollection != null);
 			CloseCollectionCommand = new DelegateCommand<object>(_ => CloseCollection(), _ => ActiveCollection != null);
 
-			ViewImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) WindowsApplication.ViewImage(image); });
-			OpenImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) WindowsApplication.OpenImageExternally(image, "open"); });
-			EditImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) WindowsApplication.OpenImageExternally(image, "edit"); });
+			ViewImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) application.ViewImage(image); });
+			OpenImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) application.OpenImageExternally(image, "open"); });
+			EditImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) application.OpenImageExternally(image, "edit"); });
 			RestartDownloadCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) Downloader.RestartDownload(image); });
 		}
 
+		private readonly WindowsApplication application;
 		private readonly DataProvider dataProvider;
 
 		public string ApplicationTitle
@@ -92,7 +94,7 @@ namespace Overmind.ImageManager.WindowsClient
 				CloseCollection();
 
 			CollectionModel collectionModel = new CollectionModel(dataProvider, collectionData, collectionPath);
-			ActiveCollection = new CollectionViewModel(collectionModel);
+			ActiveCollection = new CollectionViewModel(application, collectionModel);
 			Downloader = new Downloader(ActiveCollection);
 		}
 

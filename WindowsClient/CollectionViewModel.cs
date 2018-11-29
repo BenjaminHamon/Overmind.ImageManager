@@ -10,7 +10,7 @@ namespace Overmind.ImageManager.WindowsClient
 {
 	public class CollectionViewModel : INotifyPropertyChanged, IDisposable
 	{
-		public CollectionViewModel(CollectionModel model)
+		public CollectionViewModel(WindowsApplication application, CollectionModel model)
 		{
 			this.model = model;
 
@@ -21,7 +21,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 			ExecuteQuery();
 
-			ViewImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) WindowsApplication.ViewImage(image); });
+			ViewImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) application.ViewImage(image); });
 			RemoveImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) RemoveImage(image); });
 			ExecuteQueryCommand = new DelegateCommand<object>(_ => ExecuteQuery());
 		}

@@ -24,7 +24,7 @@ namespace Overmind.ImageManager.WindowsClient
 			JsonSerializer serializer = new JsonSerializer() { Formatting = Formatting.Indented };
 			FileNameFormatter fileNameFormatter = new FileNameFormatter();
 			DataProvider dataProvider = new DataProvider(serializer, fileNameFormatter);
-			mainViewModel = new MainViewModel(dataProvider);
+			mainViewModel = new MainViewModel(this, dataProvider);
 		}
 
 		private readonly MainViewModel mainViewModel;
@@ -41,7 +41,7 @@ namespace Overmind.ImageManager.WindowsClient
 				mainViewModel.Dispose();
 		}
 
-		public static void ViewImage(ImageViewModel image)
+		public void ViewImage(ImageViewModel image)
 		{
 			// Use BeginInvoke so that the call finishes before the window is shown
 			// to ensure the window is correctly activated and in the foreground
@@ -53,7 +53,7 @@ namespace Overmind.ImageManager.WindowsClient
 			}));
 		}
 
-		public static void OpenImageExternally(ImageViewModel image, string mode)
+		public void OpenImageExternally(ImageViewModel image, string mode)
 		{
 			ProcessStartInfo processInformation = new ProcessStartInfo() { FileName = image.FilePath, Verb = mode };
 

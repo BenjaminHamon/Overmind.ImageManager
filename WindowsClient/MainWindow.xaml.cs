@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 
 namespace Overmind.ImageManager.WindowsClient
 {
@@ -7,6 +8,11 @@ namespace Overmind.ImageManager.WindowsClient
 		public MainWindow()
 		{
 			InitializeComponent();
+		}
+
+		private void ExitApplication(object sender, CancelEventArgs eventArguments)
+		{
+			Application.Current.Shutdown();
 		}
 	}
 }

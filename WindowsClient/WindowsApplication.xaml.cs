@@ -29,13 +29,13 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private readonly MainViewModel mainViewModel;
 
-		private void Application_Startup(object sender, StartupEventArgs e)
+		private void Application_Startup(object sender, StartupEventArgs eventArguments)
 		{
 			MainWindow = new MainWindow() { DataContext = mainViewModel };
 			MainWindow.Show();
 		}
 
-		private void Application_Exit(object sender, ExitEventArgs e)
+		private void Application_Exit(object sender, ExitEventArgs eventArguments)
 		{
 			if (mainViewModel != null)
 				mainViewModel.Dispose();

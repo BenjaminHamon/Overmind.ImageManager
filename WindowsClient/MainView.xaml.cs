@@ -90,5 +90,10 @@ namespace Overmind.ImageManager.WindowsClient
 				downloaderWindow.Activate();
 			}
 		}
+
+		private void ExitApplication(object sender, RoutedEventArgs eventArguments)
+		{
+			System.Windows.Application.Current.Shutdown();
+		}
 	}
 }

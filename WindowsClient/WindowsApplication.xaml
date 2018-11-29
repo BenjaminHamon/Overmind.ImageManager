@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
              Startup="Application_Startup"
-             Exit="Application_Exit">
+             Exit="Application_Exit"
+             ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
         <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
         <main:StringToImageConverter x:Key="DefaultImageConverter"/>

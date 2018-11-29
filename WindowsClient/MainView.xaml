@@ -7,6 +7,20 @@
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:MainViewModel}"
              d:DesignHeight="500" d:DesignWidth="1000">
 
+    <UserControl.Resources>
+        <Style x:Key="InnerMenuItemStyle" TargetType="MenuItem">
+            <Style.Resources>
+                <Style TargetType="ContentPresenter">
+                    <Style.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Margin" Value="5,0,0,0"/>
+                        </Style>
+                    </Style.Resources>
+                </Style>
+            </Style.Resources>
+        </Style>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -17,12 +31,12 @@
              See https://stackoverflow.com/questions/57493/wpf-databind-before-saving -->
         <Menu Grid.Row="0" FocusManager.IsFocusScope="False">
             <MenuItem Header="File">
-                <MenuItem Header="New collection" Click="CreateCollection"/>
-                <MenuItem Header="Open collection" Click="LoadCollection"/>
-                <MenuItem Header="Save collection" Command="{Binding Path=SaveCollectionCommand}"/>
-                <MenuItem Header="Close collection" Command="{Binding Path=CloseCollectionCommand}"/>
-                <Separator/>
-                <MenuItem Header="Export query" Click="ExportQuery" IsEnabled="{Binding Path=CanExportQuery}"/>
+                <MenuItem Header="New collection" Style="{StaticResource InnerMenuItemStyle}" Click="CreateCollection"/>
+                <MenuItem Header="Open collection" Style="{StaticResource InnerMenuItemStyle}" Click="LoadCollection"/>
+                <MenuItem Header="Save collection" Style="{StaticResource InnerMenuItemStyle}" Command="{Binding Path=SaveCollectionCommand}"/>
+                <MenuItem Header="Close collection" Style="{StaticResource InnerMenuItemStyle}" Command="{Binding Path=CloseCollectionCommand}"/>
+                <Separator Margin="0,-3"/>
+                <MenuItem Header="Export query" Style="{StaticResource InnerMenuItemStyle}" Click="ExportQuery" IsEnabled="{Binding Path=CanExportQuery}"/>
             </MenuItem>
         </Menu>
 

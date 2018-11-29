@@ -94,6 +94,27 @@ namespace Overmind.ImageManager.Model
 				serializer.Serialize(jsonWriter, collectionData.Images);
 		}
 
+		public bool IsCollectionSaved(string collectionPath, CollectionData activeCollectionData, IEnumerable<ImageModel> removedImages)
+		{
+			if (removedImages.Any())
+				return false;
+
+			string temporaryDirectory = Path.Combine(collectionPath, DataProvider.TemporaryDirectory);
+			if (Directory.Exists(temporaryDirectory))
+				return false;
+
+			CollectionData savedCollectionData = new CollectionData();
+			string jsonPath = Path.Combine(collectionPath, ImageCollectionFileName);
+			using (StreamReader streamReader = new StreamReader(jsonPath))
+			using (JsonReader jsonReader = new JsonTextReader(streamReader))
+				savedCollectionData.Images = serializer.Deserialize<List<ImageModel>>(jsonReader);
+
+			string activeSerialized = SerializeToString(activeCollectionData);
+			string savedSerialized = SerializeToString(savedCollectionData);
+
+			return activeSerialized == savedSerialized;
+		}
+
 		public void ExportCollection(string sourceCollectionPath, string destinationCollectionPath, CollectionData collectionData)
 		{
 			if (Directory.Exists(destinationCollectionPath) && Directory.EnumerateFileSystemEntries(destinationCollectionPath).Any())
@@ -136,6 +157,16 @@ namespace Overmind.ImageManager.Model
 			string temporaryDirectory = Path.Combine(collectionPath, DataProvider.TemporaryDirectory);
 			if (Directory.Exists(temporaryDirectory))
 				Directory.Delete(temporaryDirectory, true);
+		}
+
+		private string SerializeToString<TData>(TData data)
+		{
+			using (StringWriter stringWriter = new StringWriter())
+			using (JsonWriter jsonWriter = new JsonTextWriter(stringWriter))
+			{
+				serializer.Serialize(jsonWriter, data);
+				return stringWriter.ToString();
+			}
 		}
 	}
 }

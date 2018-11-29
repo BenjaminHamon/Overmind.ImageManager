@@ -39,6 +39,11 @@ namespace Overmind.ImageManager.Model
 			removedImages.Clear();
 		}
 
+		public bool IsSaved()
+		{
+			return dataProvider.IsCollectionSaved(storagePath, data, removedImages);
+		}
+
 		public void Dispose()
 		{
 			dataProvider.CleanTemporary(storagePath);

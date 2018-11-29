@@ -71,6 +71,14 @@ namespace Overmind.ImageManager.WindowsClient
 			}
 		}
 
+		public bool IsSaved()
+		{
+			lock (modelLock)
+			{
+				return model.IsSaved();
+			}
+		}
+
 		public void Dispose()
 		{
 			lock (modelLock)

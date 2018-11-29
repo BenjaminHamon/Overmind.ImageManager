@@ -63,7 +63,7 @@ namespace Overmind.ImageManager.WindowsClient
 			if (viewModel.ActiveCollection == null)
 				return;
 
-			if (viewModel.IsActiveCollectionSaved())
+			if (viewModel.ActiveCollection.IsSaved())
 			{
 				viewModel.CloseCollectionCommand.Execute(null);
 			}

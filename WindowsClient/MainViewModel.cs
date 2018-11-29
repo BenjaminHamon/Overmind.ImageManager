@@ -92,11 +92,6 @@ namespace Overmind.ImageManager.WindowsClient
 		public DelegateCommand<ImageViewModel> EditImageCommand { get; }
 		public DelegateCommand<ImageViewModel> RestartDownloadCommand { get; }
 
-		public bool IsActiveCollectionSaved()
-		{
-			return false;
-		}
-
 		private void ChangeCollection(CollectionData collectionData, string collectionPath)
 		{
 			if (ActiveCollection != null)

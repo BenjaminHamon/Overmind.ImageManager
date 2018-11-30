@@ -60,28 +60,50 @@
     <Compile Include="..\.build\Shared\Metadata\ProductInformation.cs">
       <Link>Properties\ProductInformation.cs</Link>
     </Compile>
-    <Compile Include="CollectionQuery.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutocompleteTextBox.xaml.cs">
       <DependentUpon>AutocompleteTextBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CollectionQuery.cs" />
+    <Compile Include="CollectionView.xaml.cs">
+      <DependentUpon>CollectionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CollectionViewModel.cs" />
     <Compile Include="Downloads\Downloader.cs" />
     <Compile Include="Downloads\DownloaderView.xaml.cs">
       <DependentUpon>DownloaderView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Downloads\ObservableDownload.cs" />
     <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="ImagePropertiesView.xaml.cs">
+      <DependentUpon>ImagePropertiesView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ImageView.xaml.cs">
       <DependentUpon>ImageView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ImageViewModel.cs" />
     <Compile Include="ImagePropertiesViewModel.cs" />
+    <Compile Include="MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainViewModel.cs" />
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ObservableString.cs" />
     <Compile Include="SlideShowView.xaml.cs">
       <DependentUpon>SlideShowView.xaml</DependentUpon>
     </Compile>
     <Compile Include="SlideShowViewModel.cs" />
+    <Compile Include="StringToImageConverter.cs" />
+    <Compile Include="TokenListView.xaml.cs">
+      <DependentUpon>TokenListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsApplication.xaml.cs">
+      <DependentUpon>WindowsApplication.xaml</DependentUpon>
+    </Compile>
     <Page Include="AutocompleteTextBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -102,6 +124,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="MainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -111,41 +137,13 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TokenListView.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="WindowsApplication.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="MainView.xaml">
       <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
-    <Compile Include="CollectionView.xaml.cs">
-      <DependentUpon>CollectionView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="CollectionViewModel.cs" />
-    <Compile Include="ImagePropertiesView.xaml.cs">
-      <DependentUpon>ImagePropertiesView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ImageViewModel.cs" />
-    <Compile Include="MainViewModel.cs" />
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="StringToImageConverter.cs" />
-    <Compile Include="TokenListView.xaml.cs">
-      <DependentUpon>TokenListView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="WindowsApplication.xaml.cs">
-      <DependentUpon>WindowsApplication.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MainView.xaml.cs">
-      <DependentUpon>MainView.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -171,16 +169,16 @@
     <Content Include="Credits.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Resources\Icons\Remove.png" />
-    <Resource Include="Resources\Icons\View.png" />
     <Resource Include="Resources\Icons\Cancel.png" />
     <Resource Include="Resources\Icons\Error.png" />
-    <Resource Include="Resources\Icons\Success.png" />
-    <Resource Include="Resources\Icons\Pause.png" />
-    <Resource Include="Resources\Icons\Resume.png" />
     <Resource Include="Resources\Icons\Next.png" />
+    <Resource Include="Resources\Icons\Pause.png" />
     <Resource Include="Resources\Icons\Previous.png" />
+    <Resource Include="Resources\Icons\Remove.png" />
+    <Resource Include="Resources\Icons\Resume.png" />
     <Resource Include="Resources\Icons\Search.png" />
+    <Resource Include="Resources\Icons\Success.png" />
+    <Resource Include="Resources\Icons\View.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)/Overmind.ImageManager.targets" />

@@ -23,6 +23,7 @@ namespace Overmind.ImageManager.WindowsClient
 		private MainViewModel viewModel { get { return (MainViewModel)DataContext; } }
 
 		private Window downloaderWindow;
+		private Window settingsWindow;
 
 		private void CreateCollection(object sender, EventArgs eventArguments)
 		{
@@ -112,6 +113,32 @@ namespace Overmind.ImageManager.WindowsClient
 				return;
 
 			viewModel.ExitApplicationCommand.Execute(null);
+		}
+
+		private void ShowSettings(object sender, RoutedEventArgs eventArguments)
+		{
+			if (settingsWindow == null)
+			{
+				SettingsView settingsView = new SettingsView();
+				settingsView.DataContext = viewModel.Settings;
+
+				settingsWindow = new Window()
+				{
+					Title = "Settings - " + WindowsApplication.Name,
+					Content = settingsView,
+					Height = 800,
+					Width = 800,
+				};
+
+				settingsWindow.Closed += (s, e) => settingsWindow = null;
+				settingsWindow.Show();
+			}
+			else
+			{
+				if (settingsWindow.WindowState == WindowState.Minimized)
+					settingsWindow.WindowState = WindowState.Normal;
+				settingsWindow.Activate();
+			}
 		}
 
 		private void ShowDownloader(object sender, RoutedEventArgs eventArguments)

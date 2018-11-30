@@ -45,6 +45,8 @@
                 <Separator Margin="0,-3"/>
                 <MenuItem Header="Export query" Style="{StaticResource InnerMenuItemStyle}" Click="ExportQuery" IsEnabled="{Binding Path=CanExportQuery}"/>
                 <Separator Margin="0,-3"/>
+                <MenuItem Header="Settings" Style="{StaticResource InnerMenuItemStyle}" Click="ShowSettings"/>
+                <Separator Margin="0,-3"/>
                 <MenuItem Header="Exit" Style="{StaticResource InnerMenuItemStyle}" Click="ExitApplication"/>
             </MenuItem>
         </Menu>

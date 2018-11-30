@@ -14,6 +14,8 @@ namespace Overmind.ImageManager.WindowsClient
 			this.application = application;
 			this.dataProvider = dataProvider;
 
+			Settings = new SettingsViewModel();
+
 			ExitApplicationCommand = new DelegateCommand<object>(_ => application.Shutdown());
 
 			CreateCollectionCommand = new DelegateCommand<string>(path => ChangeCollection(dataProvider.CreateCollection(path), path));
@@ -39,6 +41,8 @@ namespace Overmind.ImageManager.WindowsClient
 				return ActiveCollection.Name + " - " + WindowsApplication.Name;
 			}
 		}
+
+		public SettingsViewModel Settings { get; }
 
 		private CollectionViewModel activeCollectionField;
 		public CollectionViewModel ActiveCollection

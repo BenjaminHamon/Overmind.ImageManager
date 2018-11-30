@@ -1,4 +1,5 @@
-﻿using Overmind.WpfExtensions;
+﻿using Overmind.ImageManager.WindowsClient.Extensions;
+using Overmind.WpfExtensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

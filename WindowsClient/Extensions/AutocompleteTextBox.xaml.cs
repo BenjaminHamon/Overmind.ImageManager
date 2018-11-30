@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Overmind.ImageManager.WindowsClient
+namespace Overmind.ImageManager.WindowsClient.Extensions
 {
 	public partial class AutocompleteTextBox : UserControl
 	{

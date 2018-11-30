@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace Overmind.ImageManager.WindowsClient
+namespace Overmind.ImageManager.WindowsClient.Extensions
 {
 	public partial class TokenListView : UserControl
 	{

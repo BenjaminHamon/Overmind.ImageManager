@@ -19,7 +19,7 @@ namespace Overmind.ImageManager.WindowsClient
 			if (e.Key == Key.Escape)
 				Close();
 		}
-		
+
 		private void ResizeWindow(object sender, RoutedEventArgs e)
 		{
 			double windowHeight = ActualHeight;

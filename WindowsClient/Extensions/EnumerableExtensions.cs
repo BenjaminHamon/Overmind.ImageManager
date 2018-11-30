@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Overmind.ImageManager.WindowsClient
+namespace Overmind.ImageManager.WindowsClient.Extensions
 {
 	public static class EnumerableExtensions
 	{

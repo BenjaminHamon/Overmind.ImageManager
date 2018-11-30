@@ -63,9 +63,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutocompleteTextBox.xaml.cs">
-      <DependentUpon>AutocompleteTextBox.xaml</DependentUpon>
-    </Compile>
     <Compile Include="CollectionQuery.cs" />
     <Compile Include="CollectionView.xaml.cs">
       <DependentUpon>CollectionView.xaml</DependentUpon>
@@ -76,7 +73,14 @@
       <DependentUpon>DownloaderView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Downloads\ObservableDownload.cs" />
-    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="Extensions\AutocompleteTextBox.xaml.cs">
+      <DependentUpon>AutocompleteTextBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\ObservableString.cs" />
+    <Compile Include="Extensions\TokenListView.xaml.cs">
+      <DependentUpon>TokenListView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ImagePropertiesView.xaml.cs">
       <DependentUpon>ImagePropertiesView.xaml</DependentUpon>
     </Compile>
@@ -92,27 +96,27 @@
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ObservableString.cs" />
     <Compile Include="SlideShowView.xaml.cs">
       <DependentUpon>SlideShowView.xaml</DependentUpon>
     </Compile>
     <Compile Include="SlideShowViewModel.cs" />
     <Compile Include="StringToImageConverter.cs" />
-    <Compile Include="TokenListView.xaml.cs">
-      <DependentUpon>TokenListView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="WindowsApplication.xaml.cs">
       <DependentUpon>WindowsApplication.xaml</DependentUpon>
     </Compile>
-    <Page Include="AutocompleteTextBox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="CollectionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Downloads\DownloaderView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Extensions\AutocompleteTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Extensions\TokenListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -133,10 +137,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SlideShowView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="TokenListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

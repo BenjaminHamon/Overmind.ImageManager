@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Overmind.ImageManager.WindowsClient
+namespace Overmind.ImageManager.WindowsClient.Extensions
 {
 	public class ObservableString : INotifyPropertyChanged
 	{

@@ -1,8 +1,9 @@
 ﻿<UserControl x:Class="Overmind.ImageManager.WindowsClient.ImagePropertiesView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:extensions="clr-namespace:Overmind.ImageManager.WindowsClient.Extensions"
              xmlns:globalization="clr-namespace:System.Globalization;assembly=mscorlib"
              xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:ImagePropertiesViewModel}"
@@ -22,7 +23,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <Style TargetType="main:TokenListView">
+        <Style TargetType="extensions:TokenListView">
             <Style.Resources>
                 <Style TargetType="TextBox">
                     <Setter Property="MinWidth" Value="20"/>
@@ -52,41 +53,41 @@
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Title"/>
             <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=Title}"/>
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Subjects"/>
-            <main:TokenListView Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Path=SubjectCollection}" Margin="5" MinHeight="30">
-                <main:TokenListView.TextBoxTemplate>
+            <extensions:TokenListView Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Path=SubjectCollection}" Margin="5" MinHeight="30">
+                <extensions:TokenListView.TextBoxTemplate>
                     <DataTemplate>
-                        <main:AutocompleteTextBox d:DataContext="{d:DesignInstance Type=main:ObservableString}" Text="{Binding Path=Value}">
-                            <main:AutocompleteTextBox.AllValues>
-                                <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=main:TokenListView}" Path="DataContext.AllSubjects"/>
-                            </main:AutocompleteTextBox.AllValues>
-                        </main:AutocompleteTextBox>
+                        <extensions:AutocompleteTextBox d:DataContext="{d:DesignInstance Type=extensions:ObservableString}" Text="{Binding Path=Value}">
+                            <extensions:AutocompleteTextBox.AllValues>
+                                <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=extensions:TokenListView}" Path="DataContext.AllSubjects"/>
+                            </extensions:AutocompleteTextBox.AllValues>
+                        </extensions:AutocompleteTextBox>
                     </DataTemplate>
-                </main:TokenListView.TextBoxTemplate>
-            </main:TokenListView>
+                </extensions:TokenListView.TextBoxTemplate>
+            </extensions:TokenListView>
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Artists"/>
-            <main:TokenListView Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Path=ArtistCollection}" Margin="5" MinHeight="30">
-                <main:TokenListView.TextBoxTemplate>
+            <extensions:TokenListView Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Path=ArtistCollection}" Margin="5" MinHeight="30">
+                <extensions:TokenListView.TextBoxTemplate>
                     <DataTemplate>
-                        <main:AutocompleteTextBox d:DataContext="{d:DesignInstance Type=main:ObservableString}" Text="{Binding Path=Value}">
-                            <main:AutocompleteTextBox.AllValues>
-                                <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=main:TokenListView}" Path="DataContext.AllArtists"/>
-                            </main:AutocompleteTextBox.AllValues>
-                        </main:AutocompleteTextBox>
+                        <extensions:AutocompleteTextBox d:DataContext="{d:DesignInstance Type=extensions:ObservableString}" Text="{Binding Path=Value}">
+                            <extensions:AutocompleteTextBox.AllValues>
+                                <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=extensions:TokenListView}" Path="DataContext.AllArtists"/>
+                            </extensions:AutocompleteTextBox.AllValues>
+                        </extensions:AutocompleteTextBox>
                     </DataTemplate>
-                </main:TokenListView.TextBoxTemplate>
-            </main:TokenListView>
+                </extensions:TokenListView.TextBoxTemplate>
+            </extensions:TokenListView>
             <TextBlock Grid.Row="3" Grid.Column="0" Text="Tags"/>
-            <main:TokenListView Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Path=TagCollection}" Margin="5" MinHeight="30">
-                <main:TokenListView.TextBoxTemplate>
+            <extensions:TokenListView Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Path=TagCollection}" Margin="5" MinHeight="30">
+                <extensions:TokenListView.TextBoxTemplate>
                     <DataTemplate>
-                        <main:AutocompleteTextBox d:DataContext="{d:DesignInstance Type=main:ObservableString}" Text="{Binding Path=Value}">
-                            <main:AutocompleteTextBox.AllValues>
-                                <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=main:TokenListView}" Path="DataContext.AllTags"/>
-                            </main:AutocompleteTextBox.AllValues>
-                        </main:AutocompleteTextBox>
+                        <extensions:AutocompleteTextBox d:DataContext="{d:DesignInstance Type=extensions:ObservableString}" Text="{Binding Path=Value}">
+                            <extensions:AutocompleteTextBox.AllValues>
+                                <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=extensions:TokenListView}" Path="DataContext.AllTags"/>
+                            </extensions:AutocompleteTextBox.AllValues>
+                        </extensions:AutocompleteTextBox>
                     </DataTemplate>
-                </main:TokenListView.TextBoxTemplate>
-            </main:TokenListView>
+                </extensions:TokenListView.TextBoxTemplate>
+            </extensions:TokenListView>
             <TextBlock Grid.Row="4" Grid.Column="0" Text="Score"/>
             <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Path=Score}"/>
             <TextBlock Grid.Row="5" Grid.Column="0" Text="Added on"/>

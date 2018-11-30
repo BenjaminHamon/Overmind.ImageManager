@@ -58,8 +58,8 @@
     <Compile Include="ImageModel.cs" />
     <Compile Include="ImageQueryParser.cs" />
     <Compile Include="ReadOnlyCollectionModel.cs" />
+    <Compile Include="SettingsProvider.cs" />
     <Compile Include="Wallpapers\WallpaperConfiguration.cs" />
-    <Compile Include="Wallpapers\WallpaperConfigurationProvider.cs" />
     <Compile Include="Wallpapers\WallpaperServiceInstance.cs" />
   </ItemGroup>
   <ItemGroup>

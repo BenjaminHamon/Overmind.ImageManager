@@ -1,7 +1,6 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
 using Newtonsoft.Json;
 using Overmind.ImageManager.Model;
-using Overmind.ImageManager.Model.Wallpapers;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -21,11 +20,11 @@ namespace Overmind.ImageManager.WallpaperService
 
 		public WindowsApplication()
 		{
-			string configurationDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
+			string settingsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
 			JsonSerializer serializer = new JsonSerializer() { Formatting = Formatting.Indented };
 			DataProvider dataProvider = new DataProvider(serializer, null);
-			WallpaperConfigurationProvider configurationProvider = new WallpaperConfigurationProvider(serializer, configurationDirectory);
-			serviceViewModel = new WallpaperServiceViewModel(configurationProvider, dataProvider, configurationDirectory);
+			SettingsProvider settingsProvider = new SettingsProvider(serializer, settingsDirectory);
+			serviceViewModel = new WallpaperServiceViewModel(settingsProvider, dataProvider, settingsDirectory);
 		}
 
 		private readonly WallpaperServiceViewModel serviceViewModel;

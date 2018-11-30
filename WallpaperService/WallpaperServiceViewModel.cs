@@ -15,9 +15,9 @@ namespace Overmind.ImageManager.WallpaperService
 {
 	public class WallpaperServiceViewModel : INotifyPropertyChanged, IDisposable
 	{
-		public WallpaperServiceViewModel(WallpaperConfigurationProvider configurationProvider, DataProvider dataProvider, string wallpaperStorage)
+		public WallpaperServiceViewModel(SettingsProvider settingsProvider, DataProvider dataProvider, string wallpaperStorage)
 		{
-			this.configurationProvider = configurationProvider;
+			this.settingsProvider = settingsProvider;
 			this.dataProvider = dataProvider;
 			this.wallpaperStorage = wallpaperStorage;
 
@@ -31,7 +31,7 @@ namespace Overmind.ImageManager.WallpaperService
 			ApplyConfiguration();
 		}
 
-		private readonly WallpaperConfigurationProvider configurationProvider;
+		private readonly SettingsProvider settingsProvider;
 		private readonly DataProvider dataProvider;
 		private readonly string wallpaperStorage;
 		private WallpaperServiceInstance wallpaperService;
@@ -90,28 +90,28 @@ namespace Overmind.ImageManager.WallpaperService
 			NextWallpaperCommand.RaiseCanExecuteChanged();
 			CopyWallpaperHashCommand.RaiseCanExecuteChanged();
 
-			configurationProvider.SaveActiveConfiguration(configuration.Name);
+			settingsProvider.SaveActiveWallpaperConfiguration(configuration.Name);
 		}
 
 		private void EditConfiguration()
 		{
-			string configurationPath = configurationProvider.GetConfigurationPath();
-			if (File.Exists(configurationPath) == false)
+			string settingsPath = settingsProvider.GetWallpaperSettingsFilePath();
+			if (File.Exists(settingsPath) == false)
 			{
 				string installationDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 				string defaultConfigurationPath = Path.Combine(installationDirectory, "Resources", "WallpaperService.default.json");
-				File.Copy(defaultConfigurationPath, configurationPath);
+				File.Copy(defaultConfigurationPath, settingsPath);
 			}
 
-			Process.Start(configurationPath);
+			Process.Start(settingsPath);
 		}
 
 		private void ReloadConfiguration()
 		{
-			ConfigurationCollection = configurationProvider.LoadConfiguration();
+			ConfigurationCollection = settingsProvider.LoadWallpaperSettings();
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConfigurationCollection)));
 
-			string activeConfigurationName = configurationProvider.LoadActiveConfiguration();
+			string activeConfigurationName = settingsProvider.LoadActiveWallpaperConfiguration();
 			ActiveConfiguration = ConfigurationCollection.FirstOrDefault(configuration => configuration.Name == activeConfigurationName);
 		}
 

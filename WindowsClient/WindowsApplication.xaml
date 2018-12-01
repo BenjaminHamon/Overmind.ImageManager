@@ -33,6 +33,9 @@
                         </Style>
                     </Style.Resources>
                 </Style>
+                <Style TargetType="Button">
+                    <Setter Property="Margin" Value="5"/>
+                </Style>
             </Style.Resources>
         </Style>
 

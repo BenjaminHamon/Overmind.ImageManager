@@ -9,12 +9,12 @@ namespace Overmind.ImageManager.WindowsClient
 {
 	public class MainViewModel : INotifyPropertyChanged, IDisposable
 	{
-		public MainViewModel(WindowsApplication application, DataProvider dataProvider)
+		public MainViewModel(WindowsApplication application, DataProvider dataProvider, SettingsProvider wallpaperConfigurationProvider)
 		{
 			this.application = application;
 			this.dataProvider = dataProvider;
 
-			Settings = new SettingsViewModel();
+			Settings = new SettingsViewModel(wallpaperConfigurationProvider);
 
 			ExitApplicationCommand = new DelegateCommand<object>(_ => application.Shutdown());
 

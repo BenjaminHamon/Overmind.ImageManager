@@ -2,6 +2,7 @@
 using Overmind.ImageManager.Model;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -21,10 +22,12 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public WindowsApplication()
 		{
+			string settingsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
 			JsonSerializer serializer = new JsonSerializer() { Formatting = Formatting.Indented };
 			FileNameFormatter fileNameFormatter = new FileNameFormatter();
 			DataProvider dataProvider = new DataProvider(serializer, fileNameFormatter);
-			mainViewModel = new MainViewModel(this, dataProvider);
+			SettingsProvider settingsProvider = new SettingsProvider(serializer, settingsDirectory);
+			mainViewModel = new MainViewModel(this, dataProvider, settingsProvider);
 		}
 
 		private readonly MainViewModel mainViewModel;

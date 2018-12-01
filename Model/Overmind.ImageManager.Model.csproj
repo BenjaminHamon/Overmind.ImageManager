@@ -47,20 +47,21 @@
     <Compile Include="..\.build\Shared\Metadata\ProductInformation.cs">
       <Link>Properties\ProductInformation.cs</Link>
     </Compile>
-    <Compile Include="FileNameFormatter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
-    <Compile Include="DataProvider.cs" />
     <Compile Include="CollectionData.cs" />
     <Compile Include="CollectionModel.cs" />
+    <Compile Include="DataProvider.cs" />
+    <Compile Include="FileNameFormatter.cs" />
     <Compile Include="ImageModel.cs" />
     <Compile Include="ImageQueryParser.cs" />
     <Compile Include="ReadOnlyCollectionModel.cs" />
     <Compile Include="SettingsProvider.cs" />
     <Compile Include="Wallpapers\WallpaperConfiguration.cs" />
     <Compile Include="Wallpapers\WallpaperServiceInstance.cs" />
+    <Compile Include="Wallpapers\WallpaperSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -8,57 +8,57 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 	{
 		public WallpaperConfigurationViewModel(WallpaperConfiguration model)
 		{
-			this.model = model;
+			this.Model = model;
 		}
 
-		private readonly WallpaperConfiguration model;
+		public WallpaperConfiguration Model { get; }
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public string Name
 		{
-			get { return model.Name; }
+			get { return Model.Name; }
 			set
 			{
-				if (model.Name == value)
+				if (Model.Name == value)
 					return;
-				model.Name = value;
+				Model.Name = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
 			}
 		}
 
 		public string CollectionPath
 		{
-			get { return model.CollectionPath; }
+			get { return Model.CollectionPath; }
 			set
 			{
-				if (model.CollectionPath == value)
+				if (Model.CollectionPath == value)
 					return;
-				model.CollectionPath = value;
+				Model.CollectionPath = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CollectionPath)));
 			}
 		}
 
 		public string ImageQuery
 		{
-			get { return model.ImageQuery; }
+			get { return Model.ImageQuery; }
 			set
 			{
-				if (model.ImageQuery == value)
+				if (Model.ImageQuery == value)
 					return;
-				model.ImageQuery = value;
+				Model.ImageQuery = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageQuery)));
 			}
 		}
 
 		public TimeSpan CyclePeriod
 		{
-			get { return model.CyclePeriod; }
+			get { return Model.CyclePeriod; }
 			set
 			{
-				if (model.CyclePeriod == value)
+				if (Model.CyclePeriod == value)
 					return;
-				model.CyclePeriod = value;
+				Model.CyclePeriod = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CyclePeriod)));
 			}
 		}

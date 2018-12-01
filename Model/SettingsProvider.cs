@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using Overmind.ImageManager.Model.Wallpapers;
-using System.Collections.Generic;
 using System.IO;
 
 namespace Overmind.ImageManager.Model
@@ -19,21 +18,25 @@ namespace Overmind.ImageManager.Model
 		private readonly JsonSerializer serializer;
 		private readonly string settingsDirectory;
 
-		public string GetWallpaperSettingsFilePath()
-		{
-			return Path.Combine(settingsDirectory, WallpaperSettingsFile);
-		}
-
-		public ICollection<WallpaperConfiguration> LoadWallpaperSettings()
+		public WallpaperSettings LoadWallpaperSettings()
 		{
 			string path = Path.Combine(settingsDirectory, WallpaperSettingsFile);
 
 			if (File.Exists(path) == false)
-				return new List<WallpaperConfiguration>();
+				return new WallpaperSettings();
 
 			using (StreamReader streamReader = new StreamReader(path))
 			using (JsonReader jsonReader = new JsonTextReader(streamReader))
-				return serializer.Deserialize<List<WallpaperConfiguration>>(jsonReader);
+				return serializer.Deserialize<WallpaperSettings>(jsonReader);
+		}
+
+		public void SaveWallpaperSettings(WallpaperSettings settings)
+		{
+			string path = Path.Combine(settingsDirectory, WallpaperSettingsFile);
+
+			using (StreamWriter streamWriter = new StreamWriter(path))
+			using (JsonWriter jsonWriter = new JsonTextWriter(streamWriter))
+				serializer.Serialize(jsonWriter, settings);
 		}
 
 		public string LoadActiveWallpaperConfiguration()

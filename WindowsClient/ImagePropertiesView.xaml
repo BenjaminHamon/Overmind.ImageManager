@@ -8,33 +8,10 @@
              xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:ImagePropertiesViewModel}"
              d:DesignHeight="400" d:DesignWidth="300">
-    
-    <UserControl.Resources>
-        <Style TargetType="TextBlock">
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
-        <Style TargetType="TextBox">
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="Padding" Value="5"/>
-            <Style.Triggers>
-                <Trigger Property="IsReadOnly" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <Style TargetType="extensions:TokenListView">
-            <Style.Resources>
-                <Style TargetType="TextBox">
-                    <Setter Property="MinWidth" Value="20"/>
-                </Style>
-            </Style.Resources>
-        </Style>
-    </UserControl.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid>
-            
+        <Grid Style="{StaticResource FormStyle}">
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -49,7 +26,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            
+
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Title"/>
             <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=Title}"/>
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Subjects"/>
@@ -99,7 +76,7 @@
             <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Path=Source}" TextWrapping="Wrap"/>
             <TextBlock Grid.Row="7" Grid.Column="0" Text="Hash"/>
             <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding Path=Hash, Mode=OneWay}" IsReadOnly="True"/>
-            
+
         </Grid>
     </ScrollViewer>
 </UserControl>

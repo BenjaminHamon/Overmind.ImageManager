@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
@@ -10,14 +11,18 @@ namespace Overmind.ImageManager.Model.Wallpapers
 	/// </summary>
 	public class WallpaperServiceInstance : IDisposable
 	{
-		public static WallpaperServiceInstance CreateInstance(ReadOnlyCollectionModel collectionModel,
-			WallpaperConfiguration configuration, Action<ImageModel> setSystemWallpaper, Random random)
+		public static WallpaperServiceInstance CreateInstance(DataProvider dataProvider,
+			WallpaperConfiguration configuration, Action<string> setSystemWallpaperFromPath, Random random)
 		{
+			CollectionData collectionData = dataProvider.LoadCollection(configuration.CollectionPath);
+			ReadOnlyCollectionModel collectionModel = new ReadOnlyCollectionModel(dataProvider, collectionData, configuration.CollectionPath);
+			Action<ImageModel> setSystemWallpaperFromImage = image => setSystemWallpaperFromPath(collectionModel.GetImagePath(image));
+
 			IEnumerable<ImageModel> imageCollection = collectionModel.AllImages;
 			if (String.IsNullOrEmpty(configuration.ImageQuery) == false)
 				imageCollection = collectionModel.SearchAdvanced(configuration.ImageQuery);
 
-			return new WallpaperServiceInstance(imageCollection, setSystemWallpaper, random, configuration.CyclePeriod);
+			return new WallpaperServiceInstance(imageCollection, setSystemWallpaperFromImage, random, configuration.CyclePeriod);
 		}
 
 		public WallpaperServiceInstance(IEnumerable<ImageModel> imageCollection,
@@ -81,7 +86,7 @@ namespace Overmind.ImageManager.Model.Wallpapers
 
 					if (newWallpaper != null)
 					{
-						System.Diagnostics.Trace.TraceInformation("Setting wallpaper to {0}", newWallpaper.FileName);
+						Trace.TraceInformation("Setting wallpaper to {0}", newWallpaper.FileName);
 
 						setSystemWallpaper(newWallpaper);
 						CurrentWallpaper = newWallpaper;
@@ -89,7 +94,7 @@ namespace Overmind.ImageManager.Model.Wallpapers
 				}
 				catch (Exception exception)
 				{
-					System.Diagnostics.Trace.TraceError("[WallpaperService] Failed to cycle wallpaper: {0}",  exception);
+					Trace.TraceError("[WallpaperService] Failed to cycle wallpaper: {0}",  exception);
 				}
 			}
 		}

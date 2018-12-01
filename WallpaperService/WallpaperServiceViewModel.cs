@@ -75,22 +75,24 @@ namespace Overmind.ImageManager.WallpaperService
 			{
 				wallpaperService.Dispose();
 				wallpaperService = null;
-				NextWallpaperCommand.RaiseCanExecuteChanged();
-				CopyWallpaperHashCommand.RaiseCanExecuteChanged();
 			}
 
-			WallpaperConfiguration configuration = ActiveConfiguration;
-			if (configuration == null)
-				return;
+			if (ActiveConfiguration != null)
+			{
+				try
+				{
+					wallpaperService = WallpaperServiceInstance.CreateInstance(dataProvider, ActiveConfiguration, SetWallpaper, new Random());
+				}
+				catch (Exception exception)
+				{
+					Trace.TraceError("[WallpaperService] Failed to create wallpaper service instance: {0}", exception);
+				}
 
-			CollectionData collectionData = dataProvider.LoadCollection(configuration.CollectionPath);
-			ReadOnlyCollectionModel collectionModel = new ReadOnlyCollectionModel(dataProvider, collectionData, configuration.CollectionPath);
-			Action<ImageModel> setWallpaperAction = image => SetWallpaper(collectionModel.GetImagePath(image));
-			wallpaperService = WallpaperServiceInstance.CreateInstance(collectionModel, configuration, setWallpaperAction, new Random());
+				settingsProvider.SaveActiveWallpaperConfiguration(ActiveConfiguration.Name);
+			}
+
 			NextWallpaperCommand.RaiseCanExecuteChanged();
 			CopyWallpaperHashCommand.RaiseCanExecuteChanged();
-
-			settingsProvider.SaveActiveWallpaperConfiguration(configuration.Name);
 		}
 
 		private void EditConfiguration()

@@ -64,7 +64,7 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 			foreach (object item in itemsControl.Items)
 			{
 				FrameworkElement itemElement = (FrameworkElement)itemsControl.ItemContainerGenerator.ContainerFromItem(item);
-				VisualTreeExtensions.GetDescendant<ToggleButton>(itemElement).IsChecked = true;
+				VisualTreeExtensions.GetDescendant<Expander>(itemElement).IsExpanded = true;
 			}
 		}
 
@@ -73,7 +73,7 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 			foreach (object item in itemsControl.Items)
 			{
 				FrameworkElement itemElement = (FrameworkElement)itemsControl.ItemContainerGenerator.ContainerFromItem(item);
-				VisualTreeExtensions.GetDescendant<ToggleButton>(itemElement).IsChecked = false;
+				VisualTreeExtensions.GetDescendant<Expander>(itemElement).IsExpanded = false;
 			}
 		}
 

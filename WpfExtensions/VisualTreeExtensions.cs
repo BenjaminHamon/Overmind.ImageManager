@@ -8,24 +8,35 @@ namespace Overmind.WpfExtensions
 		public static TVisual GetDescendant<TVisual>(Visual element)
 			where TVisual : Visual
 		{
-			if (element == null)
-				return null;
-
-			if (element is TVisual)
-				return (TVisual)element;
-			
 			if (element is FrameworkElement)
 				((FrameworkElement)element).ApplyTemplate();
 
 			for (int childIndex = 0; childIndex < VisualTreeHelper.GetChildrenCount(element); childIndex += 1)
 			{
 				Visual child = VisualTreeHelper.GetChild(element, childIndex) as Visual;
-				TVisual descendant = GetDescendant<TVisual>(child);
-				if (descendant != null)
-					return descendant;
+				if (child != null)
+				{
+					if (child is TVisual)
+						return (TVisual)child;
+
+					TVisual descendant = GetDescendant<TVisual>(child);
+					if (descendant != null)
+						return descendant;
+				}
 			}
 
 			return null;
+		}
+
+		public static TVisual GetAncestor<TVisual>(Visual element)
+			where TVisual : Visual
+		{
+			Visual parent = VisualTreeHelper.GetParent(element) as Visual;
+			if (parent == null)
+				return null;
+			if (parent is TVisual)
+				return (TVisual)parent;
+			return GetAncestor<TVisual>(parent);
 		}
 	}
 }

@@ -2,6 +2,8 @@ import argparse
 import logging
 import os
 
+import filelock
+
 import configuration
 import environment
 
@@ -36,11 +38,12 @@ if __name__ == "__main__":
 	workspace_directory = os.path.dirname(os.path.dirname(script_path))
 	os.chdir(workspace_directory)
 
-	environment_instance = environment.load_environment()
-	configuration_instance = configuration.load_configuration(environment_instance)
+	with filelock.FileLock("Scripts/main.lock", 5):
+		environment_instance = environment.load_environment()
+		configuration_instance = configuration.load_configuration(environment_instance)
 
-	arguments = parse_arguments(environment_instance, configuration_instance)
-	environment.configure_logging(logging.getLevelName(arguments.verbosity.upper()))
+		arguments = parse_arguments(environment_instance, configuration_instance)
+		environment.configure_logging(logging.getLevelName(arguments.verbosity.upper()))
 
-	show_project_information(configuration_instance, arguments.simulate)
-	arguments.func(environment_instance, configuration_instance, arguments)
+		show_project_information(configuration_instance, arguments.simulate)
+		arguments.func(environment_instance, configuration_instance, arguments)

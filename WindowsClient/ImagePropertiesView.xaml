@@ -30,7 +30,7 @@
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Title"/>
             <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=Title}"/>
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Subjects"/>
-            <extensions:TokenListView Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Path=SubjectCollection}" Margin="5" MinHeight="30">
+            <extensions:TokenListView Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Path=SubjectCollection}">
                 <extensions:TokenListView.TextBoxTemplate>
                     <DataTemplate>
                         <extensions:AutocompleteTextBox d:DataContext="{d:DesignInstance Type=extensions:ObservableString}" Text="{Binding Path=Value}">
@@ -42,7 +42,7 @@
                 </extensions:TokenListView.TextBoxTemplate>
             </extensions:TokenListView>
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Artists"/>
-            <extensions:TokenListView Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Path=ArtistCollection}" Margin="5" MinHeight="30">
+            <extensions:TokenListView Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Path=ArtistCollection}">
                 <extensions:TokenListView.TextBoxTemplate>
                     <DataTemplate>
                         <extensions:AutocompleteTextBox d:DataContext="{d:DesignInstance Type=extensions:ObservableString}" Text="{Binding Path=Value}">
@@ -54,7 +54,7 @@
                 </extensions:TokenListView.TextBoxTemplate>
             </extensions:TokenListView>
             <TextBlock Grid.Row="3" Grid.Column="0" Text="Tags"/>
-            <extensions:TokenListView Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Path=TagCollection}" Margin="5" MinHeight="30">
+            <extensions:TokenListView Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Path=TagCollection}">
                 <extensions:TokenListView.TextBoxTemplate>
                     <DataTemplate>
                         <extensions:AutocompleteTextBox d:DataContext="{d:DesignInstance Type=extensions:ObservableString}" Text="{Binding Path=Value}">

@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:downloads="clr-namespace:Overmind.ImageManager.WindowsClient.Downloads"
              mc:Ignorable="d" d:DesignHeight="400" d:DesignWidth="600"
              d:DataContext="{d:DesignInstance Type=downloads:Downloader}">
@@ -44,15 +45,6 @@
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 </Style>
-                <Style TargetType="Button">
-                    <Style.Resources>
-                        <Style TargetType="Image">
-                            <Setter Property="Height" Value="12"/>
-                            <Setter Property="Width" Value="12"/>
-                            <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality"/>
-                        </Style>
-                    </Style.Resources>
-                </Style>
             </ListView.Resources>
             <ListView.View>
                 <GridView>
@@ -66,7 +58,7 @@
                     <GridViewColumn Header="Progress" Width="75">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ProgressBar Value="{Binding Path=ProgressPercentage, Mode=OneWay}" Width="60" Height="15"
+                                <ProgressBar Value="{Binding Path=ProgressPercentage, Mode=OneWay}" Width="60" Height="16"
                                              Visibility="{Binding Path=IsDownloading, Converter={StaticResource VisibilityConverter}}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
@@ -74,35 +66,38 @@
                     <GridViewColumn Header="Status" Width="50">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Image ToolTip="{Binding Path=StatusMessage}" Height="18" Width="18" RenderOptions.BitmapScalingMode="HighQuality"
-                                       Visibility="{Binding Path=IsCompleted, Converter={StaticResource VisibilityConverter}}">
-                                    <Image.Style>
-                                        <Style TargetType="Image">
-                                            <Setter Property="Source" Value="/Resources/Icons/Error.png"/>
+                                <fa:ImageAwesome ToolTip="{Binding Path=StatusMessage}" Height="16" Width="16">
+                                    <fa:ImageAwesome.Style>
+                                        <Style TargetType="fa:ImageAwesome">
+                                            <Setter Property="Icon" Value="ExclamationCircle"/>
+                                            <Setter Property="Visibility" Value="Hidden"/>
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding Path=Success}" Value="True">
-                                                    <Setter Property="Source" Value="/Resources/Icons/Success.png"/>
+                                                    <Setter Property="Icon" Value="CheckCircle"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Path=IsCompleted}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
-                                    </Image.Style>
-                                </Image>
+                                    </fa:ImageAwesome.Style>
+                                </fa:ImageAwesome>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Width="50">
+                    <GridViewColumn Width="60">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <Button Command="{Binding Path=CancelCommand}" ToolTip="Cancel">
-                                        <Image Source="/Resources/Icons/Cancel.png"/>
+                                        <fa:ImageAwesome Icon="StopCircle" Height="16" Width="16" />
                                     </Button>
                                     <!-- Using ElementName instead of RelativeSource breaks the command parameter binding.
                                          The parameter is null during the first CanExecute invocation.
                                          See https://stackoverflow.com/questions/335849/wpf-commandparameter-is-null-first-time-canexecute-is-called -->
                                     <Button Command="{Binding RelativeSource={RelativeSource AncestorType=downloads:DownloaderView}, Path=DataContext.SelectImageCommand}"
                                             CommandParameter="{Binding}" ToolTip="Select">
-                                        <Image Source="/Resources/Icons/View.png"/>
+                                        <fa:ImageAwesome Icon="ExternalLinkSquare" Height="16" Width="16" />
                                     </Button>
                                 </StackPanel>
                             </DataTemplate>

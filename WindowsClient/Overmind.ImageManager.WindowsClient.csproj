@@ -34,6 +34,9 @@
     <ApplicationIcon>$(SolutionDir)/Resources/Logo.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FontAwesome.WPF, Version=4.7.0.37774, Culture=neutral, PublicKeyToken=0758b07a11a4f466, processorArchitecture=MSIL">
+      <HintPath>..\packages\FontAwesome.WPF.4.7.0.9\lib\net40\FontAwesome.WPF.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.WindowsAPICodePack-Core.1.1.0.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
     </Reference>
@@ -179,27 +182,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Icons\Grid.png" />
-    <Resource Include="Resources\Icons\List.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Credits.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Resources\Icons\Cancel.png" />
-    <Resource Include="Resources\Icons\Collapse.png" />
-    <Resource Include="Resources\Icons\Error.png" />
-    <Resource Include="Resources\Icons\Expand.png" />
-    <Resource Include="Resources\Icons\Information.png" />
-    <Resource Include="Resources\Icons\Next.png" />
-    <Resource Include="Resources\Icons\Pause.png" />
-    <Resource Include="Resources\Icons\Previous.png" />
-    <Resource Include="Resources\Icons\Remove.png" />
-    <Resource Include="Resources\Icons\Resume.png" />
-    <Resource Include="Resources\Icons\Search.png" />
-    <Resource Include="Resources\Icons\Success.png" />
-    <Resource Include="Resources\Icons\View.png" />
-    <Resource Include="Resources\Icons\Wallpaper.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)/Overmind.ImageManager.targets" />

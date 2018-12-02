@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
              Focusable="True"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:SlideShowViewModel}"
@@ -34,26 +35,26 @@
                 <TextBlock Text=" seconds" VerticalAlignment="Center"/>
             </StackPanel>
             <Button Command="{Binding Path=PreviousCommand}" Margin="5">
-                <Image Source="/Resources/Icons/Previous.png" Height="24" Width="24"/>
+                <fa:ImageAwesome Icon="ChevronLeft" Margin="4" Height="16" Width="16"/>
             </Button>
             <ToggleButton IsChecked="{Binding Path=IsRunning}" Margin="5">
-                <Image Height="24" Width="24">
-                    <Image.Style>
-                        <Style TargetType="Image">
+                <fa:ImageAwesome Margin="4" Height="16" Width="16">
+                    <fa:ImageAwesome.Style>
+                        <Style TargetType="fa:ImageAwesome">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Path=IsRunning}" Value="True">
-                                    <Setter Property="Source" Value="/Resources/Icons/Pause.png"/>
+                                    <Setter Property="Icon" Value="Pause"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Path=IsRunning}" Value="False">
-                                    <Setter Property="Source" Value="/Resources/Icons/Resume.png"/>
+                                    <Setter Property="Icon" Value="Play"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </Image.Style>
-                </Image>
+                    </fa:ImageAwesome.Style>
+                </fa:ImageAwesome>
             </ToggleButton>
             <Button Command="{Binding Path=NextCommand}" Margin="5">
-                <Image Source="/Resources/Icons/Next.png" Height="24" Width="24"/>
+                <fa:ImageAwesome Icon="ChevronRight" Margin="4" Height="16" Width="16"/>
             </Button>
         </StackPanel>
     </Grid>

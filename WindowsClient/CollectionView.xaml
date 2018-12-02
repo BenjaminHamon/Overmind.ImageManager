@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:CollectionViewModel}"
              d:DesignHeight="300" d:DesignWidth="500">
@@ -33,14 +34,14 @@
                 <ComboBox x:Name="layoutComboBox" x:FieldModifier="private" SelectedValuePath="Tag" Margin="5">
                     <ComboBoxItem Tag="Grid" IsSelected="True">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="/Resources/Icons/Grid.png" Height="24" Width="24"/>
-                            <TextBlock Text="Grid" Margin="5" VerticalAlignment="Center"/>
+                            <fa:ImageAwesome Icon="Th" Margin="4" Height="16" Width="16"/>
+                            <TextBlock Text="Grid" Margin="4" VerticalAlignment="Center"/>
                         </StackPanel>
                     </ComboBoxItem>
                     <ComboBoxItem Tag="List">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="/Resources/Icons/List.png" Height="24" Width="24"/>
-                            <TextBlock Text="List" Margin="5" VerticalAlignment="Center"/>
+                            <fa:ImageAwesome Icon="ThList" Margin="4" Height="16" Width="16"/>
+                            <TextBlock Text="List" Margin="4" VerticalAlignment="Center"/>
                         </StackPanel>
                     </ComboBoxItem>
                 </ComboBox>
@@ -66,7 +67,7 @@
                 </TextBox>
             </Border>
             <Button Grid.Column="2" Command="{Binding Path=ExecuteQueryCommand}" Margin="5">
-                <Image Source="/Resources/Icons/Search.png" Height="24" Width="24"/>
+                <fa:ImageAwesome Icon="Search" Margin="4" Height="16" Width="16"/>
             </Button>
         </Grid>
 

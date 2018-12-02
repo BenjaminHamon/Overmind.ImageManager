@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
              xmlns:wallpapers="clr-namespace:Overmind.ImageManager.WindowsClient.Wallpapers"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:SettingsViewModel}"
@@ -16,7 +17,7 @@
                 <Style TargetType="StackPanel">
                     <Setter Property="VerticalAlignment" Value="Center"/>
                 </Style>
-                <Style TargetType="Image">
+                <Style TargetType="fa:ImageAwesome">
                     <Setter Property="Height" Value="32"/>
                     <Setter Property="Width" Value="32"/>
                 </Style>
@@ -33,7 +34,7 @@
             <TabItem.Header>
                 <Grid Style="{StaticResource TabHeaderStyle}">
                     <StackPanel>
-                        <Image Source="/Resources/Icons/Wallpaper.png"/>
+                        <fa:ImageAwesome Icon="Image"/>
                         <TextBlock Text="Wallpapers"/>
                     </StackPanel>
                 </Grid>

@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" d:DesignHeight="100" d:DesignWidth="300"
              x:Name="tokenListView"  x:FieldModifier="private"
              BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
@@ -18,7 +19,7 @@
                 <DockPanel Margin="2" MaxWidth="{Binding ElementName=tokenListView, Path=ActualWidth}">
                     <Grid DockPanel.Dock="Right" KeyboardNavigation.TabNavigation="None">
                         <Button Click="RemoveItem">
-                            <Image Source="/Resources/Icons/Remove.png" Height="18" Width="18"/>
+                            <fa:ImageAwesome Icon="Times" Margin="2" Height="12" Width="12"/>
                         </Button>
                     </Grid>
                     <ContentPresenter ContentTemplate="{Binding ElementName=tokenListView, Path=TextBoxTemplate}" LostFocus="HandleItemLostFocus"/>

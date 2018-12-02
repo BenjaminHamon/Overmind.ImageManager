@@ -34,13 +34,11 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- IsFocusScope is set to ensure any active control lose focus and gets its binding updated
-             See https://stackoverflow.com/questions/57493/wpf-databind-before-saving -->
-        <Menu Grid.Row="0" FocusManager.IsFocusScope="False">
+        <Menu Grid.Row="0">
             <MenuItem Header="File">
                 <MenuItem Header="New collection" Style="{StaticResource InnerMenuItemStyle}" Click="CreateCollection"/>
                 <MenuItem Header="Open collection" Style="{StaticResource InnerMenuItemStyle}" Click="LoadCollection"/>
-                <MenuItem Header="Save collection" Style="{StaticResource InnerMenuItemStyle}" Command="{Binding Path=SaveCollectionCommand}"/>
+                <MenuItem Header="Save collection" Style="{StaticResource ActiveCollectionMenuItemStyle}" Click="SaveCollection"/>
                 <MenuItem Header="Close collection" Style="{StaticResource ActiveCollectionMenuItemStyle}" Click="CloseCollection"/>
                 <Separator Margin="0,-3"/>
                 <MenuItem Header="Export query" Style="{StaticResource InnerMenuItemStyle}" Click="ExportQuery" IsEnabled="{Binding Path=CanExportQuery}"/>

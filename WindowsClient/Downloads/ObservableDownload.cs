@@ -63,7 +63,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 				{
 					IsDownloading = false;
 					IsCompleted = true;
-					StatusMessage = ExceptionToMessage(exception);
+					StatusMessage = FormatExtensions.FormatExceptionSummary(exception);
 
 				}
 
@@ -125,7 +125,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 				}
 				catch (Exception exception)
 				{
-					StatusMessage = ExceptionToMessage(exception);
+					StatusMessage = FormatExtensions.FormatExceptionSummary(exception);
 				}
 
 				IsCompleted = true;
@@ -147,21 +147,6 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 				if (IsDownloading)
 					webClient.CancelAsync();
 			}
-		}
-
-		private static string ExceptionToMessage(Exception exception)
-		{
-			string message = null;
-
-			while (exception != null)
-			{
-				if (message != null)
-					message += Environment.NewLine;
-				message += exception.Message;
-				exception = exception.InnerException;
-			}
-
-			return message;
 		}
 	}
 }

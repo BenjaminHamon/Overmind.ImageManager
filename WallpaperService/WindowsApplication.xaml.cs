@@ -19,6 +19,7 @@ namespace Overmind.ImageManager.WallpaperService
 			string applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
 			Model.Application.InitializeLogging(ApplicationFullName, ApplicationName, applicationDataDirectory);
 
+			Logger.Info("------------------------------");
 			Logger.Info("Initializing {0} (Version: {1})", ApplicationName, ApplicationFullVersion);
 
 			WindowsApplication windowsApplication = new WindowsApplication();

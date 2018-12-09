@@ -8,6 +8,12 @@
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=wallpapers:WallpaperSettingsViewModel}"
              d:DesignHeight="450" d:DesignWidth="800">
 
+    <UserControl.Resources>
+        <DataTemplate x:Key="ExceptionTemplate">
+            <TextBlock Text="{Binding StringFormat=- {0}, Converter={StaticResource ExceptionConverter}}"/>
+        </DataTemplate>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -62,19 +68,15 @@
                                             <fa:ImageAwesome.ToolTip>
                                                 <StackPanel Margin="5">
                                                     <TextBlock Text="The configuration has warnings:"/>
-                                                    <ItemsControl ItemsSource="{Binding Path=WarningCollection}">
-                                                        <ItemsControl.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <ItemsControl ItemsSource="{Binding Path=Value}">
-                                                                    <ItemsControl.ItemTemplate>
-                                                                        <DataTemplate>
-                                                                            <TextBlock Text="{Binding StringFormat=- {0}, Converter={StaticResource ExceptionConverter}}"/>
-                                                                        </DataTemplate>
-                                                                    </ItemsControl.ItemTemplate>
-                                                                </ItemsControl>
-                                                            </DataTemplate>
-                                                        </ItemsControl.ItemTemplate>
-                                                    </ItemsControl>
+                                                    <!-- Using explicit keys instead of an ItemsControl of ItemsControl to match order with the rest of the view -->
+                                                    <ItemsControl ItemsSource="{Binding Path=WarningCollection[Name]}"
+                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                    <ItemsControl ItemsSource="{Binding Path=WarningCollection[CollectionPath]}"
+                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                    <ItemsControl ItemsSource="{Binding Path=WarningCollection[ImageQuery]}"
+                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                    <ItemsControl ItemsSource="{Binding Path=WarningCollection[CyclePeriod]}"
+                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
                                                 </StackPanel>
                                             </fa:ImageAwesome.ToolTip>
                                         </fa:ImageAwesome>
@@ -84,19 +86,15 @@
                                             <fa:ImageAwesome.ToolTip>
                                                 <StackPanel Margin="5">
                                                     <TextBlock Text="The configuration has errors:"/>
-                                                    <ItemsControl ItemsSource="{Binding Path=ErrorCollection}">
-                                                        <ItemsControl.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <ItemsControl ItemsSource="{Binding Path=Value}">
-                                                                    <ItemsControl.ItemTemplate>
-                                                                        <DataTemplate>
-                                                                            <TextBlock Text="{Binding StringFormat=- {0}, Converter={StaticResource ExceptionConverter}}"/>
-                                                                        </DataTemplate>
-                                                                    </ItemsControl.ItemTemplate>
-                                                                </ItemsControl>
-                                                            </DataTemplate>
-                                                        </ItemsControl.ItemTemplate>
-                                                    </ItemsControl>
+                                                    <!-- Using explicit keys instead of an ItemsControl of ItemsControl to match order with the rest of the view -->
+                                                    <ItemsControl ItemsSource="{Binding Path=ErrorCollection[Name]}"
+                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                    <ItemsControl ItemsSource="{Binding Path=ErrorCollection[CollectionPath]}"
+                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                    <ItemsControl ItemsSource="{Binding Path=ErrorCollection[ImageQuery]}"
+                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                    <ItemsControl ItemsSource="{Binding Path=ErrorCollection[CyclePeriod]}"
+                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
                                                 </StackPanel>
                                             </fa:ImageAwesome.ToolTip>
                                         </fa:ImageAwesome>

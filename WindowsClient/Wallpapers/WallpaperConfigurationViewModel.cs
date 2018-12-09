@@ -16,6 +16,9 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 
 			nameField = model.Name;
 			cyclePeriodField = model.CyclePeriod.ToString();
+
+			ErrorCollection = new Dictionary<string, List<Exception>>();
+			WarningCollection = model.Validate();
 		}
 
 		public WallpaperConfiguration Model { get; }
@@ -23,15 +26,27 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 		public event PropertyChangedEventHandler PropertyChanged;
 		public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
 
-		private readonly Dictionary<string, List<Exception>> errorCollection = new Dictionary<string, List<Exception>>();
+		public Dictionary<string, List<Exception>> ErrorCollection { get; private set; }
+		public Dictionary<string, List<Exception>> WarningCollection { get; private set; }
 
-		public bool HasErrors { get { return errorCollection.SelectMany(kvp => kvp.Value).Any(); } }
+		public bool HasErrors { get { return ErrorCollection.SelectMany(kvp => kvp.Value).Any(); } }
+		public bool HasWarnings { get { return WarningCollection.SelectMany(kvp => kvp.Value).Any(); } }
 
 		public IEnumerable GetErrors(string propertyName)
 		{
-			if ((propertyName != null) && errorCollection.ContainsKey(propertyName))
-				return errorCollection[propertyName];
+			if ((propertyName != null) && ErrorCollection.ContainsKey(propertyName))
+				return ErrorCollection[propertyName];
 			return null;
+		}
+
+		private void UpdateValidation()
+		{
+			WarningCollection = Model.Validate();
+
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasWarnings)));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(WarningCollection)));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasErrors)));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ErrorCollection)));
 		}
 
 		public string Title { get { return Model.Name; } }
@@ -46,17 +61,19 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 					return;
 
 				nameField = value.Trim();
-				errorCollection[nameof(Name)] = new List<Exception>();
+				ErrorCollection[nameof(Name)] = new List<Exception>();
 
 				if (String.IsNullOrWhiteSpace(nameField))
-					errorCollection[nameof(Name)].Add(new ArgumentException("The configuration name cannot be empty.", nameof(Name)));
+					ErrorCollection[nameof(Name)].Add(new ArgumentException("The configuration name cannot be empty.", nameof(Name)));
 
-				if (errorCollection[nameof(Name)].Any() == false)
+				if (ErrorCollection[nameof(Name)].Any() == false)
 					Model.Name = nameField;
 
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Title)));
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
 				ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(Name)));
+
+				UpdateValidation();
 			}
 		}
 
@@ -69,6 +86,8 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 					return;
 				Model.CollectionPath = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CollectionPath)));
+
+				UpdateValidation();
 			}
 		}
 
@@ -81,6 +100,8 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 					return;
 				Model.ImageQuery = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageQuery)));
+
+				UpdateValidation();
 			}
 		}
 
@@ -94,22 +115,24 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 					return;
 
 				cyclePeriodField = value;
-				errorCollection[nameof(CyclePeriod)] = new List<Exception>();
+				ErrorCollection[nameof(CyclePeriod)] = new List<Exception>();
 
 				// Fix validation not updating if the error changes
 				ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(CyclePeriod)));
 
 				TimeSpan parsedValue;
 				if (TimeSpan.TryParseExact(cyclePeriodField, @"hh\:mm\:ss", CultureInfo.InvariantCulture, out parsedValue) == false)
-					errorCollection[nameof(CyclePeriod)].Add(new ArgumentException("The cycle period must use the format 'hh:mm:ss'", nameof(CyclePeriod)));
+					ErrorCollection[nameof(CyclePeriod)].Add(new ArgumentException("The cycle period must use the format 'hh:mm:ss'.", nameof(CyclePeriod)));
 				else if (parsedValue < TimeSpan.FromSeconds(1))
-					errorCollection[nameof(CyclePeriod)].Add(new ArgumentException("The cycle period cannot be smaller than one second", nameof(CyclePeriod)));
+					ErrorCollection[nameof(CyclePeriod)].Add(new ArgumentException("The cycle period cannot be smaller than one second.", nameof(CyclePeriod)));
 
-				if (errorCollection[nameof(CyclePeriod)].Any() == false)
+				if (ErrorCollection[nameof(CyclePeriod)].Any() == false)
 					Model.CyclePeriod = parsedValue;
 
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CyclePeriod)));
 				ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(CyclePeriod)));
+
+				UpdateValidation();
 			}
 		}
 	}

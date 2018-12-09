@@ -71,5 +71,18 @@ namespace Overmind.ImageManager.Model
 
 			return AllImages.Where(image => resultHashes.Contains(image.Hash)).ToList();
 		}
+
+		public static void AssertQuery(string queryString)
+		{
+			if (String.IsNullOrEmpty(queryString))
+				return;
+
+			using (Analyzer searchAnalyser = new StandardAnalyzer(searchVersion))
+			{
+				ImageQueryParser queryParser = new ImageQueryParser(searchVersion, "any", searchAnalyser);
+				queryParser.AllowLeadingWildcard = true;
+				queryParser.Parse(queryString);
+			}
+		}
 	}
 }

@@ -133,7 +133,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 				settingsWindow = new Window()
 				{
-					Title = "Settings - " + WindowsApplication.Name,
+					Title = "Settings - " + WindowsApplication.ApplicationTitle,
 					Content = settingsView,
 					Height = 800,
 					Width = 800,
@@ -160,7 +160,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 				downloaderWindow = new Window()
 				{
-					Title = "Downloads - " + WindowsApplication.Name,
+					Title = "Downloads - " + WindowsApplication.ApplicationTitle,
 					Content = downloaderView,
 					Height = 400,
 					Width = 600,

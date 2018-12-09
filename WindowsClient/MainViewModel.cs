@@ -37,8 +37,8 @@ namespace Overmind.ImageManager.WindowsClient
 			get
 			{
 				if (ActiveCollection == null)
-					return WindowsApplication.Name;
-				return ActiveCollection.Name + " - " + WindowsApplication.Name;
+					return WindowsApplication.ApplicationTitle;
+				return ActiveCollection.Name + " - " + WindowsApplication.ApplicationTitle;
 			}
 		}
 

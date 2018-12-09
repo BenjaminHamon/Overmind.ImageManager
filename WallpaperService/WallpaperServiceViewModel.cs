@@ -37,7 +37,7 @@ namespace Overmind.ImageManager.WallpaperService
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public string ApplicationTitle { get { return "Overmind Wallpaper Service"; } }
+		public string ApplicationTitle { get { return WindowsApplication.ApplicationTitle; } }
 		public IEnumerable<WallpaperConfiguration> ConfigurationCollection { get { return wallpaperSettings.ConfigurationCollection; } }
 
 		private WallpaperConfiguration activeConfigurationField;

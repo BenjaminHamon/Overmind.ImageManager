@@ -1,9 +1,12 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
 using Newtonsoft.Json;
+using NLog;
 using Overmind.ImageManager.Model;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Windows;
 
 namespace Overmind.ImageManager.WallpaperService
@@ -13,10 +16,21 @@ namespace Overmind.ImageManager.WallpaperService
 		[STAThread]
 		public static void Main(string[] arguments)
 		{
+			string applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
+			Model.Application.InitializeLogging(ApplicationFullName, ApplicationName, applicationDataDirectory);
+
 			WindowsApplication windowsApplication = new WindowsApplication();
 			windowsApplication.InitializeComponent();
 			windowsApplication.Run();
 		}
+
+		public static string ApplicationTitle { get { return "Overmind Wallpaper Service"; } }
+		public static string ApplicationName { get { return "WallpaperService"; } }
+		public static string ApplicationFullName { get { return Assembly.GetExecutingAssembly().GetName().Name; } }
+		public static Version ApplicationVersion { get { return Assembly.GetExecutingAssembly().GetName().Version; } }
+		public static string ApplicationFullVersion { get { return FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion; } }
+
+		private static readonly Logger Logger = LogManager.GetLogger(nameof(WindowsApplication));
 
 		public WindowsApplication()
 		{

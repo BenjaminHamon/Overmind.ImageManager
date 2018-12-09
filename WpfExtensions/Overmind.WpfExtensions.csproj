@@ -39,10 +39,10 @@
     <Compile Include="..\.build\Shared\Metadata\ProductInformation.cs">
       <Link>Properties\ProductInformation.cs</Link>
     </Compile>
-    <Compile Include="Converters\ExceptionToStringConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\ExceptionToStringConverter.cs" />
     <Compile Include="Converters\ValidationErrorsToStringConverter.cs" />
     <Compile Include="DelegateCommand.cs" />
     <Compile Include="FormatExtensions.cs" />

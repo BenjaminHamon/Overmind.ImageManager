@@ -60,6 +60,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Model\Overmind.ImageManager.Model.csproj">
+      <Project>{6b9087f2-e5a0-4869-9cba-0fe28df17277}</Project>
+      <Name>Overmind.ImageManager.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfExtensions\Overmind.WpfExtensions.csproj">
+      <Project>{0a54b239-9de8-4cce-a244-da844f3080c9}</Project>
+      <Name>Overmind.WpfExtensions</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="..\.build\Shared\Metadata\ProductInformation.cs">
       <Link>Properties\ProductInformation.cs</Link>
     </Compile>
@@ -170,16 +180,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Model\Overmind.ImageManager.Model.csproj">
-      <Project>{6b9087f2-e5a0-4869-9cba-0fe28df17277}</Project>
-      <Name>Overmind.ImageManager.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WpfExtensions\Overmind.WpfExtensions.csproj">
-      <Project>{0a54b239-9de8-4cce-a244-da844f3080c9}</Project>
-      <Name>Overmind.WpfExtensions</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Credits.txt">

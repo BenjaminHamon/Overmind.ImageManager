@@ -3,6 +3,8 @@ using Overmind.ImageManager.Model.Wallpapers;
 using Overmind.WpfExtensions;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
 
 namespace Overmind.ImageManager.WindowsClient.Wallpapers
 {
@@ -14,10 +16,15 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 
 			settings = settingsProvider.LoadWallpaperSettings();
 			ConfigurationCollection = new ObservableCollection<WallpaperConfigurationViewModel>();
-			foreach (WallpaperConfiguration configuration in settings.Configurations)
-				ConfigurationCollection.Add(new WallpaperConfigurationViewModel(configuration));
 
-			SaveSettingsCommand = new DelegateCommand<object>(_ => SaveSettings());
+			foreach (WallpaperConfiguration configuration in settings.Configurations)
+			{
+				WallpaperConfigurationViewModel configurationViewModel = new WallpaperConfigurationViewModel(configuration);
+				configurationViewModel.PropertyChanged += HandleValidationUpdated;
+				ConfigurationCollection.Add(configurationViewModel);
+			}
+
+			SaveSettingsCommand = new DelegateCommand<object>(_ => SaveSettings(), _ => CanSaveSettings());
 			AddConfigurationCommand = new DelegateCommand<object>(_ => AddConfiguration());
 			RemoveConfigurationCommand = new DelegateCommand<WallpaperConfigurationViewModel>(RemoveConfiguration);
 		}
@@ -31,6 +38,17 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 		public DelegateCommand<object> AddConfigurationCommand { get; }
 		public DelegateCommand<WallpaperConfigurationViewModel> RemoveConfigurationCommand { get; }
 
+		private void HandleValidationUpdated(object sender, PropertyChangedEventArgs eventArguments)
+		{
+			if (eventArguments.PropertyName == nameof(WallpaperConfigurationViewModel.HasErrors))
+				SaveSettingsCommand.RaiseCanExecuteChanged();
+		}
+
+		private bool CanSaveSettings()
+		{
+			return ConfigurationCollection.All(configuration => configuration.HasErrors == false);
+		}
+
 		private void SaveSettings()
 		{
 			settingsProvider.SaveWallpaperSettings(settings);
@@ -38,17 +56,21 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 
 		private void AddConfiguration()
 		{
-			WallpaperConfigurationViewModel configuration = new WallpaperConfigurationViewModel(
-				new WallpaperConfiguration() { Name = "New Configuration", CyclePeriod = TimeSpan.FromMinutes(5) });
+			WallpaperConfiguration configuration = new WallpaperConfiguration() { Name = "New Configuration", CyclePeriod = TimeSpan.FromMinutes(5) };
+			WallpaperConfigurationViewModel configurationViewModel = new WallpaperConfigurationViewModel(configuration);
 
-			settings.Configurations.Add(configuration.Model);
-			ConfigurationCollection.Add(configuration);
+			configurationViewModel.PropertyChanged += HandleValidationUpdated;
+			settings.Configurations.Add(configuration);
+			ConfigurationCollection.Add(configurationViewModel);
+			SaveSettingsCommand.RaiseCanExecuteChanged();
 		}
 
 		private void RemoveConfiguration(WallpaperConfigurationViewModel configuration)
 		{
+			configuration.PropertyChanged -= HandleValidationUpdated;
 			settings.Configurations.Remove(configuration.Model);
 			ConfigurationCollection.Remove(configuration);
+			SaveSettingsCommand.RaiseCanExecuteChanged();
 		}
 	}
 }

@@ -18,6 +18,8 @@ namespace Overmind.ImageManager.WindowsClient
 			string applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
 			Model.Application.InitializeLogging(ApplicationFullName, ApplicationName, applicationDataDirectory);
 
+			Logger.Info("Initializing {0} (Version: {1})", ApplicationName, ApplicationFullVersion);
+
 			WindowsApplication windowsApplication = new WindowsApplication();
 			windowsApplication.InitializeComponent();
 			windowsApplication.Run();
@@ -45,12 +47,16 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private void Application_Startup(object sender, StartupEventArgs eventArguments)
 		{
+			Logger.Info("Starting {0}", ApplicationName);
+
 			MainWindow = new MainWindow() { DataContext = mainViewModel };
 			MainWindow.Show();
 		}
 
 		private void Application_Exit(object sender, ExitEventArgs eventArguments)
 		{
+			Logger.Info("Exiting {0}", ApplicationName);
+
 			if (mainViewModel != null)
 				mainViewModel.Dispose();
 		}
@@ -77,7 +83,7 @@ namespace Overmind.ImageManager.WindowsClient
 			}
 			catch (Exception exception)
 			{
-				Trace.TraceError("[Application] Failed to open image in external process: {0}", exception);
+				Logger.Error(exception, "Failed to open image in external process (Path: '{0}')", image.FilePath);
 			}
 		}
 	}

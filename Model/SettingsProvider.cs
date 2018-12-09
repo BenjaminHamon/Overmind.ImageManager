@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NLog;
 using Overmind.ImageManager.Model.Wallpapers;
 using System.IO;
 
@@ -6,6 +7,8 @@ namespace Overmind.ImageManager.Model
 {
 	public class SettingsProvider
 	{
+		private static readonly Logger Logger = LogManager.GetLogger(nameof(SettingsProvider));
+
 		private const string WallpaperSettingsFile = "WallpaperService.json";
 		private const string ActiveWallpaperConfigurationFile = "WallpaperService.active.txt";
 
@@ -20,6 +23,8 @@ namespace Overmind.ImageManager.Model
 
 		public WallpaperSettings LoadWallpaperSettings()
 		{
+			Logger.Info("Loading wallpaper settings");
+
 			string path = Path.Combine(settingsDirectory, WallpaperSettingsFile);
 
 			if (File.Exists(path) == false)
@@ -32,6 +37,8 @@ namespace Overmind.ImageManager.Model
 
 		public void SaveWallpaperSettings(WallpaperSettings settings)
 		{
+			Logger.Info("Saving wallpaper settings");
+
 			string path = Path.Combine(settingsDirectory, WallpaperSettingsFile);
 
 			using (StreamWriter streamWriter = new StreamWriter(path))

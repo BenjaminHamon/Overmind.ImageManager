@@ -1,10 +1,10 @@
-﻿using Overmind.ImageManager.Model;
+﻿using NLog;
+using Overmind.ImageManager.Model;
 using Overmind.ImageManager.Model.Wallpapers;
 using Overmind.WpfExtensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -14,6 +14,8 @@ namespace Overmind.ImageManager.WallpaperService
 {
 	public class WallpaperServiceViewModel : INotifyPropertyChanged, IDisposable
 	{
+		private static readonly Logger Logger = LogManager.GetLogger(nameof(WallpaperServiceViewModel));
+
 		public WallpaperServiceViewModel(SettingsProvider settingsProvider, DataProvider dataProvider, string wallpaperStorage)
 		{
 			this.settingsProvider = settingsProvider;
@@ -84,7 +86,7 @@ namespace Overmind.ImageManager.WallpaperService
 				}
 				catch (Exception exception)
 				{
-					Trace.TraceError("[WallpaperService] Failed to create wallpaper service instance: {0}", exception);
+					Logger.Error(exception, "Failed to create wallpaper service instance");
 				}
 
 				settingsProvider.SaveActiveWallpaperConfiguration(ActiveConfiguration.Name);

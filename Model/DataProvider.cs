@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -9,6 +10,8 @@ namespace Overmind.ImageManager.Model
 {
 	public class DataProvider
 	{
+		private static readonly Logger Logger = LogManager.GetLogger(nameof(DataProvider));
+
 		public const string ImageCollectionFileName = "images.json";
 		private const string TemporaryDirectory = ".temporary";
 
@@ -23,6 +26,8 @@ namespace Overmind.ImageManager.Model
 
 		public CollectionData CreateCollection(string collectionPath)
 		{
+			Logger.Info("Creating collection (Path: '{0}')", collectionPath);
+
 			if (Directory.Exists(collectionPath) && Directory.EnumerateFileSystemEntries(collectionPath).Any())
 				throw new ArgumentException("Directory is not empty", nameof(collectionPath));
 
@@ -33,6 +38,8 @@ namespace Overmind.ImageManager.Model
 
 		public CollectionData LoadCollection(string collectionPath)
 		{
+			Logger.Info("Loading collection (Path: '{0}')", collectionPath);
+
 			string jsonPath = Path.Combine(collectionPath, ImageCollectionFileName);
 
 			CollectionData collectionData = new CollectionData();
@@ -50,6 +57,8 @@ namespace Overmind.ImageManager.Model
 
 		public void SaveCollection(string collectionPath, CollectionData collectionData, IEnumerable<ImageModel> removedImages)
 		{
+			Logger.Info("Saving collection (Path: '{0}')", collectionPath);
+
 			Directory.CreateDirectory(collectionPath);
 			string jsonPath = Path.Combine(collectionPath, ImageCollectionFileName);
 
@@ -82,7 +91,7 @@ namespace Overmind.ImageManager.Model
 				}
 				else
 				{
-					System.Diagnostics.Trace.TraceWarning("[DataProvider] File not found: {0}", oldPath);
+					Logger.Warn("Image file not found (Path: '{0}')", oldPath);
 				}
 			}
 
@@ -116,6 +125,8 @@ namespace Overmind.ImageManager.Model
 
 		public void ExportCollection(string sourceCollectionPath, string destinationCollectionPath, CollectionData collectionData)
 		{
+			Logger.Info("Exporting collection ('{0}' => '{1}')", sourceCollectionPath, destinationCollectionPath);
+
 			if (Directory.Exists(destinationCollectionPath) && Directory.EnumerateFileSystemEntries(destinationCollectionPath).Any())
 				throw new ArgumentException("Directory is not empty", nameof(destinationCollectionPath));
 

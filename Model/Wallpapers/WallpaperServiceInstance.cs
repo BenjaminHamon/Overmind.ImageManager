@@ -1,6 +1,6 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
@@ -11,6 +11,8 @@ namespace Overmind.ImageManager.Model.Wallpapers
 	/// </summary>
 	public class WallpaperServiceInstance : IDisposable
 	{
+		private static readonly Logger Logger = LogManager.GetLogger(nameof(WallpaperServiceInstance));
+
 		public static WallpaperServiceInstance CreateInstance(DataProvider dataProvider,
 			WallpaperConfiguration configuration, Action<string> setSystemWallpaperFromPath, Random random)
 		{
@@ -86,7 +88,7 @@ namespace Overmind.ImageManager.Model.Wallpapers
 
 					if (newWallpaper != null)
 					{
-						Trace.TraceInformation("Setting wallpaper to {0}", newWallpaper.FileName);
+						Logger.Info("Setting wallpaper to {0}", newWallpaper.FileName);
 
 						setSystemWallpaper(newWallpaper);
 						CurrentWallpaper = newWallpaper;
@@ -94,7 +96,7 @@ namespace Overmind.ImageManager.Model.Wallpapers
 				}
 				catch (Exception exception)
 				{
-					Trace.TraceError("[WallpaperService] Failed to cycle wallpaper: {0}",  exception);
+					Logger.Error(exception, "[WallpaperService] Failed to cycle wallpaper");
 				}
 			}
 		}

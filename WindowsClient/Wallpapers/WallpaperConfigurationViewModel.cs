@@ -117,14 +117,9 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 				cyclePeriodField = value;
 				ErrorCollection[nameof(CyclePeriod)] = new List<Exception>();
 
-				// Fix validation not updating if the error changes
-				ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(CyclePeriod)));
-
 				TimeSpan parsedValue;
 				if (TimeSpan.TryParseExact(cyclePeriodField, @"hh\:mm\:ss", CultureInfo.InvariantCulture, out parsedValue) == false)
 					ErrorCollection[nameof(CyclePeriod)].Add(new ArgumentException("The cycle period must use the format 'hh:mm:ss'.", nameof(CyclePeriod)));
-				else if (parsedValue < TimeSpan.FromSeconds(1))
-					ErrorCollection[nameof(CyclePeriod)].Add(new ArgumentException("The cycle period cannot be smaller than one second.", nameof(CyclePeriod)));
 
 				if (ErrorCollection[nameof(CyclePeriod)].Any() == false)
 					Model.CyclePeriod = parsedValue;

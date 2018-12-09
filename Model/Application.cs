@@ -17,7 +17,7 @@ namespace Overmind.ImageManager.Model
 			InternalLogger.LogLevel = LogLevel.Warn;
 
 			LoggingConfiguration loggingConfiguration = new LoggingConfiguration();
-			string loggingLayout = "${longdate} [${level}][${logger}] ${message}${onexception:${newline}${exception:format=ToString}";
+			string loggingLayout = "${date:format=s} [${level}][${logger}] ${message}${onexception:${newline}${exception:format=ToString}";
 
 			DebuggerTarget debuggerTarget = new DebuggerTarget() { Layout = loggingLayout };
 			loggingConfiguration.AddRule(LogLevel.Debug, LogLevel.Fatal, debuggerTarget);

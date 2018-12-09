@@ -49,6 +49,9 @@ namespace Overmind.ImageManager.WallpaperService
 		{
 			Logger.Info("Starting {0}", ApplicationName);
 
+			serviceViewModel.ReloadSettings();
+			serviceViewModel.ApplyConfiguration();
+
 			MainWindow = new WallpaperServiceView() { DataContext = serviceViewModel };
 			MainWindow.Closing += HideMainWindow;
 

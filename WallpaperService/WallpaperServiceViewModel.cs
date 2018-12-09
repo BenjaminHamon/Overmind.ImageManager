@@ -26,9 +26,6 @@ namespace Overmind.ImageManager.WallpaperService
 			ReloadSettingsCommand = new DelegateCommand<object>(_ => ReloadSettings());
 			NextWallpaperCommand = new DelegateCommand<object>(_ => wallpaperService.CycleNow(), _ => wallpaperService != null);
 			CopyWallpaperHashCommand = new DelegateCommand<object>(_ => Clipboard.SetText(wallpaperService.CurrentWallpaper.Hash), _ => wallpaperService != null);
-
-			ReloadSettings();
-			ApplyConfiguration();
 		}
 
 		private readonly SettingsProvider settingsProvider;
@@ -70,7 +67,7 @@ namespace Overmind.ImageManager.WallpaperService
 			}
 		}
 
-		private void ApplyConfiguration()
+		public void ApplyConfiguration()
 		{
 			if (wallpaperService != null)
 			{
@@ -96,7 +93,7 @@ namespace Overmind.ImageManager.WallpaperService
 			CopyWallpaperHashCommand.RaiseCanExecuteChanged();
 		}
 
-		private void ReloadSettings()
+		public void ReloadSettings()
 		{
 			wallpaperSettings = settingsProvider.LoadWallpaperSettings();
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConfigurationCollection)));

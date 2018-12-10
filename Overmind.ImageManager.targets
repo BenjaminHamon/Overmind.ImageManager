@@ -1,8 +1,0 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <PythonExecutable>python</PythonExecutable>
-  </PropertyGroup>
-  <Target Name="GenerateMetadataFiles" BeforeTargets="PrepareForBuild">
-    <Exec Command="$(PythonExecutable) $(SolutionDir)/Scripts/main.py --verbosity warning metadata"/>
-  </Target>
-</Project>

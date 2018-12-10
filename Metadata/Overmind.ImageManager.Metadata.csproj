@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')"/>
+  <PropertyGroup>
+    <ProjectGuid>{02518BED-C771-4097-8553-8505E7E60F59}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <IntermediateOutputPath>$(SolutionDir)/.build/Metadata/obj/$(Configuration)</IntermediateOutputPath>
+    <OutputPath>$(SolutionDir)/.build/Metadata/bin/$(Configuration)</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "/>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "/>
+
+  <Import Project="$(SolutionDir)/Environment.props"/>
+  <Import Project="$(SolutionDir)/Environment.props.user" Condition="Exists('$(SolutionDir)/Environment.props.user')"/>
+
+  <ItemGroup>
+    <None Include="ProductInformation.template.cs" />
+  </ItemGroup>
+
+  <Target Name="Clean"/>
+  <Target Name="Build" DependsOnTargets="Metadata"/>
+  <Target Name="Rebuild" DependsOnTargets="Clean;Build"/>
+
+  <!-- Only enabled for Visual Studio to avoid re-entering the build script and failing on the lock -->
+  <Target Name="Metadata" BeforeTargets="PrepareForBuild" Condition="$(BuildingInsideVisualStudio) == 'true'">
+    <Exec Command="$(PythonExecutable) $(SolutionDir)/Scripts/main.py --verbosity warning metadata"/>
+  </Target>
+
+</Project>

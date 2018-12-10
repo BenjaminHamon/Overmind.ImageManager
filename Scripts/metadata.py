@@ -17,14 +17,14 @@ def write_product_information(version, simulate):
 		"assembly_informational_version": version["full"],
 	}
 
-	metadata_directory = os.path.join(".build", "Shared", "Metadata")
-	if not simulate and not os.path.isdir(metadata_directory):
-		os.makedirs(metadata_directory)
+	output_directory = os.path.join(".build", "Metadata")
+	if not simulate and not os.path.isdir(output_directory):
+		os.makedirs(output_directory)
 
 	logging.info("Writing ProductInformation.cs")
-	with open("ProductInformation.template.cs", "r") as template_file:
+	with open(os.path.join("Metadata", "ProductInformation.template.cs"), "r") as template_file:
 		file_content = template_file.read()
 	file_content = file_content.format(**information)
 	if not simulate:
-		with open(os.path.join(metadata_directory, "ProductInformation.cs"), "w") as product_file:
+		with open(os.path.join(output_directory, "ProductInformation.cs"), "w") as product_file:
 			product_file.write(file_content)

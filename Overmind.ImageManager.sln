@@ -4,26 +4,38 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Overmind.ImageManager.WindowsClient", "WindowsClient\Overmind.ImageManager.WindowsClient.csproj", "{1A64535F-2D41-46BA-A989-39859C29908B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{02518BED-C771-4097-8553-8505E7E60F59} = {02518BED-C771-4097-8553-8505E7E60F59}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Overmind.ImageManager.Model", "Model\Overmind.ImageManager.Model.csproj", "{6B9087F2-E5A0-4869-9CBA-0FE28DF17277}"
+	ProjectSection(ProjectDependencies) = postProject
+		{02518BED-C771-4097-8553-8505E7E60F59} = {02518BED-C771-4097-8553-8505E7E60F59}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BBC41195-85E8-4982-80DB-2922C7C64D1E}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		License.txt = License.txt
-		Overmind.ImageManager.targets = Overmind.ImageManager.targets
-		ProductInformation.template.cs = ProductInformation.template.cs
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Overmind.WpfExtensions", "WpfExtensions\Overmind.WpfExtensions.csproj", "{0A54B239-9DE8-4CCE-A244-DA844F3080C9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{02518BED-C771-4097-8553-8505E7E60F59} = {02518BED-C771-4097-8553-8505E7E60F59}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Overmind.ImageManager.WallpaperService", "WallpaperService\Overmind.ImageManager.WallpaperService.csproj", "{513B010B-9481-4634-94B4-E56A8D95C753}"
+	ProjectSection(ProjectDependencies) = postProject
+		{02518BED-C771-4097-8553-8505E7E60F59} = {02518BED-C771-4097-8553-8505E7E60F59}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{D5B32110-7FCD-483E-8048-D5BBD879C7FE}"
 	ProjectSection(SolutionItems) = preProject
 		Resources\Logo.ico = Resources\Logo.ico
 		Resources\Logo.png = Resources\Logo.png
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Overmind.ImageManager.Metadata", "Metadata\Overmind.ImageManager.Metadata.csproj", "{02518BED-C771-4097-8553-8505E7E60F59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +59,10 @@ Global
 		{513B010B-9481-4634-94B4-E56A8D95C753}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{513B010B-9481-4634-94B4-E56A8D95C753}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{513B010B-9481-4634-94B4-E56A8D95C753}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02518BED-C771-4097-8553-8505E7E60F59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02518BED-C771-4097-8553-8505E7E60F59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02518BED-C771-4097-8553-8505E7E60F59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02518BED-C771-4097-8553-8505E7E60F59}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

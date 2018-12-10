@@ -17,6 +17,7 @@ __pycache__/
 # Visual Studio
 .vs/
 *.csproj.user
+*.props.user
 *.suo
 
 # Visual Studio Code

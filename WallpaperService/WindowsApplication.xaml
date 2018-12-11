@@ -8,7 +8,7 @@
              mc:Ignorable="d"
              Startup="Application_Startup" Exit="Application_Exit" ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
-        <taskbar:TaskbarIcon x:Key="NotificationIcon" d:DataContext="{d:DesignInstance Type=main:WallpaperServiceViewModel}"
+        <taskbar:TaskbarIcon x:Key="NotificationIcon" d:DataContext="{d:DesignInstance Type=main:MainViewModel}"
                              IconSource="/Resources/Logo.ico" ToolTipText="{Binding Path=ApplicationTitle}" TrayMouseDoubleClick="ShowMainWindow">
             <taskbar:TaskbarIcon.ContextMenu>
                 <ContextMenu>

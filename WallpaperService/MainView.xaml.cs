@@ -2,9 +2,9 @@
 
 namespace Overmind.ImageManager.WallpaperService
 {
-	public partial class WallpaperServiceView : Window
+	public partial class MainView : Window
 	{
-		public WallpaperServiceView()
+		public MainView()
 		{
 			InitializeComponent();
 		}

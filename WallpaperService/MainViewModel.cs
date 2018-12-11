@@ -12,11 +12,11 @@ using System.Windows;
 
 namespace Overmind.ImageManager.WallpaperService
 {
-	public class WallpaperServiceViewModel : INotifyPropertyChanged, IDisposable
+	public class MainViewModel : INotifyPropertyChanged, IDisposable
 	{
-		private static readonly Logger Logger = LogManager.GetLogger(nameof(WallpaperServiceViewModel));
+		private static readonly Logger Logger = LogManager.GetLogger(nameof(MainViewModel));
 
-		public WallpaperServiceViewModel(SettingsProvider settingsProvider, DataProvider dataProvider, string wallpaperStorage)
+		public MainViewModel(SettingsProvider settingsProvider, DataProvider dataProvider, string wallpaperStorage)
 		{
 			this.settingsProvider = settingsProvider;
 			this.dataProvider = dataProvider;
@@ -53,7 +53,6 @@ namespace Overmind.ImageManager.WallpaperService
 		}
 
 		public DelegateCommand<object> ApplyConfigurationCommand { get; }
-		public DelegateCommand<object> EditConfigurationCommand { get; }
 		public DelegateCommand<object> ReloadSettingsCommand { get; }
 		public DelegateCommand<object> NextWallpaperCommand { get; }
 		public DelegateCommand<object> CopyWallpaperHashCommand { get; }

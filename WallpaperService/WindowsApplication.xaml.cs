@@ -41,31 +41,31 @@ namespace Overmind.ImageManager.WallpaperService
 			JsonSerializer serializer = new JsonSerializer() { Formatting = Formatting.Indented };
 			DataProvider dataProvider = new DataProvider(serializer, null);
 			SettingsProvider settingsProvider = new SettingsProvider(serializer, settingsDirectory);
-			serviceViewModel = new WallpaperServiceViewModel(settingsProvider, dataProvider, settingsDirectory);
+			mainViewModel = new MainViewModel(settingsProvider, dataProvider, settingsDirectory);
 		}
 
-		private readonly WallpaperServiceViewModel serviceViewModel;
+		private readonly MainViewModel mainViewModel;
 
 		private void Application_Startup(object sender, StartupEventArgs eventArguments)
 		{
 			Logger.Info("Starting {0}", ApplicationName);
 
-			serviceViewModel.ReloadSettings();
-			serviceViewModel.ApplyConfiguration();
+			mainViewModel.ReloadSettings();
+			mainViewModel.ApplyConfiguration();
 
-			MainWindow = new WallpaperServiceView() { DataContext = serviceViewModel };
+			MainWindow = new MainView() { DataContext = mainViewModel };
 			MainWindow.Closing += HideMainWindow;
 
 			// FIXME: The NotificationIcon bindings throw exceptions on initialization (but still work).
 			TaskbarIcon notificationIcon = (TaskbarIcon)Resources["NotificationIcon"];
-			notificationIcon.DataContext = serviceViewModel;
+			notificationIcon.DataContext = mainViewModel;
 		}
 
 		private void Application_Exit(object sender, ExitEventArgs eventArguments)
 		{
 			Logger.Info("Exiting {0}", ApplicationName);
 
-			serviceViewModel.Dispose();
+			mainViewModel.Dispose();
 		}
 
 		private void ShowMainWindow(object sender, RoutedEventArgs eventArguments)

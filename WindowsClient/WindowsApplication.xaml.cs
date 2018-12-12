@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
 using NLog;
 using Overmind.ImageManager.Model;
+using Overmind.ImageManager.WindowsClient.Downloads;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Threading;
 
 namespace Overmind.ImageManager.WindowsClient
@@ -41,17 +43,24 @@ namespace Overmind.ImageManager.WindowsClient
 			string settingsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
 			JsonSerializer serializer = new JsonSerializer() { Formatting = Formatting.Indented };
 			FileNameFormatter fileNameFormatter = new FileNameFormatter();
-			DataProvider dataProvider = new DataProvider(serializer, fileNameFormatter);
-			SettingsProvider settingsProvider = new SettingsProvider(serializer, settingsDirectory);
-			mainViewModel = new MainViewModel(this, dataProvider, settingsProvider);
+
+			dataProvider = new DataProvider(serializer, fileNameFormatter);
+			settingsProvider = new SettingsProvider(serializer, settingsDirectory);
 		}
 
-		private readonly MainViewModel mainViewModel;
+		private readonly DataProvider dataProvider;
+		private readonly SettingsProvider settingsProvider;
+
+		private MainViewModel mainViewModel;
+
+		private Window downloaderWindow;
+		private Window settingsWindow;
 
 		private void Application_Startup(object sender, StartupEventArgs eventArguments)
 		{
 			Logger.Info("Starting {0}", ApplicationName);
 
+			mainViewModel = new MainViewModel(this, dataProvider);
 			MainWindow = new MainWindow() { DataContext = mainViewModel };
 			MainWindow.Show();
 		}
@@ -64,16 +73,67 @@ namespace Overmind.ImageManager.WindowsClient
 				mainViewModel.Dispose();
 		}
 
+		public void ShowDownloader()
+		{
+			if (downloaderWindow == null)
+			{
+				DownloaderView downloaderView = new DownloaderView();
+				Binding dataContextBinding = new Binding() { Source = mainViewModel, Path = new PropertyPath(nameof(MainViewModel.Downloader)) };
+				BindingOperations.SetBinding(downloaderView, FrameworkElement.DataContextProperty, dataContextBinding);
+
+				downloaderWindow = new Window()
+				{
+					Title = "Downloads - " + ApplicationTitle,
+					Content = downloaderView,
+					Height = 400,
+					Width = 600,
+				};
+
+				downloaderWindow.Closed += (s, e) => downloaderWindow = null;
+				downloaderWindow.Show();
+			}
+			else
+			{
+				if (downloaderWindow.WindowState == WindowState.Minimized)
+					downloaderWindow.WindowState = WindowState.Normal;
+				downloaderWindow.Activate();
+			}
+		}
+
+		public void ShowSettings()
+		{
+			if (settingsWindow == null)
+			{
+				SettingsViewModel settingsViewModel = new SettingsViewModel(settingsProvider);
+				SettingsView settingsView = new SettingsView() { DataContext = settingsViewModel };
+
+				settingsWindow = new Window()
+				{
+					Title = "Settings - " + ApplicationTitle,
+					Content = settingsView,
+					Height = 800,
+					Width = 800,
+				};
+
+				settingsWindow.Closed += (s, e) => settingsWindow = null;
+				settingsWindow.Show();
+			}
+			else
+			{
+				if (settingsWindow.WindowState == WindowState.Minimized)
+					settingsWindow.WindowState = WindowState.Normal;
+				settingsWindow.Activate();
+			}
+		}
+
 		public void ViewImage(ImageViewModel image)
 		{
+			Window imageWindow = new ImageView() { DataContext = image };
+
 			// Use BeginInvoke so that the call finishes before the window is shown
 			// to ensure the window is correctly activated and in the foreground
 			// See https://stackoverflow.com/questions/14055794/wpf-treeview-restores-its-focus-after-double-click/14077266
-			Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
-			{
-				Window imageWindow = new ImageView() { DataContext = image };
-				imageWindow.Show();
-			}));
+			Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => imageWindow.Show()));
 		}
 
 		public void OpenImageExternally(ImageViewModel image, string mode)

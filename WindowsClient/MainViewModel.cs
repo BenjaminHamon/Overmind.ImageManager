@@ -9,13 +9,13 @@ namespace Overmind.ImageManager.WindowsClient
 {
 	public class MainViewModel : INotifyPropertyChanged, IDisposable
 	{
-		public MainViewModel(WindowsApplication application, DataProvider dataProvider, SettingsProvider wallpaperConfigurationProvider)
+		public MainViewModel(WindowsApplication application, DataProvider dataProvider)
 		{
 			this.application = application;
 			this.dataProvider = dataProvider;
 
-			Settings = new SettingsViewModel(wallpaperConfigurationProvider);
-
+			ShowDownloaderCommand = new DelegateCommand<object>(_ => application.ShowDownloader());
+			ShowSettingsCommand = new DelegateCommand<object>(_ => application.ShowSettings());
 			ExitApplicationCommand = new DelegateCommand<object>(_ => application.Shutdown());
 
 			CreateCollectionCommand = new DelegateCommand<string>(path => ChangeCollection(dataProvider.CreateCollection(path), path));
@@ -41,8 +41,6 @@ namespace Overmind.ImageManager.WindowsClient
 				return ActiveCollection.Name + " - " + WindowsApplication.ApplicationTitle;
 			}
 		}
-
-		public SettingsViewModel Settings { get; }
 
 		private CollectionViewModel activeCollectionField;
 		public CollectionViewModel ActiveCollection
@@ -84,6 +82,8 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
+		public DelegateCommand<object> ShowDownloaderCommand { get; }
+		public DelegateCommand<object> ShowSettingsCommand { get; }
 		public DelegateCommand<object> ExitApplicationCommand { get; }
 
 		public DelegateCommand<string> CreateCollectionCommand { get; }

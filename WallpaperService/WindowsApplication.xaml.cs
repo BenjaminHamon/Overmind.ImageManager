@@ -16,6 +16,8 @@ namespace Overmind.ImageManager.WallpaperService
 		[STAThread]
 		public static void Main(string[] arguments)
 		{
+			AppDomain.CurrentDomain.UnhandledException += (s, e) => Logger.Fatal((Exception)e.ExceptionObject, "Unhandled exception");
+
 			string applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
 			Model.Application.InitializeLogging(ApplicationFullName, ApplicationName, applicationDataDirectory);
 

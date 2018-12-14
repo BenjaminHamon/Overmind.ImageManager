@@ -1,4 +1,6 @@
 import argparse
+import copy
+import filecmp
 import glob
 import json
 import logging
@@ -38,16 +40,17 @@ def run(environment, configuration, arguments):
 
 	artifact = configuration["artifacts"][arguments.artifact]
 	artifact_name = artifact["file_name"].format(**parameters)
-	artifact_fileset = configuration["filesets"][artifact["fileset"]]
 
 	local_artifact_path = os.path.join(".artifacts", artifact["path_in_repository"], artifact_name)
 	remote_artifact_path = os.path.join(environment["artifact_repository"], configuration["project"], artifact["path_in_repository"], artifact_name)
 
 	if "show" in arguments.artifact_commands:
-		show(artifact_name, artifact_fileset, parameters)
+		artifact_files = list_artifact_files(artifact, configuration, parameters)
+		show(artifact_name, artifact_files, parameters)
 		logging.info("")
 	if "package" in arguments.artifact_commands:
-		package(local_artifact_path, artifact_fileset, parameters, arguments.simulate)
+		artifact_files = merge_artifact_mapping(map_artifact_files(artifact, configuration, parameters))
+		package(local_artifact_path, artifact_files, parameters, arguments.simulate)
 		logging.info("")
 	if "verify" in arguments.artifact_commands:
 		verify(local_artifact_path)
@@ -57,34 +60,30 @@ def run(environment, configuration, arguments):
 		logging.info("")
 
 
-def show(artifact_name, fileset, parameters):
+def show(artifact_name, artifact_files, parameters):
 	logging.info("Artifact %s", artifact_name)
 
-	_, all_files = list_files(fileset, parameters)
-	for file_path in all_files:
+	for file_path in artifact_files:
 		logging.info("%s", file_path)
 
 
-def package(artifact_path, fileset, parameters, simulate):
+def package(artifact_path, artifact_files, parameters, simulate):
 	logging.info("Packaging artifact %s", artifact_path)
 
 	artifact_directory = os.path.dirname(artifact_path)
 	if not simulate and not os.path.isdir(artifact_directory):
 		os.makedirs(artifact_directory)
 
-	path_in_workspace, all_files = list_files(fileset, parameters)
-	if len(all_files) == 0:
+	if len(artifact_files) == 0:
 		raise RuntimeError("The artifact is empty")
 
-	all_files = [ (source, source[ len(path_in_workspace) + 1 : ]) for source in all_files ]
-
 	if simulate:
-		for source, destination in all_files:
-			logging.info("Adding %s", source)
+		for source, destination in artifact_files:
+			logging.info("Adding %s as %s", source, destination)
 	else:
 		with zipfile.ZipFile(artifact_path + ".zip.tmp", "w", zipfile.ZIP_DEFLATED) as artifact_file:
-			for source, destination in all_files:
-				logging.info("Adding %s", source)
+			for source, destination in artifact_files:
+				logging.info("Adding %s as %s", source, destination)
 				artifact_file.write(source, destination)
 		shutil.move(artifact_path + ".zip.tmp", artifact_path + ".zip")
 
@@ -115,12 +114,72 @@ def upload(local_artifact_path, remote_artifact_path, simulate, result_file_path
 			save_results(result_file_path, results)
 
 
-def list_files(fileset, parameters):
+def list_artifact_files(artifact, configuration, parameters):
+	all_files = []
+
+	for fileset_options in artifact["filesets"]:
+		fileset = configuration["filesets"][fileset_options["identifier"]]
+		if "parameters" in fileset_options:
+			fileset_parameters = copy.deepcopy(fileset_options["parameters"])
+			fileset_parameters.update(parameters)
+		else:
+			fileset_parameters = parameters
+		all_files += load_fileset(fileset, fileset_parameters)
+
+	all_files.sort()
+
+	return all_files
+
+
+def map_artifact_files(artifact, configuration, parameters):
+	all_files = []
+
+	for fileset_options in artifact["filesets"]:
+		fileset = configuration["filesets"][fileset_options["identifier"]]
+		if "parameters" in fileset_options:
+			fileset_parameters = copy.deepcopy(fileset_options["parameters"])
+			fileset_parameters.update(parameters)
+		else:
+			fileset_parameters = parameters
+
+		path_in_workspace = fileset["path_in_workspace"].format(**fileset_parameters)
+		for source in load_fileset(fileset, fileset_parameters):
+			destination = source
+			if "path_in_archive" in fileset_options:
+				destination = os.path.join(fileset_options["path_in_archive"], os.path.relpath(source, path_in_workspace))
+			all_files.append((source, destination.replace("\\", "/")))
+
+	all_files.sort()
+
+	return all_files
+
+
+def merge_artifact_mapping(artifact_files):
+	merged_files = []
+	has_conflicts = False
+
+	for destination in set(dst for src, dst in artifact_files):
+		source_collection = [ src for src, dst in artifact_files if dst == destination ]
+		for source in source_collection[1:]:
+			if not filecmp.cmp(source_collection[0], source):
+				has_conflicts = True
+				logging.error("Mapping conflict: %s, %s => %s", source_collection[0], source, destination)
+		merged_files.append((source_collection[0], destination))
+
+	if has_conflicts:
+		raise ValueError("Artifact mapper has conflicts")
+
+	merged_files.sort()
+
+	return merged_files
+
+
+def load_fileset(fileset, parameters):
 	all_files = []
 	path_in_workspace = fileset["path_in_workspace"].format(**parameters)
 	for file_pattern in fileset["file_patterns"]:
 		all_files += glob.glob(os.path.join(path_in_workspace, file_pattern.format(**parameters)))
-	return path_in_workspace, sorted(file_path.replace("\\", "/") for file_path in all_files)
+	return sorted(file_path.replace("\\", "/") for file_path in all_files)
 
 
 def load_results(result_file_path):

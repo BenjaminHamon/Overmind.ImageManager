@@ -4,10 +4,11 @@ import artifact
 import clean
 import compile
 import metadata
+import release
 
 
 def get_command_list():
-	return [ artifact, clean, compile, metadata ]
+	return [ artifact, clean, compile, metadata, release ]
 
 
 def load_configuration(environment):

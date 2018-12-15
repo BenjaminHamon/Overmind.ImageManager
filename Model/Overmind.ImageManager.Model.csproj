@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Application.cs" />
     <Compile Include="CollectionData.cs" />
+    <Compile Include="CollectionMetadata.cs" />
     <Compile Include="CollectionModel.cs" />
     <Compile Include="DataProvider.cs" />
     <Compile Include="FileNameFormatter.cs" />

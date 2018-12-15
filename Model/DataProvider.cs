@@ -12,6 +12,8 @@ namespace Overmind.ImageManager.Model
 	{
 		private static readonly Logger Logger = LogManager.GetLogger(nameof(DataProvider));
 
+		private const string FormatVersion = "2.0";
+
 		public DataProvider(JsonSerializer serializer, FileNameFormatter fileNameFormatter)
 		{
 			this.serializer = serializer;
@@ -50,10 +52,11 @@ namespace Overmind.ImageManager.Model
 		{
 			CollectionData collectionData = new CollectionData();
 
-			string jsonPath = Path.Combine(collectionPath, "Data", "Images.json");
-			using (StreamReader streamReader = new StreamReader(jsonPath))
-			using (JsonReader jsonReader = new JsonTextReader(streamReader))
-				collectionData.Images = serializer.Deserialize<List<ImageModel>>(jsonReader);
+			collectionData.Metadata = LoadData<CollectionMetadata>(Path.Combine(collectionPath, "Data", "Metadata.json"));
+			if (collectionData.Metadata.FormatVersion != FormatVersion)
+				throw new InvalidDataException("The collection format version is not supported.");
+
+			collectionData.Images = LoadData<List<ImageModel>>(Path.Combine(collectionPath, "Data", "Images.json"));
 
 			return collectionData;
 		}
@@ -61,6 +64,8 @@ namespace Overmind.ImageManager.Model
 		public void SaveCollection(string collectionPath, CollectionData collectionData, IEnumerable<ImageModel> removedImages)
 		{
 			Logger.Info("Saving collection (Path: '{0}')", collectionPath);
+
+			collectionData.Metadata.FormatVersion = FormatVersion;
 
 			Directory.CreateDirectory(Path.Combine(collectionPath, "Data"));
 			Directory.CreateDirectory(Path.Combine(collectionPath, "Data-Temporary"));
@@ -102,10 +107,8 @@ namespace Overmind.ImageManager.Model
 
 			CleanTemporary(collectionPath);
 
-			string jsonTemporaryPath = Path.Combine(collectionPath, "Data-Temporary", "Images.json");
-			using (StreamWriter streamWriter = new StreamWriter(jsonTemporaryPath))
-			using (JsonWriter jsonWriter = new JsonTextWriter(streamWriter))
-				serializer.Serialize(jsonWriter, collectionData.Images);
+			SaveData(Path.Combine(collectionPath, "Data-Temporary", "Metadata.json"), collectionData.Metadata);
+			SaveData(Path.Combine(collectionPath, "Data-Temporary", "Images.json"), collectionData.Images);
 
 			Directory.Move(Path.Combine(collectionPath, "Data"), Path.Combine(collectionPath, "Data-ToRemove"));
 			Directory.Move(Path.Combine(collectionPath, "Data-Temporary"), Path.Combine(collectionPath, "Data"));
@@ -183,6 +186,20 @@ namespace Overmind.ImageManager.Model
 			string temporaryDirectory = Path.Combine(collectionPath, "Images-Temporary");
 			if (Directory.Exists(temporaryDirectory))
 				Directory.Delete(temporaryDirectory, true);
+		}
+
+		private TData LoadData<TData>(string filePath)
+		{
+			using (StreamReader streamReader = new StreamReader(filePath))
+			using (JsonReader jsonReader = new JsonTextReader(streamReader))
+				return serializer.Deserialize<TData>(jsonReader);
+		}
+
+		private void SaveData<TData>(string filePath, TData data)
+		{
+			using (StreamWriter streamWriter = new StreamWriter(filePath))
+			using (JsonWriter jsonWriter = new JsonTextWriter(streamWriter))
+				serializer.Serialize(jsonWriter, data);
 		}
 
 		private string SerializeToString<TData>(TData data)

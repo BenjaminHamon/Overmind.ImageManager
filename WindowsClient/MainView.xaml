@@ -47,6 +47,12 @@
                 <Separator Margin="0,-3"/>
                 <MenuItem Header="Exit" Style="{StaticResource InnerMenuItemStyle}" Click="ExitApplication"/>
             </MenuItem>
+            <MenuItem Header="View">
+                <MenuItem x:Name="gridDisplayMenuItem" x:FieldModifier="private"
+                          Header="Grid display" Style="{StaticResource InnerMenuItemStyle}" IsCheckable="True"/>
+                <MenuItem x:Name="listDisplayMenuItem" x:FieldModifier="private"
+                          Header="List display" Style="{StaticResource InnerMenuItemStyle}" IsCheckable="True"/>
+            </MenuItem>
         </Menu>
 
         <Grid Grid.Row="1">
@@ -64,7 +70,7 @@
                 <ColumnDefinition Width="400"/>
             </Grid.ColumnDefinitions>
 
-            <main:CollectionView Grid.Row="2" DataContext="{Binding Path=ActiveCollection}"/>
+            <main:CollectionView x:Name="collectionView" x:FieldModifier="private" Grid.Column="0" DataContext="{Binding Path=ActiveCollection}"/>
 
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>

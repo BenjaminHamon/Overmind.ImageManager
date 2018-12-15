@@ -6,7 +6,8 @@
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:CollectionViewModel}"
-             d:DesignHeight="300" d:DesignWidth="500">
+             d:DesignHeight="300" d:DesignWidth="500"
+             x:Name="userControl" x:FieldModifier="private">
 
     <UserControl.Resources>
         <main:StringToImageConverter x:Key="imageConverter" MaxHeight="150" MaxWidth="150"/>
@@ -15,6 +16,45 @@
                 <PropertyGroupDescription PropertyName="Group"/>
             </CollectionViewSource.GroupDescriptions>
         </CollectionViewSource>
+
+        <ItemsPanelTemplate x:Key="gridTemplate">
+            <WrapPanel/>
+        </ItemsPanelTemplate>
+        <DataTemplate x:Key="gridItemTemplate">
+            <!-- Transparent background to ensure the item register mouse hits everywhere -->
+            <!-- The container size is set so that the elements are aligned and so that the panel layout is correct while loading -->
+            <Grid d:DataContext="{d:DesignInstance Type=main:ImageViewModel}" Background="Transparent" Height="150" Width="150"
+                  ToolTip="{Binding Path=Name}" ToolTipService.InitialShowDelay="1000">
+                <Grid.InputBindings>
+                    <MouseBinding Gesture="LeftDoubleClick"
+                                  Command="{Binding ElementName=listBox, Path=DataContext.ViewImageCommand}"
+                                  CommandParameter="{Binding}"/>
+                </Grid.InputBindings>
+                <Image Source="{Binding Path=FilePath, Converter={StaticResource imageConverter}, IsAsync=True}"
+                       Margin="10" RenderOptions.BitmapScalingMode="HighQuality"/>
+            </Grid>
+        </DataTemplate>
+        <ItemsPanelTemplate x:Key="listTemplate">
+            <VirtualizingStackPanel/>
+        </ItemsPanelTemplate>
+        <DataTemplate x:Key="listItemTemplate">
+            <!-- Transparent background to ensure the item register mouse hits everywhere -->
+            <StackPanel d:DataContext="{d:DesignInstance Type=main:ImageViewModel}" Background="Transparent" Orientation="Horizontal">
+                <StackPanel.InputBindings>
+                    <MouseBinding Gesture="LeftDoubleClick"
+                                  Command="{Binding ElementName=listBox, Path=DataContext.ViewImageCommand}"
+                                  CommandParameter="{Binding}"/>
+                </StackPanel.InputBindings>
+                <ContentPresenter Margin="5" Height="32" Width="32">
+                    <ContentPresenter.Content>
+                        <Image Source="{Binding Path=FilePath, Converter={StaticResource imageConverter}, IsAsync=True}"
+                               MaxHeight="32" MaxWidth="32" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </ContentPresenter.Content>
+                </ContentPresenter>
+                <TextBlock Text="{Binding Path=Name}" Margin="5" VerticalAlignment="Center"/>
+            </StackPanel>
+        </DataTemplate>
+
     </UserControl.Resources>
 
     <Grid>
@@ -31,20 +71,6 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal">
-                <ComboBox x:Name="layoutComboBox" x:FieldModifier="private" SelectedValuePath="Tag" Margin="5">
-                    <ComboBoxItem Tag="Grid" IsSelected="True">
-                        <StackPanel Orientation="Horizontal">
-                            <fa:ImageAwesome Icon="Th" Margin="4" Height="16" Width="16"/>
-                            <TextBlock Text="Grid" Margin="4" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </ComboBoxItem>
-                    <ComboBoxItem Tag="List">
-                        <StackPanel Orientation="Horizontal">
-                            <fa:ImageAwesome Icon="ThList" Margin="4" Height="16" Width="16"/>
-                            <TextBlock Text="List" Margin="4" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </ComboBoxItem>
-                </ComboBox>
                 <Button DockPanel.Dock="Left" Content="SlideShow" Click="OpenSlideShow" Margin="5" Padding="5,0"/>
             </StackPanel>
             <Border Grid.Column="1" BorderThickness="1" Margin="5" VerticalAlignment="Center">
@@ -99,55 +125,14 @@
             <ListBox.InputBindings>
                 <KeyBinding Key="Enter" Command="{Binding Path=ViewImageCommand}" CommandParameter="{Binding Path=SelectedImage}"/>
             </ListBox.InputBindings>
-            <ListBox.Resources>
-                <ItemsPanelTemplate x:Key="gridTemplate">
-                    <WrapPanel/>
-                </ItemsPanelTemplate>
-                <DataTemplate x:Key="gridItemTemplate">
-                    <!-- Transparent background to ensure the item register mouse hits everywhere -->
-                    <!-- The container size is set so that the elements are aligned and so that the panel layout is correct whiile loading -->
-                    <Grid d:DataContext="{d:DesignInstance Type=main:ImageViewModel}"
-                          Background="Transparent" Height="150" Width="150">
-                        <Grid.InputBindings>
-                            <MouseBinding Gesture="LeftDoubleClick"
-                                          Command="{Binding ElementName=listBox, Path=DataContext.ViewImageCommand}"
-                                          CommandParameter="{Binding}"/>
-                        </Grid.InputBindings>
-                        <Image Source="{Binding Path=FilePath, Converter={StaticResource imageConverter}, IsAsync=True}"
-                               ToolTip="{Binding Path=Name}" ToolTipService.InitialShowDelay="1000"
-                               Margin="10" RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </Grid>
-                </DataTemplate>
-                <ItemsPanelTemplate x:Key="listTemplate">
-                    <VirtualizingStackPanel/>
-                </ItemsPanelTemplate>
-                <DataTemplate x:Key="listItemTemplate">
-                    <!-- Transparent background to ensure the item register mouse hits everywhere -->
-                    <StackPanel d:DataContext="{d:DesignInstance Type=main:ImageViewModel}"
-                                Background="Transparent" Orientation="Horizontal">
-                        <StackPanel.InputBindings>
-                            <MouseBinding Gesture="LeftDoubleClick"
-                                          Command="{Binding ElementName=listBox, Path=DataContext.ViewImageCommand}"
-                                          CommandParameter="{Binding}"/>
-                        </StackPanel.InputBindings>
-                        <ContentPresenter Margin="5" Height="32" Width="32">
-                            <ContentPresenter.Content>
-                                <Image Source="{Binding Path=FilePath, Converter={StaticResource imageConverter}, IsAsync=True}"
-                                       MaxHeight="32" MaxWidth="32" RenderOptions.BitmapScalingMode="HighQuality"/>
-                            </ContentPresenter.Content>
-                        </ContentPresenter>
-                        <TextBlock Text="{Binding Path=Name}" Margin="5" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.Resources>
             <ListBox.Style>
                 <Style TargetType="ListBox">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding ElementName=layoutComboBox, Path=SelectedValue}" Value="Grid">
+                        <DataTrigger Binding="{Binding ElementName=userControl, Path=ListDisplayStyle}" Value="Grid">
                             <Setter Property="ItemsPanel" Value="{StaticResource gridTemplate}"/>
                             <Setter Property="ItemTemplate" Value="{StaticResource gridItemTemplate}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding ElementName=layoutComboBox, Path=SelectedValue}" Value="List">
+                        <DataTrigger Binding="{Binding ElementName=userControl, Path=ListDisplayStyle}" Value="List">
                             <Setter Property="ItemsPanel" Value="{StaticResource listTemplate}"/>
                             <Setter Property="ItemTemplate" Value="{StaticResource listItemTemplate}"/>
                         </DataTrigger>

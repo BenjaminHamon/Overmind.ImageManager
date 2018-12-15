@@ -10,6 +10,14 @@ namespace Overmind.ImageManager.WindowsClient
 {
 	public partial class CollectionView : UserControl
 	{
+		static CollectionView()
+		{
+			ListDisplayStyleProperty = DependencyProperty.Register(nameof(ListDisplayStyle), typeof(string), typeof(CollectionView),
+				new UIPropertyMetadata("Grid"));
+		}
+
+		public static readonly DependencyProperty ListDisplayStyleProperty;
+
 		public CollectionView()
 		{
 			InitializeComponent();
@@ -21,12 +29,17 @@ namespace Overmind.ImageManager.WindowsClient
 			scrollViewer = VisualTreeExtensions.GetDescendant<ScrollViewer>(listBox);
 
 			DataContextChanged += HandleDataContextChanged;
-			layoutComboBox.SelectionChanged += (s, e) => ((CollectionViewModel)DataContext)?.ResetDisplay();
 			scrollViewer.ScrollChanged += (s, e) => ScheduleTryDisplayMore();
 		}
 
 		private readonly ScrollViewer scrollViewer;
 		private bool isTryDisplayMoreScheduled;
+
+		public string ListDisplayStyle
+		{
+			get { return (string)GetValue(ListDisplayStyleProperty); }
+			set { SetValue(ListDisplayStyleProperty, value); }
+		}
 
 		private void HandleDataContextChanged(object sender, DependencyPropertyChangedEventArgs eventArguments)
 		{

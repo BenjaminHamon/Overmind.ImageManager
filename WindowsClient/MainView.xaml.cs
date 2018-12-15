@@ -16,6 +16,11 @@ namespace Overmind.ImageManager.WindowsClient
 		public MainView()
 		{
 			InitializeComponent();
+
+			SelectListDisplayStyle(collectionView.ListDisplayStyle);
+
+			gridDisplayMenuItem.Click += (s, e) => SelectListDisplayStyle("Grid");
+			listDisplayMenuItem.Click += (s, e) => SelectListDisplayStyle("List");
 		}
 
 		private MainViewModel viewModel { get { return (MainViewModel)DataContext; } }
@@ -154,6 +159,27 @@ namespace Overmind.ImageManager.WindowsClient
 			{
 				FocusManager.SetFocusedElement(mainWindow, this);
 				FocusManager.SetFocusedElement(mainWindow, focusedElement);
+			}
+		}
+
+		private void SelectListDisplayStyle(string style)
+		{
+			gridDisplayMenuItem.IsChecked = false;
+			listDisplayMenuItem.IsChecked = false;
+
+			switch (style)
+			{
+				case "Grid": gridDisplayMenuItem.IsChecked = true; break;
+				case "List": listDisplayMenuItem.IsChecked = true; break;
+				default: break;
+			}
+
+			if (style != collectionView.ListDisplayStyle)
+			{
+				collectionView.ListDisplayStyle = style;
+
+				if (viewModel.ActiveCollection != null)
+					viewModel.ActiveCollection.ResetDisplay();
 			}
 		}
 	}

@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace Overmind.ImageManager.WindowsClient
 {
-	public class CollectionQuery : INotifyPropertyChanged
+	public class QueryViewModel : INotifyPropertyChanged
 	{
 		private const string FieldSeparator = ",";
 		private static readonly Regex FieldRegex = new Regex("^(?<name>[a-zA-Z]+)(\\[(?<index>[0-9]+)\\])?$");

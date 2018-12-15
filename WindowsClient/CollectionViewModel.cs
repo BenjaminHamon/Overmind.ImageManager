@@ -18,7 +18,7 @@ namespace Overmind.ImageManager.WindowsClient
 			foreach (ImageModel image in model.AllImages)
 				allImages.Add(new ImageViewModel(image, () => model.GetImagePath(image)));
 
-			Query = new CollectionQuery();
+			Query = new QueryViewModel();
 			FilteredImages = new List<ImageViewModel>();
 			DisplayedImages = new ObservableCollection<ImageViewModel>();
 
@@ -35,7 +35,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public string Name { get { return model.StoragePath; } }
 		public string StoragePath { get { return model.StoragePath; } }
-		public CollectionQuery Query { get; }
+		public QueryViewModel Query { get; }
 		public List<ImageViewModel> FilteredImages { get; private set; }
 
 		// Images are added to display only when requested by the view, to improve memory usage and loading speed.

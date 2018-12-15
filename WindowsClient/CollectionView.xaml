@@ -69,8 +69,26 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Border Grid.Column="1" BorderThickness="1" Margin="5" VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Margin" Value="5"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                </Style>
+                <Style TargetType="TextBox">
+                    <Setter Property="Margin" Value="5"/>
+                    <Setter Property="Padding" Value="2"/>
+                </Style>
+            </Grid.Resources>
+
+            <Border Grid.ColumnSpan="4" BorderThickness="1" Margin="5" VerticalAlignment="Center">
                 <Border.Style>
                     <Style TargetType="Border">
                         <Setter Property="BorderBrush" Value="Red"/>
@@ -83,37 +101,27 @@
                         </Style.Triggers>
                     </Style>
                 </Border.Style>
-                <TextBox Text="{Binding Path=Query.SearchExpression, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox Margin="0" Text="{Binding Path=Query.SearchExpression, UpdateSourceTrigger=PropertyChanged}">
                     <TextBox.InputBindings>
                         <KeyBinding Key="Enter" Command="{Binding Path=ExecuteQueryCommand}"/>
                     </TextBox.InputBindings>
                 </TextBox>
             </Border>
-            <Button Grid.Column="2" Command="{Binding Path=ExecuteQueryCommand}" Margin="5">
+            <Button Grid.Column="4" Command="{Binding Path=ExecuteQueryCommand}" Margin="5">
                 <fa:ImageAwesome Icon="Search" Margin="4" Height="16" Width="16"/>
             </Button>
-        </Grid>
-
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.Resources>
-                <Style TargetType="TextBlock">
-                    <Setter Property="Margin" Value="5"/>
-                    <Setter Property="VerticalAlignment" Value="Center"/>
-                </Style>
-                <Style TargetType="TextBox">
-                    <Setter Property="Margin" Value="5"/>
-                </Style>
-            </Grid.Resources>
-            <TextBlock Grid.Column="0" Text="Group by"/>
-            <TextBox Grid.Column="1" Text="{Binding Path=Query.GroupByExpression}"/>
-            <TextBlock Grid.Column="2" Text="Order by"/>
-            <TextBox Grid.Column="3" Text="{Binding Path=Query.OrderByExpression}"/>
+            <TextBlock Grid.Column="0" Grid.Row="1" Text="Group by"/>
+            <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Path=Query.GroupByExpression, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding Path=ExecuteQueryCommand}"/>
+                </TextBox.InputBindings>
+            </TextBox>
+            <TextBlock Grid.Column="2" Grid.Row="1" Text="Order by"/>
+            <TextBox Grid.Column="3" Grid.Row="1" Text="{Binding Path=Query.OrderByExpression, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding Path=ExecuteQueryCommand}"/>
+                </TextBox.InputBindings>
+            </TextBox>
         </Grid>
 
         <ListBox Grid.Row="2" x:Name="listBox" x:FieldModifier="private"

@@ -79,7 +79,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CollectionQuery.cs" />
     <Compile Include="CollectionView.xaml.cs">
       <DependentUpon>CollectionView.xaml</DependentUpon>
     </Compile>
@@ -112,6 +111,7 @@
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="QueryViewModel.cs" />
     <Compile Include="SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>

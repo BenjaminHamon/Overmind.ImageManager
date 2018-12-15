@@ -41,7 +41,7 @@
                 <MenuItem Header="Save collection" Style="{StaticResource ActiveCollectionMenuItemStyle}" Click="SaveCollection"/>
                 <MenuItem Header="Close collection" Style="{StaticResource ActiveCollectionMenuItemStyle}" Click="CloseCollection"/>
                 <Separator Margin="0,-3"/>
-                <MenuItem Header="Export query" Style="{StaticResource InnerMenuItemStyle}" Click="ExportQuery" IsEnabled="{Binding Path=CanExportQuery}"/>
+                <MenuItem Header="Export query" Style="{StaticResource ActiveCollectionMenuItemStyle}" Click="ExportQuery"/>
                 <Separator Margin="0,-3"/>
                 <MenuItem Header="Settings" Style="{StaticResource InnerMenuItemStyle}" Command="{Binding Path=ShowSettingsCommand}"/>
                 <Separator Margin="0,-3"/>

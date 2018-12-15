@@ -21,6 +21,7 @@ namespace Overmind.ImageManager.WindowsClient
 			CreateCollectionCommand = new DelegateCommand<string>(path => ChangeCollection(dataProvider.CreateCollection(path), path));
 			LoadCollectionCommand = new DelegateCommand<string>(path => ChangeCollection(dataProvider.LoadCollection(path), path));
 			SaveCollectionCommand = new DelegateCommand<object>(_ => ActiveCollection.Save(), _ => ActiveCollection != null);
+			ExportCollectionCommand = new DelegateCommand<string>(path => ExportQuery(path), _ => ActiveCollection != null);
 			CloseCollectionCommand = new DelegateCommand<object>(_ => CloseCollection(), _ => ActiveCollection != null);
 
 			ViewImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) application.ViewImage(image); });
@@ -54,9 +55,9 @@ namespace Overmind.ImageManager.WindowsClient
 
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ApplicationTitle)));
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActiveCollection)));
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanExportQuery)));
 
 				SaveCollectionCommand.RaiseCanExecuteChanged();
+				ExportCollectionCommand.RaiseCanExecuteChanged();
 				CloseCollectionCommand.RaiseCanExecuteChanged();
 			}
 		}
@@ -89,6 +90,7 @@ namespace Overmind.ImageManager.WindowsClient
 		public DelegateCommand<string> CreateCollectionCommand { get; }
 		public DelegateCommand<string> LoadCollectionCommand { get; }
 		public DelegateCommand<object> SaveCollectionCommand { get; }
+		public DelegateCommand<string> ExportCollectionCommand { get; }
 		public DelegateCommand<object> CloseCollectionCommand { get; }
 
 		public DelegateCommand<ImageViewModel> ViewImageCommand { get; }
@@ -114,9 +116,7 @@ namespace Overmind.ImageManager.WindowsClient
 			Downloader = null;
 		}
 
-		public bool CanExportQuery { get { return ActiveCollection != null; } }
-
-		public void ExportQuery(string collectionPath)
+		private void ExportQuery(string collectionPath)
 		{
 			CollectionData collectionData = new CollectionData();
 			collectionData.Images = ActiveCollection.FilteredImages.Select(image => image.Model).ToList();

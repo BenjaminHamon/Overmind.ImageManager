@@ -2,6 +2,7 @@
 using NLog;
 using Overmind.ImageManager.Model;
 using Overmind.ImageManager.WindowsClient.Downloads;
+using Overmind.WpfExtensions;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -148,6 +149,15 @@ namespace Overmind.ImageManager.WindowsClient
 			{
 				Logger.Error(exception, "Failed to open image in external process (Path: '{0}')", image.FilePath);
 			}
+		}
+
+		public static void ShowError(string context, string message, Exception exception)
+		{
+			string formattedMessage = message;
+			if (exception != null)
+				formattedMessage += Environment.NewLine + FormatExtensions.FormatExceptionHint(exception);
+
+			MessageBox.Show(formattedMessage, context, MessageBoxButton.OK, MessageBoxImage.Error);
 		}
 	}
 }

@@ -1,8 +1,7 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using NLog;
 using System;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -12,6 +11,8 @@ namespace Overmind.ImageManager.WindowsClient
 {
 	public partial class MainView : UserControl
 	{
+		private static readonly Logger Logger = LogManager.GetLogger(nameof(MainView));
+
 		public MainView()
 		{
 			InitializeComponent();
@@ -29,14 +30,15 @@ namespace Overmind.ImageManager.WindowsClient
 			if (fileDialog.ShowDialog() != CommonFileDialogResult.Ok)
 				return;
 
-			string collectionPath = fileDialog.FileName;
-			if (Directory.Exists(fileDialog.FileName) && Directory.EnumerateFileSystemEntries(fileDialog.FileName).Any())
+			try
 			{
-				MessageBox.Show("The selected directory is not empty.", "Create Collection", MessageBoxButton.OK, MessageBoxImage.Error);
-				return;
+				viewModel.CreateCollectionCommand.Execute(fileDialog.FileName);
 			}
-
-			viewModel.CreateCollectionCommand.Execute(collectionPath);
+			catch (Exception exception)
+			{
+				Logger.Error(exception, "Failed to create collection (Path: '{0}')", fileDialog.FileName);
+				WindowsApplication.ShowError("Create Collection", "Failed to create the image collection.", exception);
+			}
 		}
 
 		private void LoadCollection(object sender, EventArgs eventArguments)
@@ -53,16 +55,26 @@ namespace Overmind.ImageManager.WindowsClient
 			{
 				viewModel.LoadCollectionCommand.Execute(fileDialog.FileName);
 			}
-			catch
+			catch (Exception exception)
 			{
-				MessageBox.Show("Failed to open an image collection from the selected directory.", "Open Collection", MessageBoxButton.OK, MessageBoxImage.Error);
+				Logger.Error(exception, "Failed to load collection (Path: '{0}')", fileDialog.FileName);
+				WindowsApplication.ShowError("Open Collection", "Failed to open the image collection.", exception);
 			}
 		}
 
 		private void SaveCollection(object sender, EventArgs eventArguments)
 		{
 			ForceUpdateOnFocusedElement();
-			viewModel.SaveCollectionCommand.Execute(null);
+
+			try
+			{
+				viewModel.SaveCollectionCommand.Execute(null);
+			}
+			catch (Exception exception)
+			{
+				Logger.Error(exception, "Failed to save collection (Path: '{0}')", viewModel.ActiveCollection.StoragePath);
+				WindowsApplication.ShowError("Save Collection", "Failed to save the image collection.", exception);
+			}
 		}
 
 		private void CloseCollection(object sender, EventArgs eventArguments)
@@ -104,15 +116,16 @@ namespace Overmind.ImageManager.WindowsClient
 			if (fileDialog.ShowDialog() != CommonFileDialogResult.Ok)
 				return;
 
-			string collectionPath = fileDialog.FileName;
-			if (Directory.Exists(fileDialog.FileName) && Directory.EnumerateFileSystemEntries(fileDialog.FileName).Any())
+			try
 			{
-				MessageBox.Show("Directory is not empty", "Export Query", MessageBoxButton.OK, MessageBoxImage.Error);
-				return;
+				viewModel.ExportCollectionCommand.Execute(fileDialog.FileName);
 			}
-
-			viewModel.ExportQuery(collectionPath);
-		}
+			catch (Exception exception)
+			{
+				Logger.Error(exception, "Failed to export collection ('{0}' => '{1}')", viewModel.ActiveCollection.StoragePath, fileDialog.FileName);
+				WindowsApplication.ShowError("Export Collection", "Failed to export the image collection.", exception);
+			}
+}
 
 		internal void ExitApplication(object sender, EventArgs eventArguments)
 		{

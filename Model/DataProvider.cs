@@ -26,7 +26,7 @@ namespace Overmind.ImageManager.Model
 			Logger.Info("Creating collection (Path: '{0}')", collectionPath);
 
 			if (Directory.Exists(collectionPath) && Directory.EnumerateFileSystemEntries(collectionPath).Any())
-				throw new ArgumentException("Directory is not empty", nameof(collectionPath));
+				throw new ArgumentException("The directory is not empty.", nameof(collectionPath));
 
 			CollectionData newCollection = new CollectionData();
 			SaveCollection(collectionPath, newCollection, new List<ImageModel>());
@@ -133,7 +133,7 @@ namespace Overmind.ImageManager.Model
 			Logger.Info("Exporting collection ('{0}' => '{1}')", sourceCollectionPath, destinationCollectionPath);
 
 			if (Directory.Exists(destinationCollectionPath) && Directory.EnumerateFileSystemEntries(destinationCollectionPath).Any())
-				throw new ArgumentException("Directory is not empty", nameof(destinationCollectionPath));
+				throw new ArgumentException("The directory is not empty.", nameof(destinationCollectionPath));
 
 			Directory.CreateDirectory(Path.Combine(destinationCollectionPath, "Images"));
 

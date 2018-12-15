@@ -1,6 +1,4 @@
-﻿using Microsoft.Win32;
-using Microsoft.WindowsAPICodePack.Dialogs;
-using Overmind.ImageManager.Model;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -34,7 +32,7 @@ namespace Overmind.ImageManager.WindowsClient
 			string collectionPath = fileDialog.FileName;
 			if (Directory.Exists(fileDialog.FileName) && Directory.EnumerateFileSystemEntries(fileDialog.FileName).Any())
 			{
-				MessageBox.Show("Directory is not empty", "Create Collection", MessageBoxButton.OK, MessageBoxImage.Error);
+				MessageBox.Show("The selected directory is not empty.", "Create Collection", MessageBoxButton.OK, MessageBoxImage.Error);
 				return;
 			}
 
@@ -47,12 +45,18 @@ namespace Overmind.ImageManager.WindowsClient
 			if (viewModel.ActiveCollection != null)
 				return;
 
-			OpenFileDialog fileDialog = new OpenFileDialog();
-			fileDialog.Filter = "Collection|" + DataProvider.ImageCollectionFileName;
-			if (fileDialog.ShowDialog() == false)
+			CommonOpenFileDialog fileDialog = new CommonOpenFileDialog("Open Collection") { IsFolderPicker = true };
+			if (fileDialog.ShowDialog() != CommonFileDialogResult.Ok)
 				return;
 
-			viewModel.LoadCollectionCommand.Execute(Path.GetDirectoryName(fileDialog.FileName));
+			try
+			{
+				viewModel.LoadCollectionCommand.Execute(fileDialog.FileName);
+			}
+			catch
+			{
+				MessageBox.Show("Failed to open an image collection from the selected directory.", "Open Collection", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
 		}
 
 		private void SaveCollection(object sender, EventArgs eventArguments)

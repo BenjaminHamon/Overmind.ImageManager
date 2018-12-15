@@ -12,9 +12,6 @@ namespace Overmind.ImageManager.Model
 	{
 		private static readonly Logger Logger = LogManager.GetLogger(nameof(DataProvider));
 
-		public const string ImageCollectionFileName = "images.json";
-		private const string TemporaryDirectory = ".temporary";
-
 		public DataProvider(JsonSerializer serializer, FileNameFormatter fileNameFormatter)
 		{
 			this.serializer = serializer;
@@ -40,13 +37,7 @@ namespace Overmind.ImageManager.Model
 		{
 			Logger.Info("Loading collection (Path: '{0}')", collectionPath);
 
-			string jsonPath = Path.Combine(collectionPath, ImageCollectionFileName);
-
-			CollectionData collectionData = new CollectionData();
-			using (StreamReader streamReader = new StreamReader(jsonPath))
-			using (JsonReader jsonReader = new JsonTextReader(streamReader))
-				collectionData.Images = serializer.Deserialize<List<ImageModel>>(jsonReader);
-
+			CollectionData collectionData = LoadCollectionData(collectionPath);
 			foreach (ImageModel image in collectionData.Images)
 				image.FileNameInStorage = image.FileName;
 
@@ -55,23 +46,37 @@ namespace Overmind.ImageManager.Model
 			return collectionData;
 		}
 
+		private CollectionData LoadCollectionData(string collectionPath)
+		{
+			CollectionData collectionData = new CollectionData();
+
+			string jsonPath = Path.Combine(collectionPath, "Data", "Images.json");
+			using (StreamReader streamReader = new StreamReader(jsonPath))
+			using (JsonReader jsonReader = new JsonTextReader(streamReader))
+				collectionData.Images = serializer.Deserialize<List<ImageModel>>(jsonReader);
+
+			return collectionData;
+		}
+
 		public void SaveCollection(string collectionPath, CollectionData collectionData, IEnumerable<ImageModel> removedImages)
 		{
 			Logger.Info("Saving collection (Path: '{0}')", collectionPath);
 
-			Directory.CreateDirectory(collectionPath);
-			string jsonPath = Path.Combine(collectionPath, ImageCollectionFileName);
+			Directory.CreateDirectory(Path.Combine(collectionPath, "Data"));
+			Directory.CreateDirectory(Path.Combine(collectionPath, "Data-Temporary"));
+			Directory.CreateDirectory(Path.Combine(collectionPath, "Images"));
+			Directory.CreateDirectory(Path.Combine(collectionPath, "Images-Temporary"));
 
 			foreach (ImageModel image in removedImages)
-				File.Delete(Path.Combine(collectionPath, image.FileNameInStorage));
+				File.Delete(Path.Combine(collectionPath, "Images", image.FileNameInStorage));
 
 			foreach (ImageModel image in collectionData.Images)
 			{
 				image.FileName = fileNameFormatter.Format(image);
 
-				string temporaryPath = Path.Combine(collectionPath, DataProvider.TemporaryDirectory, image.FileNameInStorage);
-				string oldPath = Path.Combine(collectionPath, image.FileNameInStorage);
-				string finalPath = Path.Combine(collectionPath, image.FileName);
+				string temporaryPath = Path.Combine(collectionPath, "Images-Temporary", image.FileNameInStorage);
+				string oldPath = Path.Combine(collectionPath, "Images", image.FileNameInStorage);
+				string finalPath = Path.Combine(collectionPath, "Images", image.FileName);
 
 				if (File.Exists(temporaryPath))
 				{
@@ -97,9 +102,14 @@ namespace Overmind.ImageManager.Model
 
 			CleanTemporary(collectionPath);
 
-			using (StreamWriter streamWriter = new StreamWriter(jsonPath))
+			string jsonTemporaryPath = Path.Combine(collectionPath, "Data-Temporary", "Images.json");
+			using (StreamWriter streamWriter = new StreamWriter(jsonTemporaryPath))
 			using (JsonWriter jsonWriter = new JsonTextWriter(streamWriter))
 				serializer.Serialize(jsonWriter, collectionData.Images);
+
+			Directory.Move(Path.Combine(collectionPath, "Data"), Path.Combine(collectionPath, "Data-ToRemove"));
+			Directory.Move(Path.Combine(collectionPath, "Data-Temporary"), Path.Combine(collectionPath, "Data"));
+			Directory.Delete(Path.Combine(collectionPath, "Data-ToRemove"), true);
 		}
 
 		public bool IsCollectionSaved(string collectionPath, CollectionData activeCollectionData, IEnumerable<ImageModel> removedImages)
@@ -107,15 +117,10 @@ namespace Overmind.ImageManager.Model
 			if (removedImages.Any())
 				return false;
 
-			string temporaryDirectory = Path.Combine(collectionPath, DataProvider.TemporaryDirectory);
-			if (Directory.Exists(temporaryDirectory))
+			if (Directory.Exists(Path.Combine(collectionPath, "Images-Temporary")))
 				return false;
 
-			CollectionData savedCollectionData = new CollectionData();
-			string jsonPath = Path.Combine(collectionPath, ImageCollectionFileName);
-			using (StreamReader streamReader = new StreamReader(jsonPath))
-			using (JsonReader jsonReader = new JsonTextReader(streamReader))
-				savedCollectionData.Images = serializer.Deserialize<List<ImageModel>>(jsonReader);
+			CollectionData savedCollectionData = LoadCollectionData(collectionPath);
 
 			string activeSerialized = SerializeToString(activeCollectionData);
 			string savedSerialized = SerializeToString(savedCollectionData);
@@ -130,19 +135,31 @@ namespace Overmind.ImageManager.Model
 			if (Directory.Exists(destinationCollectionPath) && Directory.EnumerateFileSystemEntries(destinationCollectionPath).Any())
 				throw new ArgumentException("Directory is not empty", nameof(destinationCollectionPath));
 
-			Directory.CreateDirectory(destinationCollectionPath);
+			Directory.CreateDirectory(Path.Combine(destinationCollectionPath, "Images"));
+
 			foreach (ImageModel image in collectionData.Images)
-				File.Copy(Path.Combine(sourceCollectionPath, image.FileNameInStorage), Path.Combine(destinationCollectionPath, image.FileNameInStorage));
+			{
+				string sourceImagePath = GetImagePath(sourceCollectionPath, image);
+				string destinationImagePath = Path.Combine(destinationCollectionPath, "Images", image.FileNameInStorage);
+
+				if (sourceImagePath != null)
+					File.Copy(sourceImagePath, destinationImagePath);
+			}
 
 			SaveCollection(destinationCollectionPath, collectionData, new List<ImageModel>());
 		}
 
 		public string GetImagePath(string collectionPath, ImageModel image)
 		{
-			string temporaryPath = Path.Combine(collectionPath, DataProvider.TemporaryDirectory, image.FileNameInStorage);
+			string temporaryPath = Path.Combine(collectionPath, "Images-Temporary", image.FileNameInStorage);
 			if (File.Exists(temporaryPath))
 				return temporaryPath;
-			return Path.Combine(collectionPath, image.FileName);
+
+			string finalPath = Path.Combine(collectionPath, "Images", image.FileNameInStorage);
+			if (File.Exists(finalPath))
+				return finalPath;
+
+			return null;
 		}
 
 		public void WriteImageFile(string collectionPath, ImageModel image, byte[] imageData)
@@ -153,18 +170,17 @@ namespace Overmind.ImageManager.Model
 			using (Image imageObject = Image.FromStream(stream))
 				fileExtension = new ImageFormatConverter().ConvertToString(imageObject.RawFormat).ToLower();
 
-			string temporaryDirectory = Path.Combine(collectionPath, DataProvider.TemporaryDirectory);
-			Directory.CreateDirectory(temporaryDirectory);
+			Directory.CreateDirectory(Path.Combine(collectionPath, "Images-Temporary"));
 
 			image.FileName = fileNameFormatter.Format(image, fileExtension);
-			string temporaryPath = Path.Combine(temporaryDirectory, image.FileName);
+			string temporaryPath = Path.Combine(collectionPath, "Images-Temporary", image.FileName);
 			File.WriteAllBytes(temporaryPath, imageData);
 			image.FileNameInStorage = image.FileName;
 		}
 
 		public void CleanTemporary(string collectionPath)
 		{
-			string temporaryDirectory = Path.Combine(collectionPath, DataProvider.TemporaryDirectory);
+			string temporaryDirectory = Path.Combine(collectionPath, "Images-Temporary");
 			if (Directory.Exists(temporaryDirectory))
 				Directory.Delete(temporaryDirectory, true);
 		}

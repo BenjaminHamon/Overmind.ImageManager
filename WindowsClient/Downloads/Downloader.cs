@@ -21,7 +21,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		private readonly CollectionViewModel collection;
 
 		public ObservableCollection<ObservableDownload> DownloadCollection { get; } = new ObservableCollection<ObservableDownload>();
-		private Dictionary<ObservableDownload, ImageViewModel> downloadToImageDictionary = new Dictionary<ObservableDownload, ImageViewModel>();
+		private Dictionary<ObservableDownload, string> downloadHashCache = new Dictionary<ObservableDownload, string>();
 
 		public DelegateCommand<string> AddDownloadCommand { get; }
 		public DelegateCommand<ObservableDownload> SelectImageCommand { get; }
@@ -69,12 +69,9 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		{
 			download.DownloadCompleted -= HandleDownloadCompleted;
 
-			if (downloadData != null)
+			if (download.Success)
 			{
-				ImageViewModel image = collection.GetImage(ImageModel.CreateHash(downloadData));
-				if (image != null)
-					downloadToImageDictionary[download] = image;
-
+				downloadHashCache[download] = ImageModel.CreateHash(downloadData);
 				SelectImageCommand.RaiseCanExecuteChanged();
 			}
 		}
@@ -95,13 +92,12 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 		private bool CanSelectImage(ObservableDownload download)
 		{
-			return downloadToImageDictionary.ContainsKey(download);
+			return download.Success;
 		}
 
 		private void SelectImage(ObservableDownload download)
 		{
-			if (downloadToImageDictionary.ContainsKey(download))
-				collection.SelectedImage = downloadToImageDictionary[download];
+			collection.SelectedImage = collection.GetImage(downloadHashCache[download]);
 		}
 	}
 }

@@ -14,9 +14,12 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			this.model = model;
 
-			allImages = new List<ImageViewModel>(model.AllImages.Select(image => new ImageViewModel(image, () => model.GetImagePath(image))));
+			allImages = new List<ImageViewModel>();
+			foreach (ImageModel image in model.AllImages)
+				allImages.Add(new ImageViewModel(image, () => model.GetImagePath(image)));
+
 			Query = new CollectionQuery();
-			FilteredImages = new List<ImageViewModel>(allImages);
+			FilteredImages = new List<ImageViewModel>();
 			DisplayedImages = new ObservableCollection<ImageViewModel>();
 
 			ExecuteQuery();
@@ -88,6 +91,7 @@ namespace Overmind.ImageManager.WindowsClient
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
+
 		public DelegateCommand<ImageViewModel> ViewImageCommand { get; }
 		public DelegateCommand<ImageViewModel> RemoveImageCommand { get; }
 		public DelegateCommand<object> ExecuteQueryCommand { get; }

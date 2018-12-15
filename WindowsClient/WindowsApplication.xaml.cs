@@ -4,6 +4,7 @@ using Overmind.ImageManager.Model;
 using Overmind.ImageManager.WindowsClient.Downloads;
 using Overmind.WpfExtensions;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -135,6 +136,18 @@ namespace Overmind.ImageManager.WindowsClient
 			// to ensure the window is correctly activated and in the foreground
 			// See https://stackoverflow.com/questions/14055794/wpf-treeview-restores-its-focus-after-double-click/14077266
 			Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => imageWindow.Show()));
+		}
+
+		public void SpawnSlideShow(IEnumerable<ImageViewModel> imageCollection)
+		{
+			SlideShowViewModel slideShowViewModel = new SlideShowViewModel(imageCollection, new Random());
+			SlideShowView slideShowView = new SlideShowView() { DataContext = slideShowViewModel };
+
+			Window window = new Window() { Title = "Slide Show", Content = slideShowView };
+			window.Closed += (s, e) => slideShowViewModel.Dispose();
+			window.Show();
+
+			slideShowView.Focus();
 		}
 
 		public void OpenImageExternally(ImageViewModel image, string mode)

@@ -70,9 +70,6 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Orientation="Horizontal">
-                <Button DockPanel.Dock="Left" Content="SlideShow" Click="OpenSlideShow" Margin="5" Padding="5,0"/>
-            </StackPanel>
             <Border Grid.Column="1" BorderThickness="1" Margin="5" VerticalAlignment="Center">
                 <Border.Style>
                     <Style TargetType="Border">

@@ -44,6 +44,13 @@ namespace Overmind.ImageManager.Model
 			return dataProvider.IsCollectionSaved(storagePath, data, removedImages);
 		}
 
+		public void Export(string destinationPath, IEnumerable<ImageModel> imagesToExport)
+		{
+			CollectionData exportData = new CollectionData();
+			exportData.Images = new List<ImageModel>(imagesToExport);
+			dataProvider.ExportCollection(storagePath, destinationPath, exportData);
+		}
+
 		public void Dispose()
 		{
 			dataProvider.CleanTemporary(storagePath);

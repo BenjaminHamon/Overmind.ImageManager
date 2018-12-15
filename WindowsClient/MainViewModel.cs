@@ -3,7 +3,6 @@ using Overmind.ImageManager.WindowsClient.Downloads;
 using Overmind.WpfExtensions;
 using System;
 using System.ComponentModel;
-using System.Linq;
 
 namespace Overmind.ImageManager.WindowsClient
 {
@@ -21,7 +20,7 @@ namespace Overmind.ImageManager.WindowsClient
 			CreateCollectionCommand = new DelegateCommand<string>(path => ChangeCollection(dataProvider.CreateCollection(path), path));
 			LoadCollectionCommand = new DelegateCommand<string>(path => ChangeCollection(dataProvider.LoadCollection(path), path));
 			SaveCollectionCommand = new DelegateCommand<object>(_ => ActiveCollection.Save(), _ => ActiveCollection != null);
-			ExportCollectionCommand = new DelegateCommand<string>(path => ExportQuery(path), _ => ActiveCollection != null);
+			ExportCollectionCommand = new DelegateCommand<string>(path => ActiveCollection.Export(path), _ => ActiveCollection != null);
 			CloseCollectionCommand = new DelegateCommand<object>(_ => CloseCollection(), _ => ActiveCollection != null);
 
 			ViewImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) application.ViewImage(image); });
@@ -114,13 +113,6 @@ namespace Overmind.ImageManager.WindowsClient
 			ActiveCollection = null;
 			Downloader.Dispose();
 			Downloader = null;
-		}
-
-		private void ExportQuery(string collectionPath)
-		{
-			CollectionData collectionData = new CollectionData();
-			collectionData.Images = ActiveCollection.FilteredImages.Select(image => image.Model).ToList();
-			dataProvider.ExportCollection(ActiveCollection.StoragePath, collectionPath, collectionData);
 		}
 	}
 }

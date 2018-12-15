@@ -82,6 +82,14 @@ namespace Overmind.ImageManager.WindowsClient
 			}
 		}
 
+		public void Export(string destinationPath)
+		{
+			lock (modelLock)
+			{
+				model.Export(destinationPath, FilteredImages.Select(image => image.Model));
+			}
+		}
+
 		public void Dispose()
 		{
 			lock (modelLock)

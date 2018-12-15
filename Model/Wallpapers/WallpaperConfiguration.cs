@@ -1,4 +1,4 @@
-﻿using Lucene.Net.QueryParsers;
+﻿using Overmind.ImageManager.Model.Queries;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,7 +23,7 @@ namespace Overmind.ImageManager.Model.Wallpapers
 		[DataMember]
 		public TimeSpan CyclePeriod { get; set; }
 
-		public Dictionary<string, List<Exception>> Validate()
+		public Dictionary<string, List<Exception>> Validate(IQueryEngine<ImageModel> queryEngine)
 		{
 			Dictionary<string, List<Exception>> errorCollection = new Dictionary<string, List<Exception>>()
 			{
@@ -41,11 +41,11 @@ namespace Overmind.ImageManager.Model.Wallpapers
 
 			try
 			{
-				ReadOnlyCollectionModel.AssertQuery(ImageQuery);
+				queryEngine.AssertQuery(ImageQuery);
 			}
-			catch (ParseException exception)
+			catch (ArgumentException exception)
 			{
-				errorCollection[nameof(ImageQuery)].Add(new ArgumentException("The image query is invalid.", nameof(ImageQuery), exception));
+				errorCollection[nameof(ImageQuery)].Add(exception);
 			}
 
 			if (CyclePeriod < TimeSpan.FromSeconds(1))

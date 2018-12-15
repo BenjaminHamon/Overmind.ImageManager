@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using NLog;
 using Overmind.ImageManager.Model;
+using Overmind.ImageManager.Model.Queries;
 using Overmind.ImageManager.WindowsClient.Downloads;
 using Overmind.WpfExtensions;
 using System;
@@ -42,16 +43,18 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public WindowsApplication()
 		{
-			string settingsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
+			string applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
 			JsonSerializer serializer = new JsonSerializer() { Formatting = Formatting.Indented };
 			FileNameFormatter fileNameFormatter = new FileNameFormatter();
 
+			settingsProvider = new SettingsProvider(serializer, applicationDataDirectory);
 			dataProvider = new DataProvider(serializer, fileNameFormatter);
-			settingsProvider = new SettingsProvider(serializer, settingsDirectory);
+			queryEngine = new LuceneQueryEngine();
 		}
 
-		private readonly DataProvider dataProvider;
 		private readonly SettingsProvider settingsProvider;
+		private readonly DataProvider dataProvider;
+		private readonly IQueryEngine<ImageModel> queryEngine;
 
 		private MainViewModel mainViewModel;
 
@@ -62,7 +65,7 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			Logger.Info("Starting {0}", ApplicationName);
 
-			mainViewModel = new MainViewModel(this, dataProvider);
+			mainViewModel = new MainViewModel(this, dataProvider, queryEngine);
 			MainWindow = new MainWindow() { DataContext = mainViewModel };
 			MainWindow.Show();
 		}
@@ -106,7 +109,7 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			if (settingsWindow == null)
 			{
-				SettingsViewModel settingsViewModel = new SettingsViewModel(settingsProvider);
+				SettingsViewModel settingsViewModel = new SettingsViewModel(settingsProvider, queryEngine);
 				SettingsView settingsView = new SettingsView() { DataContext = settingsViewModel };
 
 				settingsWindow = new Window()

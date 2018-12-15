@@ -1,4 +1,5 @@
 ﻿using Overmind.ImageManager.Model;
+using Overmind.ImageManager.Model.Queries;
 using Overmind.WpfExtensions;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Overmind.ImageManager.WindowsClient
 {
 	public class CollectionViewModel : INotifyPropertyChanged, IDisposable
 	{
-		public CollectionViewModel(WindowsApplication application, CollectionModel model)
+		public CollectionViewModel(WindowsApplication application, CollectionModel model, IQueryEngine<ImageModel> queryEngine)
 		{
 			this.model = model;
 
@@ -18,7 +19,7 @@ namespace Overmind.ImageManager.WindowsClient
 			foreach (ImageModel image in model.AllImages)
 				allImages.Add(new ImageViewModel(image, () => model.GetImagePath(image)));
 
-			Query = new QueryViewModel();
+			Query = new QueryViewModel(queryEngine);
 			FilteredImages = new List<ImageViewModel>();
 			DisplayedImages = new ObservableCollection<ImageViewModel>();
 
@@ -171,7 +172,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 				try
 				{
-					FilteredImages = Query.Execute(model, allImages).ToList();
+					FilteredImages = Query.Execute(allImages).ToList();
 				}
 				catch (Exception exception)
 				{

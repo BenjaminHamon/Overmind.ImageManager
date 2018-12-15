@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using NLog;
 using Overmind.ImageManager.Model;
+using Overmind.ImageManager.Model.Queries;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -39,19 +40,26 @@ namespace Overmind.ImageManager.WallpaperService
 
 		public WindowsApplication()
 		{
-			string settingsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
 			JsonSerializer serializer = new JsonSerializer() { Formatting = Formatting.Indented };
-			DataProvider dataProvider = new DataProvider(serializer, null);
-			SettingsProvider settingsProvider = new SettingsProvider(serializer, settingsDirectory);
-			mainViewModel = new MainViewModel(settingsProvider, dataProvider, settingsDirectory);
+
+			applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
+			settingsProvider = new SettingsProvider(serializer, applicationDataDirectory);
+			dataProvider = new DataProvider(serializer, null);
+			queryEngine = new LuceneQueryEngine();
 		}
 
-		private readonly MainViewModel mainViewModel;
+		private readonly string applicationDataDirectory;
+		private readonly DataProvider dataProvider;
+		private readonly SettingsProvider settingsProvider;
+		private readonly IQueryEngine<ImageModel> queryEngine;
+
+		private MainViewModel mainViewModel;
 
 		private void Application_Startup(object sender, StartupEventArgs eventArguments)
 		{
 			Logger.Info("Starting {0}", ApplicationName);
 
+			mainViewModel = new MainViewModel(settingsProvider, dataProvider, queryEngine, applicationDataDirectory);
 			mainViewModel.ReloadSettings();
 			mainViewModel.ApplyConfiguration();
 

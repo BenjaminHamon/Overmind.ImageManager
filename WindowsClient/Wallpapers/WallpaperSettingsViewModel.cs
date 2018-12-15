@@ -1,4 +1,5 @@
 ﻿using Overmind.ImageManager.Model;
+using Overmind.ImageManager.Model.Queries;
 using Overmind.ImageManager.Model.Wallpapers;
 using Overmind.WpfExtensions;
 using System;
@@ -11,16 +12,17 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 {
 	public class WallpaperSettingsViewModel : INotifyPropertyChanged
 	{
-		public WallpaperSettingsViewModel(SettingsProvider settingsProvider)
+		public WallpaperSettingsViewModel(SettingsProvider settingsProvider, IQueryEngine<ImageModel> queryEngine)
 		{
 			this.settingsProvider = settingsProvider;
+			this.queryEngine = queryEngine;
 
 			settings = settingsProvider.LoadWallpaperSettings();
 			ConfigurationCollection = new ObservableCollection<WallpaperConfigurationViewModel>();
 
 			foreach (WallpaperConfiguration configuration in settings.ConfigurationCollection)
 			{
-				WallpaperConfigurationViewModel configurationViewModel = new WallpaperConfigurationViewModel(configuration);
+				WallpaperConfigurationViewModel configurationViewModel = new WallpaperConfigurationViewModel(configuration, queryEngine);
 				configurationViewModel.PropertyChanged += HandleConfigurationChanged;
 				ConfigurationCollection.Add(configurationViewModel);
 			}
@@ -33,6 +35,7 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 		}
 
 		private readonly SettingsProvider settingsProvider;
+		private readonly IQueryEngine<ImageModel> queryEngine;
 		private WallpaperSettings settings;
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -75,7 +78,7 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 		private void AddConfiguration()
 		{
 			WallpaperConfiguration configuration = new WallpaperConfiguration() { Name = "New Configuration", CyclePeriod = TimeSpan.FromMinutes(5) };
-			WallpaperConfigurationViewModel configurationViewModel = new WallpaperConfigurationViewModel(configuration);
+			WallpaperConfigurationViewModel configurationViewModel = new WallpaperConfigurationViewModel(configuration, queryEngine);
 
 			configurationViewModel.PropertyChanged += HandleConfigurationChanged;
 			settings.ConfigurationCollection.Add(configuration);

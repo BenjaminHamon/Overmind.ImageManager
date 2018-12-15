@@ -1,4 +1,5 @@
 ﻿using Overmind.ImageManager.Model;
+using Overmind.ImageManager.Model.Queries;
 using Overmind.ImageManager.WindowsClient.Downloads;
 using Overmind.WpfExtensions;
 using System;
@@ -8,10 +9,11 @@ namespace Overmind.ImageManager.WindowsClient
 {
 	public class MainViewModel : INotifyPropertyChanged, IDisposable
 	{
-		public MainViewModel(WindowsApplication application, DataProvider dataProvider)
+		public MainViewModel(WindowsApplication application, DataProvider dataProvider, IQueryEngine<ImageModel> queryEngine)
 		{
 			this.application = application;
 			this.dataProvider = dataProvider;
+			this.queryEngine = queryEngine;
 
 			ShowDownloaderCommand = new DelegateCommand<object>(_ => application.ShowDownloader());
 			ShowSettingsCommand = new DelegateCommand<object>(_ => application.ShowSettings());
@@ -32,6 +34,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private readonly WindowsApplication application;
 		private readonly DataProvider dataProvider;
+		private readonly IQueryEngine<ImageModel> queryEngine;
 
 		public string ApplicationTitle
 		{
@@ -106,7 +109,7 @@ namespace Overmind.ImageManager.WindowsClient
 				CloseCollection();
 
 			CollectionModel collectionModel = new CollectionModel(dataProvider, collectionData, collectionPath);
-			ActiveCollection = new CollectionViewModel(application, collectionModel);
+			ActiveCollection = new CollectionViewModel(application, collectionModel, queryEngine);
 			Downloader = new Downloader(ActiveCollection);
 		}
 

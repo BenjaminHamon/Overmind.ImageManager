@@ -1,4 +1,6 @@
-﻿using Overmind.ImageManager.Model.Wallpapers;
+﻿using Overmind.ImageManager.Model;
+using Overmind.ImageManager.Model.Queries;
+using Overmind.ImageManager.Model.Wallpapers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,18 +12,21 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 {
 	public class WallpaperConfigurationViewModel : INotifyPropertyChanged, INotifyDataErrorInfo
 	{
-		public WallpaperConfigurationViewModel(WallpaperConfiguration model)
+		public WallpaperConfigurationViewModel(WallpaperConfiguration model, IQueryEngine<ImageModel> queryEngine)
 		{
 			this.Model = model;
+			this.queryEngine = queryEngine;
 
 			nameField = model.Name;
 			cyclePeriodField = model.CyclePeriod.ToString();
 
 			ErrorCollection = new Dictionary<string, List<Exception>>();
-			WarningCollection = model.Validate();
+			WarningCollection = model.Validate(queryEngine);
 		}
 
 		public WallpaperConfiguration Model { get; }
+
+		private readonly IQueryEngine<ImageModel> queryEngine;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
@@ -41,7 +46,7 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 
 		private void UpdateValidation()
 		{
-			WarningCollection = Model.Validate();
+			WarningCollection = Model.Validate(queryEngine);
 
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasWarnings)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(WarningCollection)));

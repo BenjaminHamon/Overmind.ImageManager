@@ -1,4 +1,5 @@
 ﻿using NLog;
+using Overmind.ImageManager.Model.Queries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,16 +14,13 @@ namespace Overmind.ImageManager.Model.Wallpapers
 	{
 		private static readonly Logger Logger = LogManager.GetLogger(nameof(WallpaperServiceInstance));
 
-		public static WallpaperServiceInstance CreateInstance(DataProvider dataProvider,
-			WallpaperConfiguration configuration, Action<string> setSystemWallpaperFromPath, Random random)
+		public static WallpaperServiceInstance CreateInstance(WallpaperConfiguration configuration,
+			DataProvider dataProvider, IQueryEngine<ImageModel> queryEngine, Action<string> setSystemWallpaperFromPath, Random random)
 		{
 			CollectionData collectionData = dataProvider.LoadCollection(configuration.CollectionPath);
 			ReadOnlyCollectionModel collectionModel = new ReadOnlyCollectionModel(dataProvider, collectionData, configuration.CollectionPath);
+			ICollection<ImageModel> imageCollection = queryEngine.Search(collectionModel.AllImages, configuration.ImageQuery);
 			Action<ImageModel> setSystemWallpaperFromImage = image => setSystemWallpaperFromPath(collectionModel.GetImagePath(image));
-
-			IEnumerable<ImageModel> imageCollection = collectionModel.AllImages;
-			if (String.IsNullOrEmpty(configuration.ImageQuery) == false)
-				imageCollection = collectionModel.SearchAdvanced(configuration.ImageQuery);
 
 			return new WallpaperServiceInstance(imageCollection, setSystemWallpaperFromImage, random, configuration.CyclePeriod);
 		}

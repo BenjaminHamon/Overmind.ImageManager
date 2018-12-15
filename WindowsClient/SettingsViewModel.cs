@@ -1,13 +1,14 @@
 ﻿using Overmind.ImageManager.Model;
+using Overmind.ImageManager.Model.Queries;
 using Overmind.ImageManager.WindowsClient.Wallpapers;
 
 namespace Overmind.ImageManager.WindowsClient
 {
 	public class SettingsViewModel
 	{
-		public SettingsViewModel(SettingsProvider settingsProvider)
+		public SettingsViewModel(SettingsProvider settingsProvider, IQueryEngine<ImageModel> queryEngine)
 		{
-			WallpaperSettings = new WallpaperSettingsViewModel(settingsProvider);
+			WallpaperSettings = new WallpaperSettingsViewModel(settingsProvider, queryEngine);
 		}
 
 		public WallpaperSettingsViewModel WallpaperSettings { get; }

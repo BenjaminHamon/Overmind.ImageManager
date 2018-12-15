@@ -4,7 +4,7 @@ using Lucene.Net.Search;
 using System;
 using Lucene.Net.Index;
 
-namespace Overmind.ImageManager.Model
+namespace Overmind.ImageManager.Model.Queries
 {
 	public class ImageQueryParser : QueryParser
 	{

@@ -60,7 +60,10 @@
     <Compile Include="DataProvider.cs" />
     <Compile Include="FileNameFormatter.cs" />
     <Compile Include="ImageModel.cs" />
-    <Compile Include="ImageQueryParser.cs" />
+    <Compile Include="Queries\ImageQueryParser.cs" />
+    <Compile Include="Queries\IQueryEngine.cs" />
+    <Compile Include="Queries\LuceneQueryEngine.cs" />
+    <Compile Include="Queries\SimpleQueryEngine.cs" />
     <Compile Include="ReadOnlyCollectionModel.cs" />
     <Compile Include="SettingsProvider.cs" />
     <Compile Include="Wallpapers\WallpaperConfiguration.cs" />

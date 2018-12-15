@@ -1,5 +1,6 @@
 ﻿using NLog;
 using Overmind.ImageManager.Model;
+using Overmind.ImageManager.Model.Queries;
 using Overmind.ImageManager.Model.Wallpapers;
 using Overmind.WpfExtensions;
 using System;
@@ -16,10 +17,11 @@ namespace Overmind.ImageManager.WallpaperService
 	{
 		private static readonly Logger Logger = LogManager.GetLogger(nameof(MainViewModel));
 
-		public MainViewModel(SettingsProvider settingsProvider, DataProvider dataProvider, string wallpaperStorage)
+		public MainViewModel(SettingsProvider settingsProvider, DataProvider dataProvider, IQueryEngine<ImageModel> queryEngine, string wallpaperStorage)
 		{
 			this.settingsProvider = settingsProvider;
 			this.dataProvider = dataProvider;
+			this.queryEngine = queryEngine;
 			this.wallpaperStorage = wallpaperStorage;
 
 			ApplyConfigurationCommand = new DelegateCommand<object>(_ => ApplyConfiguration());
@@ -30,6 +32,7 @@ namespace Overmind.ImageManager.WallpaperService
 
 		private readonly SettingsProvider settingsProvider;
 		private readonly DataProvider dataProvider;
+		private readonly IQueryEngine<ImageModel> queryEngine;
 		private readonly string wallpaperStorage;
 		private WallpaperSettings wallpaperSettings;
 		private WallpaperServiceInstance wallpaperService;
@@ -67,7 +70,7 @@ namespace Overmind.ImageManager.WallpaperService
 			{
 				try
 				{
-					wallpaperService = WallpaperServiceInstance.CreateInstance(dataProvider, ActiveConfiguration, SetWallpaper, new Random());
+					wallpaperService = WallpaperServiceInstance.CreateInstance(ActiveConfiguration, dataProvider, queryEngine, SetWallpaper, new Random());
 				}
 				catch (Exception exception)
 				{
@@ -125,7 +128,7 @@ namespace Overmind.ImageManager.WallpaperService
 
 			foreach (WallpaperConfiguration configuration in wallpaperSettings.ConfigurationCollection.ToList())
 			{
-				Dictionary<string, List<Exception>> configurationValidation = configuration.Validate();
+				Dictionary<string, List<Exception>> configurationValidation = configuration.Validate(queryEngine);
 				foreach (Exception validationException in configurationValidation.SelectMany(kvp => kvp.Value))
 					Logger.Warn("Failed to validate wallpaper configuration '{0}': {1}", configuration.Name, FormatExtensions.FormatExceptionHint(validationException));
 				if (configurationValidation.SelectMany(kvp => kvp.Value).Any())

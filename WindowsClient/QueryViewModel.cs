@@ -1,4 +1,5 @@
 ﻿using Overmind.ImageManager.Model;
+using Overmind.ImageManager.Model.Queries;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,6 +12,13 @@ namespace Overmind.ImageManager.WindowsClient
 	{
 		private const string FieldSeparator = ",";
 		private static readonly Regex FieldRegex = new Regex("^(?<name>[a-zA-Z]+)(\\[(?<index>[0-9]+)\\])?$");
+
+		public QueryViewModel(IQueryEngine<ImageModel> queryEngine)
+		{
+			this.queryEngine = queryEngine;
+		}
+
+		private readonly IQueryEngine<ImageModel> queryEngine;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
@@ -69,19 +77,14 @@ namespace Overmind.ImageManager.WindowsClient
 			}
 		}
 
-		public ICollection<ImageViewModel> Execute(CollectionModel model, IEnumerable<ImageViewModel> allImages)
+		public ICollection<ImageViewModel> Execute(IEnumerable<ImageViewModel> allImages)
 		{
 			Func<ImageModel, string> groupQuery = CreateGroupQuery(GroupByExpression);
 			foreach (ImageViewModel image in allImages)
 				image.Group = groupQuery(image.Model);
 
-			IEnumerable<ImageViewModel> resultImages = allImages;
-
-			if (String.IsNullOrEmpty(SearchExpression) == false)
-			{
-				ICollection<ImageModel> searchResult = model.SearchAdvanced(SearchExpression);
-				resultImages = resultImages.Where(image => searchResult.Contains(image.Model));
-			}
+			ICollection<ImageModel> searchResult = queryEngine.Search(allImages.Select(image => image.Model), SearchExpression);
+			IEnumerable<ImageViewModel> resultImages = allImages.Where(image => searchResult.Contains(image.Model));
 
 			resultImages = OrderBy(resultImages, OrderByExpression);
 

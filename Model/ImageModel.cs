@@ -49,10 +49,13 @@ namespace Overmind.ImageManager.Model
 			foreach (string tag in TagCollection)
 				yield return tag;
 		}
-		
+
 		public Document ToDocument()
 		{
 			Document document = new Document();
+
+			document.Add(new Field("hash", Hash, Field.Store.YES, Field.Index.NOT_ANALYZED));
+
 			document.Add(new Field("title", Title ?? "", Field.Store.NO, Field.Index.ANALYZED));
 			foreach (string subject in SubjectCollection)
 				document.Add(new Field("subject", subject, Field.Store.NO, Field.Index.ANALYZED));
@@ -60,10 +63,13 @@ namespace Overmind.ImageManager.Model
 				document.Add(new Field("artist", artist, Field.Store.NO, Field.Index.ANALYZED));
 			foreach (string tag in TagCollection)
 				document.Add(new Field("tag", tag, Field.Store.NO, Field.Index.ANALYZED));
+
 			document.Add(new NumericField("score", Field.Store.NO, true).SetIntValue(Score));
+			document.Add(new Field("date", DateTools.DateToString(AdditionDate, DateTools.Resolution.DAY), Field.Store.NO, Field.Index.ANALYZED));
+
 			foreach (string searchableValue in GetSearchableValues())
 				document.Add(new Field("any", searchableValue, Field.Store.NO, Field.Index.ANALYZED));
-			document.Add(new Field("hash", Hash, Field.Store.YES, Field.Index.NOT_ANALYZED));
+
 			return document;
 		}
 	}

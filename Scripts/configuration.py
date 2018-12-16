@@ -42,7 +42,7 @@ def load_configuration(environment):
 		# Additional resources, not embedded in programs
 		"resources": {
 			"path_in_workspace": ".",
-			"file_patterns": [ "Credits.txt", "License.txt" ],
+			"file_patterns": [ "About.md", "License.txt" ],
 		},
 	}
 

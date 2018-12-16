@@ -107,5 +107,10 @@ namespace Overmind.ImageManager.WindowsClient
 				isTryDisplayMoreScheduled = false;
 			}
 		}
+
+		private void ShowQuerySyntaxHelp(object sender, RoutedEventArgs eventArguments)
+		{
+			WindowsApplication.ShowDocumentation("Query-Syntax");
+		}
 	}
 }

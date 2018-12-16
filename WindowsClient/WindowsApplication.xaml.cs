@@ -38,6 +38,7 @@ namespace Overmind.ImageManager.WindowsClient
 		public static string ApplicationFullName { get { return Assembly.GetExecutingAssembly().GetName().Name; } }
 		public static Version ApplicationVersion { get { return Assembly.GetExecutingAssembly().GetName().Version; } }
 		public static string ApplicationFullVersion { get { return FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion; } }
+		public static Uri ApplicationDocumentation { get { return new Uri("https://github.com/BenjaminHamon/Overmind.ImageManager/wiki/"); } }
 
 		private static readonly Logger Logger = LogManager.GetLogger(nameof(WindowsApplication));
 
@@ -174,6 +175,13 @@ namespace Overmind.ImageManager.WindowsClient
 				formattedMessage += Environment.NewLine + FormatExtensions.FormatExceptionHint(exception);
 
 			MessageBox.Show(formattedMessage, context, MessageBoxButton.OK, MessageBoxImage.Error);
+		}
+
+		public static void ShowDocumentation(string page)
+		{
+			Uri uri = new Uri(ApplicationDocumentation, page);
+
+			using (Process process = Process.Start(uri.ToString())) { }
 		}
 	}
 }

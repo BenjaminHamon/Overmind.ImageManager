@@ -79,35 +79,47 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public ICollection<ImageViewModel> Execute(IEnumerable<ImageViewModel> allImages)
 		{
-			Func<ImageModel, string> groupQuery = CreateGroupQuery(GroupByExpression);
 			foreach (ImageViewModel image in allImages)
-				image.Group = groupQuery(image.Model);
+				image.Group = null;
 
-			ICollection<ImageModel> searchResult = queryEngine.Search(allImages.Select(image => image.Model), SearchExpression);
-			IEnumerable<ImageViewModel> resultImages = allImages.Where(image => searchResult.Contains(image.Model));
-
+			IEnumerable<ImageViewModel> resultImages = allImages;
+			resultImages = Filter(resultImages, SearchExpression);
+			resultImages = GroupBy(resultImages, GroupByExpression);
 			resultImages = OrderBy(resultImages, OrderByExpression);
 
 			return new List<ImageViewModel>(resultImages);
 		}
 
-		private static Func<ImageModel, string> CreateGroupQuery(string expression)
+		private IEnumerable<ImageViewModel> Filter(IEnumerable<ImageViewModel> source, string expression)
 		{
-			if (String.IsNullOrWhiteSpace(expression))
-				return image => "#All";
-
-			List<Func<ImageModel, object>> getterList = expression.Split(new string[] { FieldSeparator }, StringSplitOptions.None)
-				.Select(fieldExpression => CreateFieldGetter(fieldExpression.Trim())).ToList();
-			return image =>
-			{
-				string value = String.Join(FieldSeparator, getterList.Select(getter => getter(image)));
-				if (String.IsNullOrEmpty(value))
-					value = "#NoGroup";
-				return value;
-			};
+			ICollection<ImageModel> searchResult = queryEngine.Search(source.Select(image => image.Model), expression);
+			return source.Where(image => searchResult.Contains(image.Model));
 		}
 
-		private static IEnumerable<ImageViewModel> OrderBy(IEnumerable<ImageViewModel> source, string expression)
+		private IEnumerable<ImageViewModel> GroupBy(IEnumerable<ImageViewModel> source, string expression)
+		{
+			List<Func<ImageModel, object>> getterList = new List<Func<ImageModel, object>>();
+
+			if (String.IsNullOrWhiteSpace(expression))
+			{
+				getterList.Add(image => "#All");
+			}
+			else
+			{
+				foreach (string fieldExpression in expression.Split(new string[] { FieldSeparator }, StringSplitOptions.None))
+					getterList.Add(CreateFieldGetter(fieldExpression.Trim()));
+			}
+
+			foreach (ImageViewModel image in source)
+			{
+				string value = String.Join(FieldSeparator, getterList.Select(getter => getter(image.Model)));
+				image.Group = String.IsNullOrEmpty(value) ? "#NoGroup" : value;
+			}
+
+			return source;
+		}
+
+		private IEnumerable<ImageViewModel> OrderBy(IEnumerable<ImageViewModel> source, string expression)
 		{
 			IOrderedEnumerable<ImageViewModel> orderedSource = source.OrderBy(image => image.Group);
 			if (String.IsNullOrWhiteSpace(expression))
@@ -136,7 +148,7 @@ namespace Overmind.ImageManager.WindowsClient
 			return orderedSource;
 		}
 
-		private static Func<ImageModel, object> CreateFieldGetter(string fieldExpression)
+		private Func<ImageModel, object> CreateFieldGetter(string fieldExpression)
 		{
 			Match fieldMatch = FieldRegex.Match(fieldExpression);
 			if (fieldMatch.Success == false)

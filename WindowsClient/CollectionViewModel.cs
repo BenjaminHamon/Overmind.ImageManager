@@ -166,28 +166,20 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private void ExecuteQuery()
 		{
+			Query.Validate();
+			if (Query.HasErrors)
+				return;
+
 			lock (modelLock)
 			{
-				Query.Error = null;
-
-				try
-				{
-					FilteredImages = Query.Execute(allImages).ToList();
-				}
-				catch (Exception exception)
-				{
-					Query.Error = exception.Message;
-				}
+				FilteredImages = Query.Execute(allImages).ToList();
 			}
 
-			if (Query.Error == null)
-			{
-				ResetDisplay();
+			ResetDisplay();
 
-				// The memory does not get reliably released when changing the displayed image collection.
-				// Manually calling the garbage collector here seems to help reduce the used memory as soon as possible.
-				GC.Collect();
-			}
+			// The memory does not get reliably released when changing the displayed image collection.
+			// Manually calling the garbage collector here seems to help reduce the used memory as soon as possible.
+			GC.Collect();
 		}
 
 		public bool CanDisplayMore { get { return DisplayedImages.Count != (FilteredImages ?? allImages).Count; } }

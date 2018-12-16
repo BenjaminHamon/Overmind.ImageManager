@@ -1,6 +1,7 @@
 ﻿using Overmind.ImageManager.Model;
 using Overmind.ImageManager.Model.Queries;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace Overmind.ImageManager.WindowsClient
 {
-	public class QueryViewModel : INotifyPropertyChanged
+	public class QueryViewModel : INotifyPropertyChanged, INotifyDataErrorInfo
 	{
 		private const string FieldSeparator = ",";
 		private static readonly Regex FieldRegex = new Regex("^(?<name>[a-zA-Z]+)(\\[(?<index>[0-9]+)\\])?$");
@@ -16,11 +17,25 @@ namespace Overmind.ImageManager.WindowsClient
 		public QueryViewModel(IQueryEngine<ImageModel> queryEngine)
 		{
 			this.queryEngine = queryEngine;
+
+			ErrorCollection = new Dictionary<string, List<Exception>>();
 		}
 
 		private readonly IQueryEngine<ImageModel> queryEngine;
 
 		public event PropertyChangedEventHandler PropertyChanged;
+		public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+
+		public Dictionary<string, List<Exception>> ErrorCollection { get; private set; }
+
+		public bool HasErrors { get { return ErrorCollection.SelectMany(kvp => kvp.Value).Any(); } }
+
+		public IEnumerable GetErrors(string propertyName)
+		{
+			if ((propertyName != null) && ErrorCollection.ContainsKey(propertyName))
+				return ErrorCollection[propertyName];
+			return null;
+		}
 
 		private string searchExpressionField;
 		public string SearchExpression
@@ -30,9 +45,12 @@ namespace Overmind.ImageManager.WindowsClient
 			{
 				if (searchExpressionField == value)
 					return;
+
 				searchExpressionField = value;
+				ErrorCollection[nameof(SearchExpression)] = new List<Exception>();
+
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SearchExpression)));
-				Error = null;
+				ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(SearchExpression)));
 			}
 		}
 
@@ -44,9 +62,12 @@ namespace Overmind.ImageManager.WindowsClient
 			{
 				if (groupByExpressionField == value)
 					return;
+
 				groupByExpressionField = value;
+				ErrorCollection[nameof(GroupByExpression)] = new List<Exception>();
+
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(GroupByExpression)));
-				Error = null;
+				ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(GroupByExpression)));
 			}
 		}
 
@@ -58,23 +79,33 @@ namespace Overmind.ImageManager.WindowsClient
 			{
 				if (orderByExpressionField == value)
 					return;
+
 				orderByExpressionField = value;
+				ErrorCollection[nameof(OrderByExpression)] = new List<Exception>();
+
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OrderByExpression)));
-				Error = null;
+				ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(OrderByExpression)));
 			}
 		}
 
-		private string errorField;
-		public string Error
+		public void Validate()
 		{
-			get { return errorField; }
-			set
-			{
-				if (errorField == value)
-					return;
-				errorField = value;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Error)));
-			}
+			ErrorCollection[nameof(SearchExpression)] = new List<Exception>();
+			ErrorCollection[nameof(GroupByExpression)] = new List<Exception>();
+			ErrorCollection[nameof(OrderByExpression)] = new List<Exception>();
+
+			try { Filter(new List<ImageViewModel>(), SearchExpression); }
+			catch (Exception exception) { ErrorCollection[nameof(SearchExpression)].Add(exception); }
+
+			try { GroupBy(new List<ImageViewModel>(), GroupByExpression); }
+			catch (Exception exception) { ErrorCollection[nameof(GroupByExpression)].Add(exception); }
+
+			try { OrderBy(new List<ImageViewModel>(), OrderByExpression); }
+			catch (Exception exception) { ErrorCollection[nameof(OrderByExpression)].Add(exception); }
+
+			ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(SearchExpression)));
+			ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(GroupByExpression)));
+			ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(OrderByExpression)));
 		}
 
 		public ICollection<ImageViewModel> Execute(IEnumerable<ImageViewModel> allImages)

@@ -54,6 +54,7 @@
                           Header="List display" Style="{StaticResource InnerMenuItemStyle}" IsCheckable="True"/>
                 <Separator Margin="0,-3"/>
                 <MenuItem Header="Play slide show" Style="{StaticResource InnerMenuItemStyle}" Command="{Binding Path=SpawnSlideShowCommand}"/>
+                <MenuItem Header="Play slide show (shuffle)" Style="{StaticResource InnerMenuItemStyle}" Command="{Binding Path=SpawnShuffledSlideShowCommand}"/>
             </MenuItem>
         </Menu>
 

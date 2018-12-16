@@ -25,7 +25,8 @@ namespace Overmind.ImageManager.WindowsClient
 			ExportCollectionCommand = new DelegateCommand<string>(path => ActiveCollection.Export(path), _ => ActiveCollection != null);
 			CloseCollectionCommand = new DelegateCommand<object>(_ => CloseCollection(), _ => ActiveCollection != null);
 
-			SpawnSlideShowCommand = new DelegateCommand<object>(_ => application.SpawnSlideShow(ActiveCollection.FilteredImages), _ => ActiveCollection != null);
+			SpawnSlideShowCommand = new DelegateCommand<object>(_ => application.SpawnSlideShow(ActiveCollection.FilteredImages, false), _ => ActiveCollection != null);
+			SpawnShuffledSlideShowCommand = new DelegateCommand<object>(_ => application.SpawnSlideShow(ActiveCollection.FilteredImages, true), _ => ActiveCollection != null);
 			ViewImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) application.ViewImage(image); });
 			OpenImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) application.OpenImageExternally(image, "open"); });
 			EditImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) application.OpenImageExternally(image, "edit"); });
@@ -63,6 +64,7 @@ namespace Overmind.ImageManager.WindowsClient
 				ExportCollectionCommand.RaiseCanExecuteChanged();
 				CloseCollectionCommand.RaiseCanExecuteChanged();
 				SpawnSlideShowCommand.RaiseCanExecuteChanged();
+				SpawnShuffledSlideShowCommand.RaiseCanExecuteChanged();
 			}
 		}
 
@@ -98,6 +100,7 @@ namespace Overmind.ImageManager.WindowsClient
 		public DelegateCommand<object> CloseCollectionCommand { get; }
 
 		public DelegateCommand<object> SpawnSlideShowCommand { get; }
+		public DelegateCommand<object> SpawnShuffledSlideShowCommand { get; }
 		public DelegateCommand<ImageViewModel> ViewImageCommand { get; }
 		public DelegateCommand<ImageViewModel> OpenImageCommand { get; }
 		public DelegateCommand<ImageViewModel> EditImageCommand { get; }

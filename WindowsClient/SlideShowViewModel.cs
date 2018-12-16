@@ -10,12 +10,12 @@ namespace Overmind.ImageManager.WindowsClient
 {
 	public class SlideShowViewModel : INotifyPropertyChanged, IDisposable
 	{
-		public SlideShowViewModel(IEnumerable<ImageViewModel> imageCollection, Random random)
+		public SlideShowViewModel(IReadOnlyList<ImageViewModel> imageCollection)
 		{
-			this.imageCollection = imageCollection.Shuffle(random).ToList();
+			this.imageCollection = imageCollection;
 
 			isRunningField = true;
-			currentImageField = this.imageCollection.FirstOrDefault();
+			currentImageField = imageCollection.FirstOrDefault();
 			interval = TimeSpan.FromSeconds(5);
 			cycleTimer = new Timer(_ => Next(), null, interval, interval);
 			
@@ -23,7 +23,7 @@ namespace Overmind.ImageManager.WindowsClient
 			NextCommand = new DelegateCommand<object>(_ => Next(), _ => this.imageCollection.Count > 1);
 		}
 
-		private readonly List<ImageViewModel> imageCollection;
+		private readonly IReadOnlyList<ImageViewModel> imageCollection;
 		private readonly Timer cycleTimer;
 		private readonly object cycleLock = new object();
 

@@ -3,6 +3,7 @@ using NLog;
 using Overmind.ImageManager.Model;
 using Overmind.ImageManager.Model.Queries;
 using Overmind.ImageManager.WindowsClient.Downloads;
+using Overmind.ImageManager.WindowsClient.Extensions;
 using Overmind.WpfExtensions;
 using System;
 using System.Collections.Generic;
@@ -142,9 +143,10 @@ namespace Overmind.ImageManager.WindowsClient
 			Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => imageWindow.Show()));
 		}
 
-		public void SpawnSlideShow(IEnumerable<ImageViewModel> imageCollection)
+		public void SpawnSlideShow(IEnumerable<ImageViewModel> imageCollection, bool shuffle)
 		{
-			SlideShowViewModel slideShowViewModel = new SlideShowViewModel(imageCollection, new Random());
+			List<ImageViewModel> source = new List<ImageViewModel>(shuffle ? imageCollection.Shuffle(new Random()) : imageCollection);
+			SlideShowViewModel slideShowViewModel = new SlideShowViewModel(source);
 			SlideShowView slideShowView = new SlideShowView() { DataContext = slideShowViewModel };
 
 			Window window = new Window() { Title = "Slide Show", Content = slideShowView };

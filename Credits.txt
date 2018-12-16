@@ -12,6 +12,12 @@ Overmind Image Manager uses licensed assets and software from:
 - Google Material Design Icons (https://material.io/icons/)
 	Apache License Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0.html)
 
+- Markdig (https://github.com/lunet-io/markdig)
+	BSD-Clause 2 License (https://github.com/lunet-io/markdig/blob/master/license.txt)
+
+- Markdig WPF (https://github.com/Kryptos-FR/markdig.wpf)
+	MIT License (https://github.com/Kryptos-FR/markdig.wpf/blob/master/LICENSE.md)
+
 - Newtonsoft Json.NET (https://www.newtonsoft.com/json)
 	MIT License (https://github.com/JamesNK/Newtonsoft.Json/blob/master/LICENSE.md)
 
@@ -19,7 +25,7 @@ Overmind Image Manager uses licensed assets and software from:
 	MIT License (https://github.com/icsharpcode/SharpZipLib/blob/master/LICENSE.txt)
 
 - Windows API Code Pack (https://github.com/aybe/Windows-API-Code-Pack-1.1)
-	Microsoft Software Licence https://github.com/aybe/Windows-API-Code-Pack-1.1/blob/master/LICENCE
+	Microsoft Software License (https://github.com/aybe/Windows-API-Code-Pack-1.1/blob/master/LICENCE)
 
 - WPF CustomMessageBox (https://github.com/evanwon/WPFCustomMessageBox)
 	MIT License (https://github.com/evanwon/WPFCustomMessageBox/blob/master/README.md)

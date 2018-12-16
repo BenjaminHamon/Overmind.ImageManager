@@ -66,7 +66,7 @@ namespace Overmind.ImageManager.Model.Queries
 				}
 			}
 
-			return dataSet.Where(image => resultHashes.Contains(image.Hash)).ToList();
+			return resultHashes.Select(hash => dataSet.First(image => image.Hash == hash)).ToList();
 		}
 	}
 }

@@ -182,5 +182,10 @@ namespace Overmind.ImageManager.WindowsClient
 					viewModel.ActiveCollection.ResetDisplay();
 			}
 		}
+
+		private void ShowApplicationHelp(object sender, RoutedEventArgs eventArguments)
+		{
+			WindowsApplication.ShowDocumentation("");
+		}
 	}
 }

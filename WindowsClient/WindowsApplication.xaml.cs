@@ -12,6 +12,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace Overmind.ImageManager.WindowsClient
@@ -39,7 +40,10 @@ namespace Overmind.ImageManager.WindowsClient
 		public static string ApplicationFullName { get { return Assembly.GetExecutingAssembly().GetName().Name; } }
 		public static Version ApplicationVersion { get { return Assembly.GetExecutingAssembly().GetName().Version; } }
 		public static string ApplicationFullVersion { get { return FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion; } }
-		public static Uri ApplicationDocumentation { get { return new Uri("https://github.com/BenjaminHamon/Overmind.ImageManager/wiki/"); } }
+		public static string ApplicationCopyright { get { return FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).LegalCopyright; } }
+
+		public static string InstallationDirectory { get { return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); } }
+		public static Uri DocumentationHome { get { return new Uri("https://github.com/BenjaminHamon/Overmind.ImageManager/wiki/"); } }
 
 		private static readonly Logger Logger = LogManager.GetLogger(nameof(WindowsApplication));
 
@@ -133,6 +137,25 @@ namespace Overmind.ImageManager.WindowsClient
 			}
 		}
 
+		public void ShowAbout()
+		{
+			AboutView aboutView = new AboutView();
+
+			Window aboutWindow = new Window()
+			{
+				Title = "About " + ApplicationTitle,
+				Content = aboutView,
+				Owner = MainWindow,
+				WindowStartupLocation = WindowStartupLocation.CenterOwner,
+				SizeToContent = SizeToContent.WidthAndHeight,
+				ResizeMode = ResizeMode.NoResize,
+			};
+
+			aboutWindow.KeyDown += (s, e) => { if (e.Key == Key.Escape) aboutWindow.Close(); };
+
+			aboutWindow.ShowDialog();
+		}
+
 		public void ViewImage(ImageViewModel image)
 		{
 			Window imageWindow = new ImageView() { DataContext = image };
@@ -181,7 +204,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public static void ShowDocumentation(string page)
 		{
-			Uri uri = new Uri(ApplicationDocumentation, page);
+			Uri uri = new Uri(DocumentationHome, page);
 
 			using (Process process = Process.Start(uri.ToString())) { }
 		}

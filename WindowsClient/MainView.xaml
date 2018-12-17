@@ -56,6 +56,10 @@
                 <MenuItem Header="Play slide show" Style="{StaticResource InnerMenuItemStyle}" Command="{Binding Path=SpawnSlideShowCommand}"/>
                 <MenuItem Header="Play slide show (shuffle)" Style="{StaticResource InnerMenuItemStyle}" Command="{Binding Path=SpawnShuffledSlideShowCommand}"/>
             </MenuItem>
+            <MenuItem Header="Help">
+                <MenuItem Header="Help" Style="{StaticResource InnerMenuItemStyle}" Click="ShowApplicationHelp"/>
+                <MenuItem Header="About" Style="{StaticResource InnerMenuItemStyle}" Command="{Binding Path=ShowAboutCommand}"/>
+            </MenuItem>
         </Menu>
 
         <Grid Grid.Row="1">

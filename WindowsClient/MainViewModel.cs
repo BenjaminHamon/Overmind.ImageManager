@@ -17,6 +17,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 			ShowDownloaderCommand = new DelegateCommand<object>(_ => application.ShowDownloader());
 			ShowSettingsCommand = new DelegateCommand<object>(_ => application.ShowSettings());
+			ShowAboutCommand = new DelegateCommand<object>(_ => application.ShowAbout());
 			ExitApplicationCommand = new DelegateCommand<object>(_ => application.Shutdown());
 
 			CreateCollectionCommand = new DelegateCommand<string>(path => ChangeCollection(dataProvider.CreateCollection(path), path));
@@ -27,6 +28,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 			SpawnSlideShowCommand = new DelegateCommand<object>(_ => application.SpawnSlideShow(ActiveCollection.FilteredImages, false), _ => ActiveCollection != null);
 			SpawnShuffledSlideShowCommand = new DelegateCommand<object>(_ => application.SpawnSlideShow(ActiveCollection.FilteredImages, true), _ => ActiveCollection != null);
+
 			ViewImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) application.ViewImage(image); });
 			OpenImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) application.OpenImageExternally(image, "open"); });
 			EditImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) application.OpenImageExternally(image, "edit"); });
@@ -91,6 +93,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public DelegateCommand<object> ShowDownloaderCommand { get; }
 		public DelegateCommand<object> ShowSettingsCommand { get; }
+		public DelegateCommand<object> ShowAboutCommand { get; }
 		public DelegateCommand<object> ExitApplicationCommand { get; }
 
 		public DelegateCommand<string> CreateCollectionCommand { get; }
@@ -101,6 +104,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public DelegateCommand<object> SpawnSlideShowCommand { get; }
 		public DelegateCommand<object> SpawnShuffledSlideShowCommand { get; }
+
 		public DelegateCommand<ImageViewModel> ViewImageCommand { get; }
 		public DelegateCommand<ImageViewModel> OpenImageCommand { get; }
 		public DelegateCommand<ImageViewModel> EditImageCommand { get; }

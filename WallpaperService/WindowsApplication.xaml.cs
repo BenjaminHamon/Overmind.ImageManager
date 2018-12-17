@@ -63,7 +63,17 @@ namespace Overmind.ImageManager.WallpaperService
 			mainViewModel.ReloadSettings();
 			mainViewModel.ApplyConfiguration();
 
-			MainWindow = new MainView() { DataContext = mainViewModel };
+			MainView mainView = new MainView() { DataContext = mainViewModel };
+
+			MainWindow = new Window()
+			{
+				Content = mainView,
+				Title = ApplicationTitle,
+				Width = 300,
+				SizeToContent = SizeToContent.Height,
+				ResizeMode = ResizeMode.NoResize,
+			};
+
 			MainWindow.Closing += HideMainWindow;
 
 			// FIXME: The NotificationIcon bindings throw exceptions on initialization (but still work).

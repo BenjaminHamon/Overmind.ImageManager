@@ -7,6 +7,7 @@ using Overmind.ImageManager.WindowsClient.Extensions;
 using Overmind.WpfExtensions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -63,6 +64,7 @@ namespace Overmind.ImageManager.WindowsClient
 		private readonly IQueryEngine<ImageModel> queryEngine;
 
 		private MainViewModel mainViewModel;
+		private MainView mainView;
 
 		private Window downloaderWindow;
 		private Window settingsWindow;
@@ -72,7 +74,13 @@ namespace Overmind.ImageManager.WindowsClient
 			Logger.Info("Starting {0}", ApplicationName);
 
 			mainViewModel = new MainViewModel(this, dataProvider, queryEngine);
-			MainWindow = new MainWindow() { DataContext = mainViewModel };
+			mainView = new MainView() { DataContext = mainViewModel };
+			MainWindow = new Window() { Content = mainView };
+
+			Binding titleBinding = new Binding() { Source = mainViewModel, Path = new PropertyPath(nameof(MainViewModel.WindowTitle)) };
+			BindingOperations.SetBinding(MainWindow, Window.TitleProperty, titleBinding);
+
+			MainWindow.Closing += MainWindow_Closing;
 			MainWindow.Show();
 		}
 
@@ -82,6 +90,13 @@ namespace Overmind.ImageManager.WindowsClient
 
 			if (mainViewModel != null)
 				mainViewModel.Dispose();
+		}
+
+		private void MainWindow_Closing(object sender, CancelEventArgs eventArguments)
+		{
+			mainView.ExitApplication(sender, eventArguments);
+			if (eventArguments.Cancel == false)
+				MainWindow.Closing -= MainWindow_Closing;
 		}
 
 		public void ShowDownloader()

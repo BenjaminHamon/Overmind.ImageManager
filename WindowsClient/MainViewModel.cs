@@ -39,7 +39,7 @@ namespace Overmind.ImageManager.WindowsClient
 		private readonly DataProvider dataProvider;
 		private readonly IQueryEngine<ImageModel> queryEngine;
 
-		public string ApplicationTitle
+		public string WindowTitle
 		{
 			get
 			{
@@ -59,7 +59,7 @@ namespace Overmind.ImageManager.WindowsClient
 					return;
 				activeCollectionField = value;
 
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ApplicationTitle)));
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(WindowTitle)));
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActiveCollection)));
 
 				SaveCollectionCommand.RaiseCanExecuteChanged();

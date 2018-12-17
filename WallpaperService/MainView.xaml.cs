@@ -1,8 +1,8 @@
-﻿using System.Windows;
+﻿using System.Windows.Controls;
 
 namespace Overmind.ImageManager.WallpaperService
 {
-	public partial class MainView : Window
+	public partial class MainView : UserControl
 	{
 		public MainView()
 		{

@@ -5,10 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" d:DesignHeight="100" d:DesignWidth="300"
-             x:Name="tokenListView"  x:FieldModifier="private"
-             BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
-             Background="White" MouseDoubleClick="AddItem" KeyUp="AddItem">
-    <ItemsControl x:Name="itemsControl" x:FieldModifier="private">
+             x:Name="tokenListView" x:FieldModifier="private"
+             BorderThickness="1" BorderBrush="#828790" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+             MouseDoubleClick="AddItem" KeyUp="AddItem">
+    <ItemsControl x:Name="itemsControl" x:FieldModifier="private" Margin="2">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
                 <WrapPanel/>
@@ -19,7 +19,7 @@
                 <DockPanel Margin="2" MaxWidth="{Binding ElementName=tokenListView, Path=ActualWidth}">
                     <Grid DockPanel.Dock="Right" KeyboardNavigation.TabNavigation="None">
                         <Button Click="RemoveItem">
-                            <fa:ImageAwesome Icon="Times" Margin="2" Height="12" Width="12"/>
+                            <fa:ImageAwesome Icon="Times" Margin="4" Height="8" Width="8"/>
                         </Button>
                     </Grid>
                     <ContentPresenter ContentTemplate="{Binding ElementName=tokenListView, Path=TextBoxTemplate}" LostFocus="HandleItemLostFocus"/>

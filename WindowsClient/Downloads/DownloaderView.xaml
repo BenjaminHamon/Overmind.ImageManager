@@ -85,19 +85,19 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Width="60">
+                    <GridViewColumn Header="Actions" Width="60">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Command="{Binding Path=CancelCommand}" ToolTip="Cancel">
-                                        <fa:ImageAwesome Icon="StopCircle" Height="16" Width="16" />
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Command="{Binding Path=CancelCommand}" ToolTip="Cancel" Margin="2,0">
+                                        <fa:ImageAwesome Icon="Stop" Height="12" Width="12" Margin="2"/>
                                     </Button>
                                     <!-- Using ElementName instead of RelativeSource breaks the command parameter binding.
                                          The parameter is null during the first CanExecute invocation.
                                          See https://stackoverflow.com/questions/335849/wpf-commandparameter-is-null-first-time-canexecute-is-called -->
                                     <Button Command="{Binding RelativeSource={RelativeSource AncestorType=downloads:DownloaderView}, Path=DataContext.SelectImageCommand}"
-                                            CommandParameter="{Binding}" ToolTip="Select">
-                                        <fa:ImageAwesome Icon="ExternalLinkSquare" Height="16" Width="16" />
+                                            CommandParameter="{Binding}" ToolTip="Select" Margin="2,0">
+                                        <fa:ImageAwesome Icon="ExternalLinkSquare" Height="12" Width="12" Margin="2" />
                                     </Button>
                                 </StackPanel>
                             </DataTemplate>

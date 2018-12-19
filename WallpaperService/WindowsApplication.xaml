@@ -9,7 +9,7 @@
              Startup="Application_Startup" Exit="Application_Exit" ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
         <taskbar:TaskbarIcon x:Key="NotificationIcon" d:DataContext="{d:DesignInstance Type=main:MainViewModel}"
-                             IconSource="/Resources/Logo.ico" ToolTipText="{Binding Path=ApplicationTitle}" TrayMouseDoubleClick="ShowMainWindow">
+                             IconSource="/Resources/Logo.ico" ToolTipText="{x:Static main:WindowsApplication.ApplicationTitle}" TrayMouseDoubleClick="ShowMainWindow">
             <taskbar:TaskbarIcon.ContextMenu>
                 <ContextMenu>
                     <ContextMenu.Resources>
@@ -26,7 +26,7 @@
                             <Image Source="/Resources/Logo.png"/>
                         </MenuItem.Icon>
                         <MenuItem.Header>
-                            <TextBlock Text="{Binding Path=ApplicationTitle}" FontWeight="Bold"/>
+                            <TextBlock Text="{x:Static main:WindowsApplication.ApplicationTitle}" FontWeight="Bold"/>
                         </MenuItem.Header>
                     </MenuItem>
                     <Separator Margin="0,-3"/>

@@ -82,6 +82,8 @@ namespace Overmind.ImageManager.WindowsClient
 
 			MainWindow.Closing += MainWindow_Closing;
 			MainWindow.Show();
+
+			mainView.Focus();
 		}
 
 		private void Application_Exit(object sender, ExitEventArgs eventArguments)

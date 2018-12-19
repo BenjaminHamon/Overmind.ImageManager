@@ -13,6 +13,9 @@ namespace Overmind.ImageManager.WindowsClient
 	{
 		private static readonly Logger Logger = LogManager.GetLogger(nameof(MainView));
 
+		public static RoutedUICommand ExportCommand { get; } = new RoutedUICommand("Export", "Export", typeof(MainView));
+		public static RoutedUICommand ExitCommand { get; } = new RoutedUICommand("Exit", "Exit", typeof(MainView));
+
 		public MainView()
 		{
 			InitializeComponent();
@@ -24,6 +27,11 @@ namespace Overmind.ImageManager.WindowsClient
 		}
 
 		private MainViewModel viewModel { get { return (MainViewModel)DataContext; } }
+
+		private void IsCollectionOpened(object sender, CanExecuteRoutedEventArgs eventArguments)
+		{
+			eventArguments.CanExecute = viewModel.ActiveCollection != null;
+		}
 
 		private void CreateCollection(object sender, EventArgs eventArguments)
 		{
@@ -115,9 +123,9 @@ namespace Overmind.ImageManager.WindowsClient
 			}
 		}
 
-		private void ExportQuery(object sender, EventArgs eventArguments)
+		private void ExportQueryResults(object sender, EventArgs eventArguments)
 		{
-			CommonOpenFileDialog fileDialog = new CommonOpenFileDialog("Export Query") { IsFolderPicker = true };
+			CommonOpenFileDialog fileDialog = new CommonOpenFileDialog("Export Query Results") { IsFolderPicker = true };
 			if (fileDialog.ShowDialog() != CommonFileDialogResult.Ok)
 				return;
 

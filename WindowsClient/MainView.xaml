@@ -4,8 +4,26 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
-             mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:MainViewModel}"
-             d:DesignHeight="500" d:DesignWidth="1000">
+             mc:Ignorable="d" d:DesignHeight="500" d:DesignWidth="1000"
+             d:DataContext="{d:DesignInstance Type=main:MainViewModel}"
+             Focusable="True" FocusVisualStyle="{x:Null}">
+
+    <UserControl.CommandBindings>
+        <CommandBinding Command="New" Executed="CreateCollection"/>
+        <CommandBinding Command="Open" Executed="LoadCollection"/>
+        <CommandBinding Command="Save" Executed="SaveCollection" CanExecute="IsCollectionOpened"/>
+        <CommandBinding Command="Close" Executed="CloseCollection" CanExecute="IsCollectionOpened"/>
+        <CommandBinding Command="main:MainView.ExportCommand" Executed="ExportQueryResults" CanExecute="IsCollectionOpened"/>
+        <CommandBinding Command="main:MainView.ExitCommand" Executed="ExitApplication"/>
+        <CommandBinding Command="Help" Executed="ShowApplicationHelp"/>
+    </UserControl.CommandBindings>
+
+    <UserControl.InputBindings>
+        <KeyBinding Modifiers="Ctrl" Key="N" Command="New"/>
+        <KeyBinding Modifiers="Ctrl" Key="O" Command="Open"/>
+        <KeyBinding Modifiers="Ctrl" Key="S" Command="Save"/>
+        <KeyBinding Key="F1" Command="Help"/>
+    </UserControl.InputBindings>
 
     <UserControl.Resources>
         <Style x:Key="InnerMenuItemStyle" TargetType="MenuItem">
@@ -19,13 +37,6 @@
                 </Style>
             </Style.Resources>
         </Style>
-        <Style x:Key="ActiveCollectionMenuItemStyle" TargetType="MenuItem" BasedOn="{StaticResource InnerMenuItemStyle}">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding Path=ActiveCollection}" Value="{x:Null}">
-                    <Setter Property="IsEnabled" Value="False"/>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
     </UserControl.Resources>
 
     <Grid>
@@ -36,16 +47,16 @@
 
         <Menu Grid.Row="0">
             <MenuItem Header="File">
-                <MenuItem Header="New collection" Style="{StaticResource InnerMenuItemStyle}" Click="CreateCollection"/>
-                <MenuItem Header="Open collection" Style="{StaticResource InnerMenuItemStyle}" Click="LoadCollection"/>
-                <MenuItem Header="Save collection" Style="{StaticResource ActiveCollectionMenuItemStyle}" Click="SaveCollection"/>
-                <MenuItem Header="Close collection" Style="{StaticResource ActiveCollectionMenuItemStyle}" Click="CloseCollection"/>
+                <MenuItem Header="New collection" Style="{StaticResource InnerMenuItemStyle}" Command="New" InputGestureText="Ctrl+N"/>
+                <MenuItem Header="Open collection" Style="{StaticResource InnerMenuItemStyle}" Command="Open" InputGestureText="Ctrl+O"/>
+                <MenuItem Header="Save collection" Style="{StaticResource InnerMenuItemStyle}" Command="Save" InputGestureText="Ctrl+S"/>
+                <MenuItem Header="Close collection" Style="{StaticResource InnerMenuItemStyle}" Command="Close"/>
                 <Separator Margin="0,-3"/>
-                <MenuItem Header="Export query" Style="{StaticResource ActiveCollectionMenuItemStyle}" Click="ExportQuery"/>
+                <MenuItem Header="Export query results" Style="{StaticResource InnerMenuItemStyle}" Command="main:MainView.ExportCommand"/>
                 <Separator Margin="0,-3"/>
                 <MenuItem Header="Settings" Style="{StaticResource InnerMenuItemStyle}" Command="{Binding Path=ShowSettingsCommand}"/>
                 <Separator Margin="0,-3"/>
-                <MenuItem Header="Exit" Style="{StaticResource InnerMenuItemStyle}" Click="ExitApplication"/>
+                <MenuItem Header="Exit" Style="{StaticResource InnerMenuItemStyle}" Command="main:MainView.ExitCommand" InputGestureText="Alt+F4"/>
             </MenuItem>
             <MenuItem Header="View">
                 <MenuItem x:Name="gridDisplayMenuItem" x:FieldModifier="private"
@@ -57,7 +68,7 @@
                 <MenuItem Header="Play slide show (shuffle)" Style="{StaticResource InnerMenuItemStyle}" Command="{Binding Path=SpawnShuffledSlideShowCommand}"/>
             </MenuItem>
             <MenuItem Header="Help">
-                <MenuItem Header="Help" Style="{StaticResource InnerMenuItemStyle}" Click="ShowApplicationHelp"/>
+                <MenuItem Header="Help" Style="{StaticResource InnerMenuItemStyle}" Command="Help" InputGestureText="F1"/>
                 <MenuItem Header="About" Style="{StaticResource InnerMenuItemStyle}" Command="{Binding Path=ShowAboutCommand}"/>
             </MenuItem>
         </Menu>

@@ -1,8 +1,10 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
 using Newtonsoft.Json;
 using NLog;
+using NLog.Common;
 using Overmind.ImageManager.Model;
 using Overmind.ImageManager.Model.Queries;
+using Overmind.WpfExtensions;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -17,7 +19,7 @@ namespace Overmind.ImageManager.WallpaperService
 		[STAThread]
 		public static void Main(string[] arguments)
 		{
-			AppDomain.CurrentDomain.UnhandledException += (s, e) => Logger.Fatal((Exception)e.ExceptionObject, "Unhandled exception");
+			AppDomain.CurrentDomain.UnhandledException += ReportFatalError;
 
 			string applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
 			Model.Application.InitializeLogging(ApplicationFullName, ApplicationName, applicationDataDirectory);
@@ -103,6 +105,25 @@ namespace Overmind.ImageManager.WallpaperService
 		private void ExitApplication(object sender, RoutedEventArgs eventArguments)
 		{
 			Shutdown();
+		}
+
+		private static void ReportFatalError(object sender, UnhandledExceptionEventArgs eventArguments)
+		{
+			Exception exception = (Exception)eventArguments.ExceptionObject;
+
+			InternalLogger.Fatal(exception, "Unhandled exception");
+			Logger.Fatal(exception, "Unhandled exception");
+			ShowError(ApplicationTitle, "A fatal error has occured.", exception);
+
+		}
+
+		public static void ShowError(string context, string message, Exception exception)
+		{
+			string formattedMessage = message;
+			if (exception != null)
+				formattedMessage += Environment.NewLine + FormatExtensions.FormatExceptionHint(exception);
+
+			MessageBox.Show(formattedMessage, context, MessageBoxButton.OK, MessageBoxImage.Error);
 		}
 	}
 }

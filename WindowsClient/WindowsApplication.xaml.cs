@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using NLog;
+using NLog.Common;
 using Overmind.ImageManager.Model;
 using Overmind.ImageManager.Model.Queries;
 using Overmind.ImageManager.WindowsClient.Downloads;
@@ -23,7 +24,7 @@ namespace Overmind.ImageManager.WindowsClient
 		[STAThread]
 		public static void Main(string[] arguments)
 		{
-			AppDomain.CurrentDomain.UnhandledException += (s, e) => Logger.Fatal((Exception)e.ExceptionObject, "Unhandled exception");
+			AppDomain.CurrentDomain.UnhandledException += ReportFatalError;
 
 			string applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
 			Model.Application.InitializeLogging(ApplicationFullName, ApplicationName, applicationDataDirectory);
@@ -208,6 +209,16 @@ namespace Overmind.ImageManager.WindowsClient
 			{
 				Logger.Error(exception, "Failed to open image in external process (Path: '{0}')", image.FilePath);
 			}
+		}
+
+		private static void ReportFatalError(object sender, UnhandledExceptionEventArgs eventArguments)
+		{
+			Exception exception = (Exception)eventArguments.ExceptionObject;
+
+			InternalLogger.Fatal(exception, "Unhandled exception");
+			Logger.Fatal(exception, "Unhandled exception");
+			ShowError(ApplicationTitle, "A fatal error has occured.", exception);
+
 		}
 
 		public static void ShowError(string context, string message, Exception exception)

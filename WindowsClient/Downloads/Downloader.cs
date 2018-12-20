@@ -69,7 +69,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		{
 			download.DownloadCompleted -= HandleDownloadCompleted;
 
-			if (download.Success)
+			if (downloadData != null)
 			{
 				downloadHashCache[download] = ImageModel.CreateHash(downloadData);
 				SelectImageCommand.RaiseCanExecuteChanged();
@@ -92,7 +92,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 		private bool CanSelectImage(ObservableDownload download)
 		{
-			return download.Success;
+			return downloadHashCache.ContainsKey(download);
 		}
 
 		private void SelectImage(ObservableDownload download)

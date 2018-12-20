@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Overmind.ImageManager.Model
 {
-	public class CollectionModel : ReadOnlyCollectionModel, IDisposable
+	public class CollectionModel : ReadOnlyCollectionModel
 	{
 		public CollectionModel(DataProvider dataProvider, CollectionData data, string storagePath)
 			: base(dataProvider, data, storagePath)
@@ -49,11 +49,6 @@ namespace Overmind.ImageManager.Model
 			CollectionData exportData = new CollectionData();
 			exportData.Images = new List<ImageModel>(imagesToExport);
 			dataProvider.ExportCollection(storagePath, destinationPath, exportData);
-		}
-
-		public void Dispose()
-		{
-			dataProvider.CleanTemporary(storagePath);
 		}
 	}
 }

@@ -39,17 +39,6 @@ namespace Overmind.ImageManager.Model
 		{
 			Logger.Info("Loading collection (Path: '{0}')", collectionPath);
 
-			CollectionData collectionData = LoadCollectionData(collectionPath);
-			foreach (ImageModel image in collectionData.Images)
-				image.FileNameInStorage = image.FileName;
-
-			CleanTemporary(collectionPath);
-
-			return collectionData;
-		}
-
-		private CollectionData LoadCollectionData(string collectionPath)
-		{
 			CollectionData collectionData = new CollectionData();
 
 			collectionData.Metadata = LoadData<CollectionMetadata>(Path.Combine(collectionPath, "Data", "Metadata.json"));
@@ -57,6 +46,8 @@ namespace Overmind.ImageManager.Model
 				throw new InvalidDataException("The collection format version is not supported.");
 
 			collectionData.Images = LoadData<List<ImageModel>>(Path.Combine(collectionPath, "Data", "Images.json"));
+			foreach (ImageModel image in collectionData.Images)
+				image.FileNameInStorage = image.FileName;
 
 			return collectionData;
 		}
@@ -105,7 +96,7 @@ namespace Overmind.ImageManager.Model
 				}
 			}
 
-			CleanTemporary(collectionPath);
+			Directory.Delete(Path.Combine(collectionPath, "Images-Temporary"), true);
 
 			SaveData(Path.Combine(collectionPath, "Data-Temporary", "Metadata.json"), collectionData.Metadata);
 			SaveData(Path.Combine(collectionPath, "Data-Temporary", "Images.json"), collectionData.Images);
@@ -123,7 +114,7 @@ namespace Overmind.ImageManager.Model
 			if (Directory.Exists(Path.Combine(collectionPath, "Images-Temporary")))
 				return false;
 
-			CollectionData savedCollectionData = LoadCollectionData(collectionPath);
+			CollectionData savedCollectionData = LoadCollection(collectionPath);
 
 			string activeSerialized = SerializeToString(activeCollectionData);
 			string savedSerialized = SerializeToString(savedCollectionData);
@@ -181,7 +172,7 @@ namespace Overmind.ImageManager.Model
 			image.FileNameInStorage = image.FileName;
 		}
 
-		public void CleanTemporary(string collectionPath)
+		public void ClearUnsavedFiles(string collectionPath)
 		{
 			string temporaryDirectory = Path.Combine(collectionPath, "Images-Temporary");
 			if (Directory.Exists(temporaryDirectory))

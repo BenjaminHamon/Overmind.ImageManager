@@ -20,8 +20,8 @@ namespace Overmind.ImageManager.WindowsClient
 			ShowAboutCommand = new DelegateCommand<object>(_ => application.ShowAbout());
 			ExitApplicationCommand = new DelegateCommand<object>(_ => application.Shutdown());
 
-			CreateCollectionCommand = new DelegateCommand<string>(path => ChangeCollection(dataProvider.CreateCollection(path), path));
-			LoadCollectionCommand = new DelegateCommand<string>(path => ChangeCollection(dataProvider.LoadCollection(path), path));
+			CreateCollectionCommand = new DelegateCommand<string>(path => ChangeCollection(CreateCollection(path), path));
+			LoadCollectionCommand = new DelegateCommand<string>(path => ChangeCollection(LoadCollection(path), path));
 			SaveCollectionCommand = new DelegateCommand<object>(_ => ActiveCollection.Save(), _ => ActiveCollection != null);
 			ExportCollectionCommand = new DelegateCommand<string>(path => ActiveCollection.Export(path), _ => ActiveCollection != null);
 			CloseCollectionCommand = new DelegateCommand<object>(_ => CloseCollection(), _ => ActiveCollection != null);
@@ -110,6 +110,18 @@ namespace Overmind.ImageManager.WindowsClient
 		public DelegateCommand<ImageViewModel> EditImageCommand { get; }
 		public DelegateCommand<ImageViewModel> RestartDownloadCommand { get; }
 
+		private CollectionData CreateCollection(string collectionPath)
+		{
+			return dataProvider.CreateCollection(collectionPath);
+		}
+
+		private CollectionData LoadCollection(string collectionPath)
+		{
+			CollectionData collectionData = dataProvider.LoadCollection(collectionPath);
+			dataProvider.ClearUnsavedFiles(collectionPath);
+			return collectionData;
+		}
+
 		private void ChangeCollection(CollectionData collectionData, string collectionPath)
 		{
 			if (ActiveCollection != null)
@@ -122,10 +134,11 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private void CloseCollection()
 		{
-			ActiveCollection.Dispose();
-			ActiveCollection = null;
 			Downloader.Dispose();
 			Downloader = null;
+
+			dataProvider.ClearUnsavedFiles(ActiveCollection.StoragePath);
+			ActiveCollection = null;
 		}
 	}
 }

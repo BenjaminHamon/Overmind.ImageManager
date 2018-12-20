@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Overmind.ImageManager.WindowsClient
 {
-	public class CollectionViewModel : INotifyPropertyChanged, IDisposable
+	public class CollectionViewModel : INotifyPropertyChanged
 	{
 		public CollectionViewModel(WindowsApplication application, CollectionModel model, IQueryEngine<ImageModel> queryEngine)
 		{
@@ -88,14 +88,6 @@ namespace Overmind.ImageManager.WindowsClient
 			lock (modelLock)
 			{
 				model.Export(destinationPath, FilteredImages.Select(image => image.Model));
-			}
-		}
-
-		public void Dispose()
-		{
-			lock (modelLock)
-			{
-				model.Dispose();
 			}
 		}
 

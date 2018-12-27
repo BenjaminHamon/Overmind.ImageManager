@@ -108,10 +108,14 @@ namespace Overmind.ImageManager.WindowsClient
 		public ImageViewModel AddImage(Uri source, byte[] data)
 		{
 			string hash = ImageModel.CreateHash(data);
+			DateTime now = DateTime.UtcNow;
+
+			// Change the datetime resolution to seconds
+			now = now.AddTicks( - (now.Ticks % TimeSpan.TicksPerSecond));
 
 			lock (modelLock)
 			{
-				ImageModel newImage = new ImageModel() { Hash = hash, AdditionDate = DateTime.Now, Source = source };
+				ImageModel newImage = new ImageModel() { Hash = hash, AdditionDate = now, Source = source };
 				model.AddImage(newImage);
 				model.WriteImageFile(newImage, data);
 

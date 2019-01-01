@@ -15,7 +15,7 @@ def load_configuration(environment):
 	configuration = {
 		"project": "Overmind.ImageManager",
 		"project_name": "Overmind Image Manager",
-		"project_version": { "identifier": "1.0" },
+		"project_version": { "identifier": "2.0" },
 
 		"configuration_list": [ "Debug", "Release" ],
 	}

@@ -2,17 +2,9 @@
 
 Overmind Image Manager is a Windows desktop application to manage your collections of pictures. 
 
+The product is free and open source software. See [About](About.md) for more information.  
+Public releases are available on the [Releases page](https://github.com/BenjaminHamon/Overmind.ImageManager/releases).  
+Technical documentation and user documentation can be found in the [Wiki](https://github.com/BenjaminHamon/Overmind.ImageManager/wiki).
 
-## Build
-
-- MSBuild 2017 (or simply Visual Studio 2017) is required to build the solution.
-- Python3 is required to run build scripts, of which one generating metadata files for assembly information is integrated in the msbuild projects.
-
-The solution `Overmind.ImageManager.sln` can be opened and built directly with Visual Studio. The paths to the required executables are defined in `Environment.props` and can be overriden locally by creating a similar file `Environment.props.user`.
-
-The solution can also be built directly using the python build scripts. The paths to the required executables are defined by `Scripts/environment.py` and can be overriden locally by creating a file `environment.json`, at the repository root or in a directory `.overmind` in your home directory.
-
-```
-python3 ./Scripts/main.py metadata
-python3 ./Scripts/main.py compile --configuration Debug
-```
+The solution `Overmind.ImageManager.sln` can be opened and built with Visual Studio 2017.  
+For more information on how to build the project, see the [Build](https://github.com/BenjaminHamon/Overmind.ImageManager/wiki/Build) documentation page.

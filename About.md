@@ -9,8 +9,6 @@ Overmind Image Manager uses licensed assets and software from:
   ([Font Awesome Free License](https://fontawesome.com/license/free))
 - [Font Awesome WPF](https://github.com/charri/Font-Awesome-WPF)
   ([MIT License](https://github.com/charri/Font-Awesome-WPF/blob/master/LICENSE))
-- [Google Material Design Icons](https://material.io/icons)
-  ([Apache License Version 2.0](https://www.apache.org/licenses/LICENSE-2.0.html))
 - [Markdig](https://github.com/lunet-io/markdig)
   ([BSD-Clause 2 License](https://github.com/lunet-io/markdig/blob/master/license.txt))
 - [Markdig WPF](https://github.com/Kryptos-FR/markdig.wpf)

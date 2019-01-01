@@ -2,7 +2,7 @@
 
 [assembly: AssemblyProduct("Overmind Image Manager")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyCopyright("Copyright (c) 2018 Benjamin Hamon")]
+[assembly: AssemblyCopyright("Copyright (c) 2017-2019 Benjamin Hamon")]
 
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug")]

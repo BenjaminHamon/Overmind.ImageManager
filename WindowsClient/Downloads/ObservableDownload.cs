@@ -57,14 +57,13 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 				try
 				{
-					Uri = new Uri(uriStringField);
+					Uri = new Uri(uriStringField, UriKind.Absolute);
 				}
 				catch (UriFormatException exception)
 				{
 					IsDownloading = false;
 					IsCompleted = true;
 					StatusMessage = FormatExtensions.FormatExceptionSummary(exception);
-
 				}
 
 				if (Uri != null)

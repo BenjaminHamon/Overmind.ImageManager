@@ -1,22 +1,40 @@
 ﻿using Overmind.ImageManager.Model;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Overmind.ImageManager.WindowsClient
 {
-	public class ImagePropertiesViewModel : INotifyPropertyChanged
+	public class ImagePropertiesViewModel : INotifyPropertyChanged, INotifyDataErrorInfo
 	{
 		public ImagePropertiesViewModel(ImageModel model, Func<string> getImagePath)
 		{
 			this.model = model;
 			this.getImagePath = getImagePath;
-			displayViewModel = new ImageViewModel(model, getImagePath);
+
+			sourceField = model.Source?.OriginalString;
+
+			ErrorCollection = new Dictionary<string, List<Exception>>();
 		}
 
 		private readonly ImageModel model;
 		private readonly Func<string> getImagePath;
-		private readonly ImageViewModel displayViewModel;
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+
+		public Dictionary<string, List<Exception>> ErrorCollection { get; private set; }
+
+		public bool HasErrors { get { return ErrorCollection.SelectMany(kvp => kvp.Value).Any(); } }
+
+		public IEnumerable GetErrors(string propertyName)
+		{
+			if ((propertyName != null) && ErrorCollection.ContainsKey(propertyName))
+				return ErrorCollection[propertyName];
+			return null;
+		}
 
 		public string FilePath { get { return getImagePath(); } }
 		public string Name { get { return model.FileName; } }
@@ -26,14 +44,37 @@ namespace Overmind.ImageManager.WindowsClient
 		public List<string> TagCollection { get { return model.TagCollection; } set { model.TagCollection = value; } }
 		public int Score { get { return model.Score; } set { model.Score = value; } }
 		public DateTime AdditionDate { get { return model.AdditionDate.ToLocalTime(); } }
-		public Uri Source { get { return model.Source; } set { model.Source = value; } }
 		public string Hash { get { return model.Hash; } }
+
+		private string sourceField;
+		public string Source
+		{
+			get { return sourceField; }
+			set
+			{
+				if (String.IsNullOrWhiteSpace(value))
+					value = null;
+				if (sourceField == value)
+					return;
+
+				sourceField = value;
+				ErrorCollection[nameof(Source)] = new List<Exception>();
+
+				Uri valueAsUri = null;
+				if ((sourceField != null) && (Uri.TryCreate(sourceField, UriKind.Absolute, out valueAsUri) == false))
+					ErrorCollection[nameof(Source)].Add(new ArgumentException("The URI is invalid.", nameof(Source)));
+
+				if (ErrorCollection[nameof(Source)].Any() == false)
+					model.Source = valueAsUri;
+
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Source)));
+				ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(Source)));
+			}
+		}
 
 		public List<string> AllSubjects { get; set; } = new List<string>();
 		public List<string> AllArtists { get; set; } = new List<string>();
 		public List<string> AllTags { get; set; } = new List<string>();
-
-		public event PropertyChangedEventHandler PropertyChanged;
 
 		public void NotifyFileChanged()
 		{

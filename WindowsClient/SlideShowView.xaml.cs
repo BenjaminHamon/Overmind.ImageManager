@@ -11,9 +11,15 @@ namespace Overmind.ImageManager.WindowsClient
 			InitializeComponent();
 		}
 
-		private void SubmitInterval(object sender, KeyEventArgs e)
+		// Move focus back to the user control so that the input bindings work
+		private void ResetFocus(object sender, MouseButtonEventArgs eventArguments)
 		{
-			if (e.Key == Key.Enter)
+			Focus();
+		}
+
+		private void SubmitInterval(object sender, KeyEventArgs eventArguments)
+		{
+			if (eventArguments.Key == Key.Enter)
 			{
 				BindingOperations.GetBindingExpression((TextBox)sender, TextBox.TextProperty).UpdateSource();
 				Focus(); // Move focus back to the user control so that the input bindings work

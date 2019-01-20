@@ -9,11 +9,12 @@ namespace Overmind.ImageManager.WindowsClient
 {
 	public class MainViewModel : INotifyPropertyChanged, IDisposable
 	{
-		public MainViewModel(WindowsApplication application, DataProvider dataProvider, IQueryEngine<ImageModel> queryEngine)
+		public MainViewModel(WindowsApplication application, DataProvider dataProvider, IQueryEngine<ImageModel> queryEngine, Func<Random> randomFactory)
 		{
 			this.application = application;
 			this.dataProvider = dataProvider;
 			this.queryEngine = queryEngine;
+			this.randomFactory = randomFactory;
 
 			ShowDownloaderCommand = new DelegateCommand<object>(_ => application.ShowDownloader());
 			ShowSettingsCommand = new DelegateCommand<object>(_ => application.ShowSettings());
@@ -38,6 +39,7 @@ namespace Overmind.ImageManager.WindowsClient
 		private readonly WindowsApplication application;
 		private readonly DataProvider dataProvider;
 		private readonly IQueryEngine<ImageModel> queryEngine;
+		private readonly Func<Random> randomFactory;
 
 		public string WindowTitle
 		{
@@ -128,7 +130,7 @@ namespace Overmind.ImageManager.WindowsClient
 				CloseCollection();
 
 			CollectionModel collectionModel = new CollectionModel(dataProvider, collectionData, collectionPath);
-			ActiveCollection = new CollectionViewModel(application, collectionModel, queryEngine);
+			ActiveCollection = new CollectionViewModel(application, collectionModel, queryEngine, randomFactory);
 			Downloader = new Downloader(ActiveCollection);
 		}
 

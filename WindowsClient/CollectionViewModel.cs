@@ -11,7 +11,7 @@ namespace Overmind.ImageManager.WindowsClient
 {
 	public class CollectionViewModel : INotifyPropertyChanged
 	{
-		public CollectionViewModel(WindowsApplication application, CollectionModel model, IQueryEngine<ImageModel> queryEngine)
+		public CollectionViewModel(WindowsApplication application, CollectionModel model, IQueryEngine<ImageModel> queryEngine, Func<Random> randomFactory)
 		{
 			this.model = model;
 
@@ -19,7 +19,7 @@ namespace Overmind.ImageManager.WindowsClient
 			foreach (ImageModel image in model.AllImages)
 				allImages.Add(new ImageViewModel(image, () => model.GetImagePath(image)));
 
-			Query = new QueryViewModel(queryEngine);
+			Query = new QueryViewModel(queryEngine, randomFactory);
 			FilteredImages = new List<ImageViewModel>();
 			DisplayedImages = new ObservableCollection<ImageViewModel>();
 

@@ -58,11 +58,13 @@ namespace Overmind.ImageManager.WindowsClient
 			settingsProvider = new SettingsProvider(serializer, applicationDataDirectory);
 			dataProvider = new DataProvider(serializer, fileNameFormatter);
 			queryEngine = new LuceneQueryEngine();
+			randomFactory = () => new Random();
 		}
 
 		private readonly SettingsProvider settingsProvider;
 		private readonly DataProvider dataProvider;
 		private readonly IQueryEngine<ImageModel> queryEngine;
+		private readonly Func<Random> randomFactory;
 
 		private MainViewModel mainViewModel;
 		private MainView mainView;
@@ -74,7 +76,7 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			Logger.Info("Starting {0}", ApplicationName);
 
-			mainViewModel = new MainViewModel(this, dataProvider, queryEngine);
+			mainViewModel = new MainViewModel(this, dataProvider, queryEngine, randomFactory);
 			mainView = new MainView() { DataContext = mainViewModel };
 			MainWindow = new Window() { Content = mainView };
 
@@ -186,7 +188,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public void SpawnSlideShow(IEnumerable<ImageViewModel> imageCollection, bool shuffle)
 		{
-			List<ImageViewModel> source = new List<ImageViewModel>(shuffle ? imageCollection.Shuffle(new Random()) : imageCollection);
+			List<ImageViewModel> source = new List<ImageViewModel>(shuffle ? imageCollection.Shuffle(randomFactory()) : imageCollection);
 			SlideShowViewModel slideShowViewModel = new SlideShowViewModel(source);
 			SlideShowView slideShowView = new SlideShowView() { DataContext = slideShowViewModel };
 

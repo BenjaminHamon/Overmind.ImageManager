@@ -4,27 +4,24 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading;
 
 namespace Overmind.ImageManager.WindowsClient
 {
-	public class SlideShowViewModel : INotifyPropertyChanged, IDisposable
+	public class SlideShowViewModel : INotifyPropertyChanged
 	{
 		public SlideShowViewModel(IReadOnlyList<ImageViewModel> imageCollection)
 		{
 			this.imageCollection = imageCollection;
 
-			isRunningField = true;
+			isRunningField = CanCycle;
 			currentImageField = imageCollection.FirstOrDefault();
-			interval = TimeSpan.FromSeconds(5);
-			cycleTimer = new Timer(_ => Next(), null, interval, interval);
+			Interval = TimeSpan.FromSeconds(5);
 			
-			PreviousCommand = new DelegateCommand<object>(_ => Previous(), _ => this.imageCollection.Count > 1);
-			NextCommand = new DelegateCommand<object>(_ => Next(), _ => this.imageCollection.Count > 1);
+			PreviousCommand = new DelegateCommand<object>(_ => Previous(), _ => CanCycle);
+			NextCommand = new DelegateCommand<object>(_ => Next(), _ => CanCycle);
 		}
 
 		private readonly IReadOnlyList<ImageViewModel> imageCollection;
-		private readonly Timer cycleTimer;
 		private readonly object cycleLock = new object();
 
 		private bool isRunningField;
@@ -35,7 +32,6 @@ namespace Overmind.ImageManager.WindowsClient
 			{
 				if (isRunningField == value)
 					return;
-				cycleTimer.Change(value ? interval : Timeout.InfiniteTimeSpan, interval);
 				isRunningField = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsRunning)));
 			}
@@ -50,34 +46,30 @@ namespace Overmind.ImageManager.WindowsClient
 				if (currentImageField == value)
 					return;
 				currentImageField = value;
-				if (IsRunning)
-					cycleTimer.Change(interval, interval);
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentImage)));
 			}
 		}
 
-		private TimeSpan interval;
+		public TimeSpan Interval { get; private set; }
 		public double IntervalSeconds
 		{
-			get { return interval.TotalSeconds; }
+			get { return Interval.TotalSeconds; }
 			set
 			{
 				TimeSpan valueTimeSpan = TimeSpan.FromSeconds(value);
-				if (IsRunning)
-					cycleTimer.Change(valueTimeSpan, valueTimeSpan);
-				interval = valueTimeSpan;
+				if (valueTimeSpan == Interval)
+					return;
+				Interval = valueTimeSpan;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Interval)));
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IntervalSeconds)));
 			}
-		}
-
-		public void Dispose()
-		{
-			cycleTimer.Dispose();
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		public DelegateCommand<object> PreviousCommand { get; }
 		public DelegateCommand<object> NextCommand { get; }
+
+		public bool CanCycle { get { return imageCollection.Count > 1; } }
 
 		private void Previous()
 		{

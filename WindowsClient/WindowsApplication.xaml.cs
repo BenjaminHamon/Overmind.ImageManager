@@ -193,7 +193,6 @@ namespace Overmind.ImageManager.WindowsClient
 			SlideShowView slideShowView = new SlideShowView() { DataContext = slideShowViewModel };
 
 			Window window = new Window() { Title = "Slide Show", Content = slideShowView };
-			window.Closed += (s, e) => slideShowViewModel.Dispose();
 			window.Show();
 
 			slideShowView.Focus();

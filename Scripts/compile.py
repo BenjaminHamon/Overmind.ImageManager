@@ -32,7 +32,6 @@ def compile(environment, solution, configuration, verbose, simulate):
 		msbuild_command += [ "/v:Minimal" ]
 	msbuild_command += [ "/target:build" ]
 	msbuild_command += [ "/p:Configuration=" + configuration ]
-	msbuild_command += [ "/p:PythonExecutable=" + environment["python3_executable"] ]
 	msbuild_command += [ solution ]
 	logging.info("+ %s", " ".join(msbuild_command))
 	if not simulate:

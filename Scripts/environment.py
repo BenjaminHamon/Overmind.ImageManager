@@ -19,7 +19,6 @@ def create_default_environment():
 		"git_executable": "git",
 		"msbuild_2017_executable": "msbuild_2017",
 		"nuget_executable": "nuget",
-		"python3_executable": "python3",
 	}
 
 

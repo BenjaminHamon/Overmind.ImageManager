@@ -25,7 +25,7 @@ def create_default_environment():
 
 def load_environment():
 	env = create_default_environment()
-	env.update(_load_environment_transform(os.path.join(os.path.expanduser("~"), ".overmind", "environment.json")))
+	env.update(_load_environment_transform(os.path.join(os.path.expanduser("~"), "environment.json")))
 	env.update(_load_environment_transform("environment.json"))
 	return env
 

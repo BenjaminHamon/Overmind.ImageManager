@@ -186,7 +186,9 @@ def load_results(result_file_path):
 	if not os.path.isfile(result_file_path):
 		return { "artifacts": [] }
 	with open(result_file_path, "r") as result_file:
-		return json.load(result_file)
+		results = json.load(result_file)
+		results["artifacts"] = results.get("artifacts", [])
+	return results
 
 
 def save_results(result_file_path, result_data):

@@ -11,7 +11,6 @@ def configure_logging(log_level):
 	logging.addLevelName(logging.WARNING, "Warning")
 	logging.addLevelName(logging.ERROR, "Error")
 	logging.addLevelName(logging.CRITICAL, "Critical")
-	logging.getLogger("filelock").setLevel(logging.WARNING)
 
 
 def create_default_environment():

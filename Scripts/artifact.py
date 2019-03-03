@@ -108,10 +108,10 @@ def upload(local_artifact_path, remote_artifact_path, simulate, result_file_path
 		shutil.move(remote_artifact_path + ".zip.tmp", remote_artifact_path + ".zip")
 
 	if result_file_path:
-		results = load_results(result_file_path)
+		results = _load_results(result_file_path)
 		results["artifacts"].append({ "name": os.path.basename(remote_artifact_path), "path": remote_artifact_path })
 		if not simulate:
-			save_results(result_file_path, results)
+			_save_results(result_file_path, results)
 
 
 def list_artifact_files(artifact, configuration, parameters):
@@ -182,7 +182,7 @@ def load_fileset(fileset, parameters):
 	return sorted(file_path.replace("\\", "/") for file_path in all_files)
 
 
-def load_results(result_file_path):
+def _load_results(result_file_path):
 	if not os.path.isfile(result_file_path):
 		return { "artifacts": [] }
 	with open(result_file_path, "r") as result_file:
@@ -191,8 +191,8 @@ def load_results(result_file_path):
 	return results
 
 
-def save_results(result_file_path, result_data):
-	if not os.path.isdir(os.path.dirname(result_file_path)):
-		os.makedirs(os.path.dirname(result_file_path))
+def _save_results(result_file_path, result_data):
+	if os.path.dirname(result_file_path):
+		os.makedirs(os.path.dirname(result_file_path), exist_ok = True)
 	with open(result_file_path, "w") as result_file:
 		json.dump(result_data, result_file, indent = 4)

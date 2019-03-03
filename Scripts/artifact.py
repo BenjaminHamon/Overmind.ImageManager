@@ -40,9 +40,11 @@ def run(environment, configuration, arguments):
 
 	artifact = configuration["artifacts"][arguments.artifact]
 	artifact_name = artifact["file_name"].format(**parameters)
-
 	local_artifact_path = os.path.join(".artifacts", artifact["path_in_repository"], artifact_name)
-	remote_artifact_path = os.path.join(environment["artifact_repository"], configuration["project"], artifact["path_in_repository"], artifact_name)
+
+	if "upload" in arguments.artifact_commands:
+		artifact_repository = os.path.normpath(environment["artifact_repository"])
+		remote_artifact_path = os.path.join(artifact_repository, configuration["project"], artifact["path_in_repository"], artifact_name)
 
 	if "show" in arguments.artifact_commands:
 		artifact_files = list_artifact_files(artifact, configuration, parameters)
@@ -109,7 +111,7 @@ def upload(local_artifact_path, remote_artifact_path, simulate, result_file_path
 
 	if result_file_path:
 		results = _load_results(result_file_path)
-		results["artifacts"].append({ "name": os.path.basename(remote_artifact_path), "path": remote_artifact_path })
+		results["artifacts"].append({ "name": os.path.basename(remote_artifact_path), "path": remote_artifact_path + ".zip" })
 		if not simulate:
 			_save_results(result_file_path, results)
 

@@ -49,17 +49,17 @@ def run(environment, configuration, arguments):
 	if "show" in arguments.artifact_commands:
 		artifact_files = list_artifact_files(artifact, configuration, parameters)
 		show(artifact_name, artifact_files, parameters)
-		logging.info("")
+		print("")
 	if "package" in arguments.artifact_commands:
 		artifact_files = merge_artifact_mapping(map_artifact_files(artifact, configuration, parameters))
 		package(local_artifact_path, artifact_files, parameters, arguments.simulate)
-		logging.info("")
+		print("")
 	if "verify" in arguments.artifact_commands:
 		verify(local_artifact_path)
-		logging.info("")
+		print("")
 	if "upload" in arguments.artifact_commands:
 		upload(local_artifact_path, remote_artifact_path, arguments.simulate, arguments.results)
-		logging.info("")
+		print("")
 
 
 def show(artifact_name, artifact_files, parameters):

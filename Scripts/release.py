@@ -20,9 +20,9 @@ def run(environment, configuration, arguments):
 		arguments.artifact_commands = [ "package" ]
 
 	clean.run(environment, configuration, arguments)
-	logging.info("")
+	print("")
 	metadata.run(environment, configuration, arguments)
-	logging.info("")
+	print("")
 	compile.run(environment, configuration, arguments)
-	logging.info("")
+	print("")
 	artifact.run(environment, configuration, arguments)

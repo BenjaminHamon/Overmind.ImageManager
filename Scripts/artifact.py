@@ -40,24 +40,26 @@ def run(environment, configuration, arguments):
 
 	artifact = configuration["artifacts"][arguments.artifact]
 	artifact_name = artifact["file_name"].format(**parameters)
-
 	local_artifact_path = os.path.join(".artifacts", artifact["path_in_repository"], artifact_name)
-	remote_artifact_path = os.path.join(environment["artifact_repository"], configuration["project"], artifact["path_in_repository"], artifact_name)
+
+	if "upload" in arguments.artifact_commands:
+		artifact_repository = os.path.normpath(environment["artifact_repository"])
+		remote_artifact_path = os.path.join(artifact_repository, configuration["project"], artifact["path_in_repository"], artifact_name)
 
 	if "show" in arguments.artifact_commands:
 		artifact_files = list_artifact_files(artifact, configuration, parameters)
 		show(artifact_name, artifact_files, parameters)
-		logging.info("")
+		print("")
 	if "package" in arguments.artifact_commands:
 		artifact_files = merge_artifact_mapping(map_artifact_files(artifact, configuration, parameters))
 		package(local_artifact_path, artifact_files, parameters, arguments.simulate)
-		logging.info("")
+		print("")
 	if "verify" in arguments.artifact_commands:
 		verify(local_artifact_path)
-		logging.info("")
+		print("")
 	if "upload" in arguments.artifact_commands:
 		upload(local_artifact_path, remote_artifact_path, arguments.simulate, arguments.results)
-		logging.info("")
+		print("")
 
 
 def show(artifact_name, artifact_files, parameters):
@@ -108,10 +110,10 @@ def upload(local_artifact_path, remote_artifact_path, simulate, result_file_path
 		shutil.move(remote_artifact_path + ".zip.tmp", remote_artifact_path + ".zip")
 
 	if result_file_path:
-		results = load_results(result_file_path)
-		results["artifacts"].append({ "name": os.path.basename(remote_artifact_path), "path": remote_artifact_path })
+		results = _load_results(result_file_path)
+		results["artifacts"].append({ "name": os.path.basename(remote_artifact_path), "path": remote_artifact_path + ".zip" })
 		if not simulate:
-			save_results(result_file_path, results)
+			_save_results(result_file_path, results)
 
 
 def list_artifact_files(artifact, configuration, parameters):
@@ -182,15 +184,17 @@ def load_fileset(fileset, parameters):
 	return sorted(file_path.replace("\\", "/") for file_path in all_files)
 
 
-def load_results(result_file_path):
+def _load_results(result_file_path):
 	if not os.path.isfile(result_file_path):
 		return { "artifacts": [] }
 	with open(result_file_path, "r") as result_file:
-		return json.load(result_file)
+		results = json.load(result_file)
+		results["artifacts"] = results.get("artifacts", [])
+	return results
 
 
-def save_results(result_file_path, result_data):
-	if not os.path.isdir(os.path.dirname(result_file_path)):
-		os.makedirs(os.path.dirname(result_file_path))
+def _save_results(result_file_path, result_data):
+	if os.path.dirname(result_file_path):
+		os.makedirs(os.path.dirname(result_file_path), exist_ok = True)
 	with open(result_file_path, "w") as result_file:
 		json.dump(result_data, result_file, indent = 4)

@@ -11,7 +11,6 @@ def configure_logging(log_level):
 	logging.addLevelName(logging.WARNING, "Warning")
 	logging.addLevelName(logging.ERROR, "Error")
 	logging.addLevelName(logging.CRITICAL, "Critical")
-	logging.getLogger("filelock").setLevel(logging.WARNING)
 
 
 def create_default_environment():
@@ -19,13 +18,12 @@ def create_default_environment():
 		"git_executable": "git",
 		"msbuild_2017_executable": "msbuild_2017",
 		"nuget_executable": "nuget",
-		"python3_executable": "python3",
 	}
 
 
 def load_environment():
 	env = create_default_environment()
-	env.update(_load_environment_transform(os.path.join(os.path.expanduser("~"), ".overmind", "environment.json")))
+	env.update(_load_environment_transform(os.path.join(os.path.expanduser("~"), "environment.json")))
 	env.update(_load_environment_transform("environment.json"))
 	return env
 

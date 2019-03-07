@@ -16,23 +16,23 @@ def run(environment, configuration, arguments):
 
 def compile(environment, solution, configuration, verbose, simulate):
 	logging.info("Compiling %s with configuration %s", solution, configuration)
-	logging.info("")
+	print("")
 
 	nuget_command = [ environment["nuget_executable"], "restore" ]
-	if verbose == False:
+	if not verbose:
 		nuget_command += [ "-Verbosity", "quiet" ]
 	nuget_command += [ solution ]
 	logging.info("+ %s", " ".join(nuget_command))
 	if not simulate:
 		subprocess.check_call(nuget_command)
-		logging.debug("")
+		if verbose:
+			print("")
 
 	msbuild_command = [ environment["msbuild_2017_executable"], "/m", "/nologo" ]
-	if verbose == False:
+	if not verbose:
 		msbuild_command += [ "/v:Minimal" ]
 	msbuild_command += [ "/target:build" ]
 	msbuild_command += [ "/p:Configuration=" + configuration ]
-	msbuild_command += [ "/p:PythonExecutable=" + environment["python3_executable"] ]
 	msbuild_command += [ solution ]
 	logging.info("+ %s", " ".join(msbuild_command))
 	if not simulate:

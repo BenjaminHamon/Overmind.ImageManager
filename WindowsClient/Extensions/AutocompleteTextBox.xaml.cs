@@ -45,20 +45,21 @@ namespace Overmind.ImageManager.WindowsClient.Extensions
 
 		private void HandleInput(object sender, KeyEventArgs eventArguments)
 		{
+			if (eventArguments.Key == Key.Escape)
+			{
+				popup.IsOpen = false;
+				eventArguments.Handled = true;
+				return;
+			}
+
 			if ((Keyboard.Modifiers == ModifierKeys.Control) && (eventArguments.Key == Key.Space))
 			{
-				if (listBox.HasItems)
+				if ((popup.IsOpen == false) && listBox.HasItems)
 				{
 					popup.IsOpen = true;
 					ResetSelection();
 				}
 
-				eventArguments.Handled = true;
-				return;
-			}
-			else if (eventArguments.Key == Key.Escape)
-			{
-				popup.IsOpen = false;
 				eventArguments.Handled = true;
 				return;
 			}

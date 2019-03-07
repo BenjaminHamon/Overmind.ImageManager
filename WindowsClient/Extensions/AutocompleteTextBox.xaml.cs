@@ -64,7 +64,14 @@ namespace Overmind.ImageManager.WindowsClient.Extensions
 				return;
 			}
 
-			if (popup.IsOpen)
+			if (popup.IsOpen == false)
+			{
+				if (String.IsNullOrEmpty(textBox.Text))
+				{
+					popup.IsOpen = true;
+				}
+			}
+			else
 			{
 				if (eventArguments.Key == Key.Up)
 				{

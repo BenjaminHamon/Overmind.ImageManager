@@ -39,6 +39,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Overmind.ImageManager.Metadata", "Metadata\Overmind.ImageManager.Metadata.csproj", "{02518BED-C771-4097-8553-8505E7E60F59}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Overmind.ImageManager.Test", "Test\Overmind.ImageManager.Test.csproj", "{B0825373-2525-4826-894B-C47C86F6377B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{02518BED-C771-4097-8553-8505E7E60F59} = {02518BED-C771-4097-8553-8505E7E60F59}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +70,10 @@ Global
 		{02518BED-C771-4097-8553-8505E7E60F59}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02518BED-C771-4097-8553-8505E7E60F59}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02518BED-C771-4097-8553-8505E7E60F59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0825373-2525-4826-894B-C47C86F6377B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0825373-2525-4826-894B-C47C86F6377B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0825373-2525-4826-894B-C47C86F6377B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0825373-2525-4826-894B-C47C86F6377B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

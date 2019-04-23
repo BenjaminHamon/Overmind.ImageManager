@@ -8,11 +8,14 @@
 # Build artifacts
 .artifacts/
 
+# NuGet
+/packages/
+
 # Python
 __pycache__/
 
-# NuGet
-/packages/
+# Test results
+/TestResults/
 
 # Visual Studio
 .vs/

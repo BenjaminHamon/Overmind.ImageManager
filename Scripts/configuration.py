@@ -1,3 +1,4 @@
+import datetime
 import subprocess
 
 import commands.artifact
@@ -22,14 +23,20 @@ def load_configuration(environment):
 		"project": "Overmind.ImageManager",
 		"project_name": "Overmind Image Manager",
 		"project_version": { "identifier": "2.0" },
-
-		"configuration_list": [ "Debug", "Release" ],
 	}
 
-	configuration["project_version"]["revision"] = subprocess.check_output([ environment["git_executable"], "rev-parse", "--short=10", "HEAD" ]).decode("utf-8").strip()
-	configuration["project_version"]["branch"] = subprocess.check_output([ environment["git_executable"], "rev-parse", "--abbrev-ref", "HEAD" ]).decode("utf-8").strip()
+	branch = subprocess.check_output([ environment["git_executable"], "rev-parse", "--abbrev-ref", "HEAD" ]).decode("utf-8").strip()
+	revision = subprocess.check_output([ environment["git_executable"], "rev-parse", "--short=10", "HEAD" ]).decode("utf-8").strip()
+	revision_date = int(subprocess.check_output([ environment["git_executable"], "show", "--no-patch", "--format=%ct", revision ]).decode("utf-8").strip())
+	revision_date = datetime.datetime.utcfromtimestamp(revision_date).replace(microsecond = 0).isoformat() + "Z"
+
+	configuration["project_version"]["branch"] = branch
+	configuration["project_version"]["revision"] = revision
+	configuration["project_version"]["date"] = revision_date
 	configuration["project_version"]["numeric"] = "{identifier}".format(**configuration["project_version"])
 	configuration["project_version"]["full"] = "{identifier}-{revision}".format(**configuration["project_version"])
+
+	configuration["compilation_configurations"] = [ "debug", "release" ]
 
 	configuration["filesets"] = {
 

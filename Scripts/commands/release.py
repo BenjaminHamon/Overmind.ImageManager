@@ -1,9 +1,9 @@
 import logging
 
-import artifact
-import clean
-import compile
-import metadata
+import commands.artifact
+import commands.clean
+import commands.compile
+import commands.metadata
 
 
 def configure_argument_parser(environment, configuration, subparsers):
@@ -19,10 +19,10 @@ def run(environment, configuration, arguments):
 	if arguments.simulate:
 		arguments.artifact_commands = [ "package" ]
 
-	clean.run(environment, configuration, arguments)
+	commands.clean.run(environment, configuration, arguments)
 	print("")
-	metadata.run(environment, configuration, arguments)
+	commands.metadata.run(environment, configuration, arguments)
 	print("")
-	compile.run(environment, configuration, arguments)
+	commands.compile.run(environment, configuration, arguments)
 	print("")
-	artifact.run(environment, configuration, arguments)
+	commands.artifact.run(environment, configuration, arguments)

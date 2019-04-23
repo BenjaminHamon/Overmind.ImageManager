@@ -1,14 +1,20 @@
 import subprocess
 
-import artifact
-import clean
-import compile
-import metadata
-import release
+import commands.artifact
+import commands.clean
+import commands.compile
+import commands.metadata
+import commands.release
 
 
 def get_command_list():
-	return [ artifact, clean, compile, metadata, release ]
+	return [
+		commands.artifact,
+		commands.clean,
+		commands.compile,
+		commands.metadata,
+		commands.release,
+	]
 
 
 def load_configuration(environment):

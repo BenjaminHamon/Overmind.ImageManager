@@ -9,7 +9,7 @@ import shutil
 import zipfile
 
 
-def configure_argument_parser(environment, configuration, subparsers):
+def configure_argument_parser(environment, configuration, subparsers): # pylint: disable = unused-argument
 
 	def parse_key_value_parameter(argument_value):
 		key_value = argument_value.split("=")
@@ -30,7 +30,7 @@ def configure_argument_parser(environment, configuration, subparsers):
 	return parser
 
 
-def run(environment, configuration, arguments):
+def run(environment, configuration, arguments): # pylint: disable = unused-argument
 	parameters = {
 		"project": configuration["project"],
 		"version": configuration["project_version"]["full"],
@@ -48,11 +48,11 @@ def run(environment, configuration, arguments):
 
 	if "show" in arguments.artifact_commands:
 		artifact_files = list_artifact_files(artifact, configuration, parameters)
-		show(artifact_name, artifact_files, parameters)
+		show(artifact_name, artifact_files)
 		print("")
 	if "package" in arguments.artifact_commands:
 		artifact_files = merge_artifact_mapping(map_artifact_files(artifact, configuration, parameters))
-		package(local_artifact_path, artifact_files, parameters, arguments.simulate)
+		package(local_artifact_path, artifact_files, arguments.simulate)
 		print("")
 	if "verify" in arguments.artifact_commands:
 		verify(local_artifact_path)
@@ -62,14 +62,14 @@ def run(environment, configuration, arguments):
 		print("")
 
 
-def show(artifact_name, artifact_files, parameters):
+def show(artifact_name, artifact_files):
 	logging.info("Artifact %s", artifact_name)
 
 	for file_path in artifact_files:
 		logging.info("%s", file_path)
 
 
-def package(artifact_path, artifact_files, parameters, simulate):
+def package(artifact_path, artifact_files, simulate):
 	logging.info("Packaging artifact %s", artifact_path)
 
 	artifact_directory = os.path.dirname(artifact_path)

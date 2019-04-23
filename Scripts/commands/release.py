@@ -1,16 +1,14 @@
-import logging
-
 import commands.artifact
 import commands.clean
 import commands.compile
 import commands.metadata
 
 
-def configure_argument_parser(environment, configuration, subparsers):
+def configure_argument_parser(environment, configuration, subparsers): # pylint: disable = unused-argument
 	return subparsers.add_parser("release", help = "build a package for release")
 
 
-def run(environment, configuration, arguments):
+def run(environment, configuration, arguments): # pylint: disable = unused-argument
 	arguments.configuration = "Release"
 	arguments.parameters = { }
 	arguments.artifact = "package_final"

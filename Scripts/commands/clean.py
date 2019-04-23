@@ -3,11 +3,11 @@ import os
 import shutil
 
 
-def configure_argument_parser(environment, configuration, subparsers):
+def configure_argument_parser(environment, configuration, subparsers): # pylint: disable = unused-argument
 	return subparsers.add_parser("clean", help = "clean the workspace")
 
 
-def run(environment, configuration, arguments):
+def run(environment, configuration, arguments): # pylint: disable = unused-argument
 	clean(arguments.simulate)
 
 
@@ -25,4 +25,4 @@ def clean(simulate):
 		if os.path.exists(directory["path"]):
 			logging.info("Removing directory '%s' (Path: %s)", directory["display_name"], directory["path"])
 			if not simulate:
-			 	shutil.rmtree(directory["path"])
+				shutil.rmtree(directory["path"])

@@ -6,6 +6,7 @@ import commands.clean
 import commands.compile
 import commands.metadata
 import commands.release
+import commands.test
 
 
 def get_command_list():
@@ -15,6 +16,7 @@ def get_command_list():
 		commands.compile,
 		commands.metadata,
 		commands.release,
+		commands.test,
 	]
 
 

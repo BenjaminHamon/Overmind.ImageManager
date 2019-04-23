@@ -22,18 +22,20 @@ def compile(environment, solution, configuration, verbose, simulate): # pylint: 
 	if not verbose:
 		nuget_command += [ "-Verbosity", "quiet" ]
 	nuget_command += [ solution ]
-	logging.info("+ %s", " ".join(nuget_command))
+
+	logging.info("+ %s", " ".join(("'" + x + "'") if " " in x else x for x in nuget_command))
 	if not simulate:
 		subprocess.check_call(nuget_command)
 		if verbose:
 			print("")
 
-	msbuild_command = [ environment["msbuild_2017_executable"], "/m", "/nologo" ]
+	msbuild_command = [ environment["msbuild_2017_executable"], "/m", "/NoLogo" ]
 	if not verbose:
 		msbuild_command += [ "/v:Minimal" ]
 	msbuild_command += [ "/target:build" ]
 	msbuild_command += [ "/p:Configuration=" + configuration ]
 	msbuild_command += [ solution ]
-	logging.info("+ %s", " ".join(msbuild_command))
+
+	logging.info("+ %s", " ".join(("'" + x + "'") if " " in x else x for x in msbuild_command))
 	if not simulate:
 		subprocess.check_call(msbuild_command)

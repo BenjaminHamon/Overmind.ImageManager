@@ -19,6 +19,7 @@ def clean(simulate):
 		{ "display_name": "NuGet packages", "path": "packages" },
 		{ "display_name": "Build", "path": ".build" },
 		{ "display_name": "Build artifacts", "path": ".artifacts" },
+		{ "display_name": "Test Results", "path": "TestResults" },
 	]
 
 	for directory in directories_to_clean:

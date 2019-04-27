@@ -101,6 +101,9 @@ namespace Overmind.ImageManager.Model
 			SaveData(Path.Combine(collectionPath, "Data-Temporary", "Metadata.json"), collectionData.Metadata);
 			SaveData(Path.Combine(collectionPath, "Data-Temporary", "Images.json"), collectionData.Images);
 
+			if (Directory.Exists(Path.Combine(collectionPath, "Data-ToRemove")))
+				Directory.Delete(Path.Combine(collectionPath, "Data-ToRemove"), true);
+
 			Directory.Move(Path.Combine(collectionPath, "Data"), Path.Combine(collectionPath, "Data-ToRemove"));
 			Directory.Move(Path.Combine(collectionPath, "Data-Temporary"), Path.Combine(collectionPath, "Data"));
 			Directory.Delete(Path.Combine(collectionPath, "Data-ToRemove"), true);

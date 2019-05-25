@@ -47,7 +47,7 @@ namespace Overmind.ImageManager.Model
 
 			collectionData.Images = LoadData<List<ImageModel>>(Path.Combine(collectionPath, "Data", "Images.json"));
 			foreach (ImageModel image in collectionData.Images)
-				image.FileNameInStorage = image.FileName;
+				image.FileNameAsSaved = image.FileName;
 
 			return collectionData;
 		}
@@ -63,36 +63,35 @@ namespace Overmind.ImageManager.Model
 			Directory.CreateDirectory(Path.Combine(collectionPath, "Images"));
 			Directory.CreateDirectory(Path.Combine(collectionPath, "Images-Temporary"));
 
-			foreach (ImageModel image in removedImages)
-				File.Delete(Path.Combine(collectionPath, "Images", image.FileNameInStorage));
+			foreach (ImageModel image in removedImages.Where(i => i.FileNameAsSaved != null))
+				File.Delete(Path.Combine(collectionPath, "Images", image.FileNameAsSaved));
 
 			foreach (ImageModel image in collectionData.Images)
 			{
 				image.FileName = fileNameFormatter.Format(image);
 
-				string temporaryPath = Path.Combine(collectionPath, "Images-Temporary", image.FileNameInStorage);
-				string oldPath = Path.Combine(collectionPath, "Images", image.FileNameInStorage);
-				string finalPath = Path.Combine(collectionPath, "Images", image.FileName);
-
-				if (File.Exists(temporaryPath))
+				if (image.FileNameAsTemporary != null)
 				{
-					if (File.Exists(oldPath))
-						File.Delete(oldPath);
+					if (image.FileNameAsSaved != null)
+						File.Delete(Path.Combine(collectionPath, "Images", image.FileNameAsSaved));
+
+					string temporaryPath = Path.Combine(collectionPath, "Images-Temporary", image.FileNameAsTemporary);
+					string finalPath = Path.Combine(collectionPath, "Images", image.FileName);
 
 					File.Move(temporaryPath, finalPath);
-					image.FileNameInStorage = image.FileName;
+					image.FileNameAsSaved = image.FileName;
+					image.FileNameAsTemporary = null;
 				}
-				else if (File.Exists(oldPath))
+				else if (image.FileNameAsSaved != null)
 				{
-					if (image.FileNameInStorage != image.FileName)
+					if (image.FileNameAsSaved != image.FileName)
 					{
+						string oldPath = Path.Combine(collectionPath, "Images", image.FileNameAsSaved);
+						string finalPath = Path.Combine(collectionPath, "Images", image.FileName);
+
 						File.Move(oldPath, finalPath);
-						image.FileNameInStorage = image.FileName;
+						image.FileNameAsSaved = image.FileName;
 					}
-				}
-				else
-				{
-					Logger.Warn("Image file not found (Path: '{0}')", oldPath);
 				}
 			}
 
@@ -137,10 +136,8 @@ namespace Overmind.ImageManager.Model
 			foreach (ImageModel image in collectionData.Images)
 			{
 				string sourceImagePath = GetImagePath(sourceCollectionPath, image);
-				string destinationImagePath = Path.Combine(destinationCollectionPath, "Images", image.FileNameInStorage);
-
-				if (sourceImagePath != null)
-					File.Copy(sourceImagePath, destinationImagePath);
+				string destinationImagePath = Path.Combine(destinationCollectionPath, "Images", image.FileNameAsSaved);
+				File.Copy(sourceImagePath, destinationImagePath);
 			}
 
 			SaveCollection(destinationCollectionPath, collectionData, new List<ImageModel>());
@@ -148,14 +145,10 @@ namespace Overmind.ImageManager.Model
 
 		public string GetImagePath(string collectionPath, ImageModel image)
 		{
-			string temporaryPath = Path.Combine(collectionPath, "Images-Temporary", image.FileNameInStorage);
-			if (File.Exists(temporaryPath))
-				return temporaryPath;
-
-			string finalPath = Path.Combine(collectionPath, "Images", image.FileNameInStorage);
-			if (File.Exists(finalPath))
-				return finalPath;
-
+			if (image.FileNameAsTemporary != null)
+				return Path.Combine(collectionPath, "Images-Temporary", image.FileNameAsTemporary);
+			if (image.FileNameAsSaved != null)
+				return Path.Combine(collectionPath, "Images", image.FileNameAsSaved);
 			return null;
 		}
 
@@ -172,7 +165,7 @@ namespace Overmind.ImageManager.Model
 			image.FileName = fileNameFormatter.Format(image, fileExtension);
 			string temporaryPath = Path.Combine(collectionPath, "Images-Temporary", image.FileName);
 			File.WriteAllBytes(temporaryPath, imageData);
-			image.FileNameInStorage = image.FileName;
+			image.FileNameAsTemporary = image.FileName;
 		}
 
 		public void ClearUnsavedFiles(string collectionPath)

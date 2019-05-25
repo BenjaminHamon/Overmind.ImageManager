@@ -1,8 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using Overmind.ImageManager.Model;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace Overmind.ImageManager.Test
 {
@@ -48,6 +50,34 @@ namespace Overmind.ImageManager.Test
 			File.Create(Path.Combine(workingDirectory, "Images-Temporary", "Empty.txt")).Close();
 
 			dataProvider.SaveCollection(workingDirectory, new CollectionData(), new List<ImageModel>());
+		}
+
+		[TestMethod]
+		public void DataProvider_WriteImageFile_Jpeg()
+		{
+			ImageModel imageModel = new ImageModel();
+			byte[] imageData = File.ReadAllBytes("Resources/Red.jpg");
+			dataProvider.WriteImageFile(workingDirectory, imageModel, imageData);
+			Assert.IsTrue(File.Exists(Path.Combine(workingDirectory, "Images-Temporary", imageModel.FileNameInStorage)));
+			Assert.IsTrue(imageModel.FileNameInStorage.EndsWith(".jpeg"));
+		}
+
+		[TestMethod]
+		public void DataProvider_WriteImageFile_Png()
+		{
+			ImageModel imageModel = new ImageModel();
+			byte[] imageData = File.ReadAllBytes("Resources/Red.png");
+			dataProvider.WriteImageFile(workingDirectory, imageModel, imageData);
+			Assert.IsTrue(File.Exists(Path.Combine(workingDirectory, "Images-Temporary", imageModel.FileNameInStorage)));
+			Assert.IsTrue(imageModel.FileNameInStorage.EndsWith(".png"));
+		}
+
+		[TestMethod]
+		public void DataProvider_WriteImageFile_Text()
+		{
+			ImageModel imageModel = new ImageModel();
+			byte[] imageData = Encoding.UTF8.GetBytes("Not a image");
+			Assert.ThrowsException<ArgumentException>(() => dataProvider.WriteImageFile(workingDirectory, imageModel, imageData));
 		}
 	}
 }

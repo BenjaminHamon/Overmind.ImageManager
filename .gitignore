@@ -8,6 +8,9 @@
 # Build artifacts
 .artifacts/
 
+# Environment
+environment.json
+
 # NuGet
 /packages/
 

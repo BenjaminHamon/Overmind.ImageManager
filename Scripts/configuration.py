@@ -38,6 +38,12 @@ def load_configuration(environment):
 	configuration["project_version"]["numeric"] = "{identifier}".format(**configuration["project_version"])
 	configuration["project_version"]["full"] = "{identifier}-{revision}".format(**configuration["project_version"])
 
+	configuration["author"] = "Benjamin Hamon"
+	configuration["author_email"] = "hamon.benjamin@gmail.com"
+	configuration["organization"] = ""
+	configuration["project_url"] = "https://github.com/BenjaminHamon/Overmind.ImageManager"
+	configuration["copyright"] = "Copyright (c) 2019 Benjamin Hamon"
+
 	configuration["compilation_configurations"] = [ "debug", "release" ]
 
 	configuration["filesets"] = {

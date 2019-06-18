@@ -7,14 +7,17 @@ def configure_argument_parser(environment, configuration, subparsers): # pylint:
 
 
 def run(environment, configuration, arguments): # pylint: disable = unused-argument
-	write_product_information(configuration["project_version"], arguments.simulate)
+	write_product_information(configuration, arguments.simulate)
 
 
-def write_product_information(version, simulate):
+def write_product_information(configuration, simulate):
 	information = {
-		"assembly_version": version["numeric"],
-		"assembly_file_version": version["numeric"],
-		"assembly_informational_version": version["full"],
+		"assembly_product": configuration["project_name"],
+		"assembly_company": configuration["organization"],
+		"assembly_copyright": configuration["copyright"],
+		"assembly_version": configuration["project_version"]["numeric"],
+		"assembly_file_version": configuration["project_version"]["numeric"],
+		"assembly_informational_version": configuration["project_version"]["full"],
 	}
 
 	output_directory = os.path.join(".build", "Metadata")
@@ -22,6 +25,9 @@ def write_product_information(version, simulate):
 		os.makedirs(output_directory)
 
 	logging.info("Writing ProductInformation.cs")
+	for key, value in information.items():
+		logging.info("%s: '%s'", key, value)
+
 	with open(os.path.join("Metadata", "ProductInformation.template.cs"), "r") as template_file:
 		file_content = template_file.read()
 	file_content = file_content.format(**information)

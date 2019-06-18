@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
 
-[assembly: AssemblyProduct("Overmind Image Manager")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyCopyright("Copyright (c) 2017-2019 Benjamin Hamon")]
+[assembly: AssemblyProduct("{assembly_product}")]
+[assembly: AssemblyCompany("{assembly_company}")]
+[assembly: AssemblyCopyright("{assembly_copyright}")]
 
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug")]

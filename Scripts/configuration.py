@@ -50,13 +50,13 @@ def load_configuration(environment):
 
 		# Program binaries for development (executables, libraries, symbols and documentation)
 		"binaries": {
-			"path_in_workspace": ".build/{assembly}/bin/{configuration}",
+			"path_in_workspace": ".build/{assembly}/Binaries/{configuration}",
 			"file_patterns": [ "{project}.{assembly}.exe", "{project}.{assembly}.exe.config", "*.dll", "*.pdb", "*.xml" ],
 		},
 
 		# Program binaries for release (executables and libraries)
 		"binaries_stripped": {
-			"path_in_workspace": ".build/{assembly}/bin/{configuration}",
+			"path_in_workspace": ".build/{assembly}/Binaries/{configuration}",
 			"file_patterns": [ "{project}.{assembly}.exe", "{project}.{assembly}.exe.config", "*.dll" ],
 		},
 

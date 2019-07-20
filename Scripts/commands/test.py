@@ -1,5 +1,4 @@
 import logging
-import os
 import subprocess
 
 
@@ -12,7 +11,8 @@ def configure_argument_parser(environment, configuration, subparsers): # pylint:
 
 
 def run(environment, configuration, arguments): # pylint: disable = unused-argument
-	test_container = os.path.join(".build", "Test", "bin", arguments.configuration, configuration["project"] + ".Test.dll")
+	test_container = ".build/{assembly}/Binaries/{configuration}/{project}.{assembly}.dll"
+	test_container = test_container.format(project = configuration["project"], assembly = "Test", configuration = arguments.configuration)
 	test(environment, test_container, arguments.filter)
 
 

@@ -1,4 +1,5 @@
-﻿using Overmind.ImageManager.Model;
+﻿using NLog;
+using Overmind.ImageManager.Model;
 using Overmind.ImageManager.Model.Queries;
 using Overmind.ImageManager.WindowsClient.Downloads;
 using Overmind.WpfExtensions;
@@ -9,6 +10,8 @@ namespace Overmind.ImageManager.WindowsClient
 {
 	public class MainViewModel : INotifyPropertyChanged, IDisposable
 	{
+		private static readonly Logger Logger = LogManager.GetLogger(nameof(MainViewModel));
+
 		public MainViewModel(WindowsApplication application, DataProvider dataProvider, IQueryEngine<ImageModel> queryEngine, Func<Random> randomFactory)
 		{
 			this.application = application;
@@ -120,7 +123,16 @@ namespace Overmind.ImageManager.WindowsClient
 		private CollectionData LoadCollection(string collectionPath)
 		{
 			CollectionData collectionData = dataProvider.LoadCollection(collectionPath);
-			dataProvider.ClearUnsavedFiles(collectionPath);
+
+			try
+			{
+				dataProvider.ClearUnsavedFiles(collectionPath);
+			}
+			catch (Exception exception)
+			{
+				Logger.Warn(exception, "Failed to clear unsaved files (Path: '{0}')", collectionPath);
+			}
+
 			return collectionData;
 		}
 
@@ -139,7 +151,15 @@ namespace Overmind.ImageManager.WindowsClient
 			Downloader.Dispose();
 			Downloader = null;
 
-			dataProvider.ClearUnsavedFiles(ActiveCollection.StoragePath);
+			try
+			{
+				dataProvider.ClearUnsavedFiles(ActiveCollection.StoragePath);
+			}
+			catch (Exception exception)
+			{
+				Logger.Warn(exception, "Failed to clear unsaved files (Path: '{0}')", ActiveCollection.StoragePath);
+			}
+
 			ActiveCollection = null;
 		}
 	}

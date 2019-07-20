@@ -56,12 +56,12 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private void LoadCollection(object sender, EventArgs eventArguments)
 		{
-			CloseCollection(sender, eventArguments);
-			if (viewModel.ActiveCollection != null)
-				return;
-
 			CommonOpenFileDialog fileDialog = new CommonOpenFileDialog("Open Collection") { IsFolderPicker = true };
 			if (fileDialog.ShowDialog() != CommonFileDialogResult.Ok)
+				return;
+
+			CloseCollection(sender, eventArguments);
+			if (viewModel.ActiveCollection != null)
 				return;
 
 			try

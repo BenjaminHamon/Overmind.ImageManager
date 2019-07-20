@@ -108,7 +108,17 @@ namespace Overmind.ImageManager.WindowsClient
 
 				if (result == MessageBoxResult.Yes)
 				{
-					viewModel.SaveCollectionCommand.Execute(null);
+					try
+					{
+						viewModel.SaveCollectionCommand.Execute(null);
+					}
+					catch (Exception exception)
+					{
+						Logger.Error(exception, "Failed to save collection (Path: '{0}')", viewModel.ActiveCollection.StoragePath);
+						WindowsApplication.ShowError("Save Collection", "Failed to save the image collection.", exception);
+						return;
+					}
+
 					viewModel.CloseCollectionCommand.Execute(null);
 				}
 				else if (result == MessageBoxResult.No)

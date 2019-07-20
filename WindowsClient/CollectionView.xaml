@@ -78,7 +78,8 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <TextBox Grid.ColumnSpan="5" Grid.Row="0" Text="{Binding Path=Query.SearchExpression, UpdateSourceTrigger=PropertyChanged}">
+            <TextBox Grid.ColumnSpan="5" Grid.Row="0" x:Name="searchTextBox" x:FieldModifier="private"
+                     Text="{Binding Path=Query.SearchExpression, UpdateSourceTrigger=PropertyChanged}">
                 <TextBox.InputBindings>
                     <KeyBinding Key="Enter" Command="{Binding Path=ExecuteQueryCommand}"/>
                 </TextBox.InputBindings>

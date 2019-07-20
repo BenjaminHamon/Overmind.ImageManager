@@ -48,6 +48,9 @@ def load_configuration(environment):
 
 	configuration["compilation_configurations"] = [ "debug", "release" ]
 
+	if "artifact_repository" in environment:
+		configuration["artifact_repository"] = os.path.join(os.path.normpath(environment["artifact_repository"]), "ImageManager")
+
 	configuration["filesets"] = {
 
 		# Program binaries for development (executables, libraries, symbols and documentation)
@@ -74,7 +77,7 @@ def load_configuration(environment):
 		# Compilation output
 		"binaries": {
 			"file_name": "{project}.{assembly}_{version}_Binaries_{configuration}",
-			"path_in_repository": "binaries",
+			"path_in_repository": "Binaries",
 			"filesets": [
 				{ "identifier": "binaries", "path_in_archive": "." },
 			],
@@ -83,7 +86,7 @@ def load_configuration(environment):
 		# Development package
 		"package": {
 			"file_name": "{project}_{version}_Package_{configuration}",
-			"path_in_repository": "packages",
+			"path_in_repository": "Packages",
 			"filesets": [
 				{ "identifier": "binaries", "path_in_archive": ".", "parameters": { "assembly": "WallpaperService" } },
 				{ "identifier": "binaries", "path_in_archive": ".", "parameters": { "assembly": "WindowsClient" } },
@@ -94,7 +97,7 @@ def load_configuration(environment):
 		# Release package
 		"package_final": {
 			"file_name": "{project}_{version}_PackageFinal",
-			"path_in_repository": "packages",
+			"path_in_repository": "Packages",
 			"filesets": [
 				{ "identifier": "binaries_stripped", "path_in_archive": ".", "parameters": { "assembly": "WallpaperService", "configuration": "Release" } },
 				{ "identifier": "binaries_stripped", "path_in_archive": ".", "parameters": { "assembly": "WindowsClient", "configuration": "Release" } },

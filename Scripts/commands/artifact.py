@@ -46,8 +46,7 @@ def run(environment, configuration, arguments): # pylint: disable = unused-argum
 	local_artifact_path = os.path.join(".artifacts", artifact["path_in_repository"], artifact_name)
 
 	if "upload" in arguments.artifact_commands:
-		artifact_repository = os.path.normpath(environment["artifact_repository"])
-		remote_artifact_path = os.path.join(artifact_repository, configuration["project"], artifact["path_in_repository"], artifact_name)
+		remote_artifact_path = os.path.join(configuration["artifact_repository"], artifact["path_in_repository"], artifact_name)
 
 	if "show" in arguments.artifact_commands:
 		artifact_files = list_artifact_files(artifact, configuration, parameters)

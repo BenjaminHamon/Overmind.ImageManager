@@ -7,7 +7,7 @@ import os
 import shutil
 import zipfile
 
-import configuration as scripts_configuration
+import workspace
 
 
 def configure_argument_parser(environment, configuration, subparsers): # pylint: disable = unused-argument
@@ -129,10 +129,10 @@ def save_results(artifact_name, artifact_type, result_file_path, simulate):
 	}
 
 	if result_file_path:
-		results = scripts_configuration.load_results(result_file_path)
+		results = workspace.load_results(result_file_path)
 		results["artifacts"].append(artifact_information)
 		if not simulate:
-			scripts_configuration.save_results(result_file_path, results)
+			workspace.save_results(result_file_path, results)
 
 
 def list_artifact_files(artifact, configuration, parameters):

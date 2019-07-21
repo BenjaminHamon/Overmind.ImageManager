@@ -196,8 +196,16 @@ def merge_artifact_mapping(artifact_files):
 
 
 def load_fileset(fileset, parameters):
-	all_files = []
+	matched_files = []
 	path_in_workspace = fileset["path_in_workspace"].format(**parameters)
 	for file_pattern in fileset["file_patterns"]:
-		all_files += glob.glob(os.path.join(path_in_workspace, file_pattern.format(**parameters)))
-	return sorted(file_path.replace("\\", "/") for file_path in all_files)
+		matched_files += glob.glob(os.path.join(path_in_workspace, file_pattern.format(**parameters)), recursive = True)
+
+	selected_files = []
+	for file_path in matched_files:
+		file_path = file_path.replace("\\", "/")
+		if os.path.isfile(file_path):
+			selected_files.append(file_path)
+
+	selected_files.sort()
+	return selected_files

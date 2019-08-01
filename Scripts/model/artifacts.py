@@ -3,6 +3,7 @@ import os
 import re
 import shutil
 import subprocess
+import zipfile
 
 
 logger = logging.getLogger("Artifacts")
@@ -28,14 +29,59 @@ def create_artifact_server_client(server_url, server_parameters, environment):
 
 class ArtifactRepository:
 
+
 	def __init__(self, local_path, project_identifier):
 		self.local_path = local_path
 		self.project_identifier = project_identifier
 		self.server_client = None
 
 
-	def upload(self, path_in_repository, artifact_name, file_extension, overwrite, simulate): # pylint: disable = too-many-arguments
-		self.server_client.upload(self.local_path, self.project_identifier, path_in_repository, artifact_name, file_extension, overwrite, simulate)
+	def show(self, artifact_name, artifact_files): # pylint: disable = no-self-use
+		logging.info("Artifact '%s'", artifact_name)
+
+		for file_path in artifact_files:
+			logging.info("+ '%s'", file_path)
+
+
+	def package(self, path_in_repository, artifact_name, artifact_files, simulate):
+		logging.info("Packaging artifact '%s'", artifact_name)
+
+		if len(artifact_files) == 0:
+			raise ValueError("The artifact is empty")
+
+		artifact_path = os.path.join(self.local_path, path_in_repository, artifact_name)
+
+		logging.info("Writing '%s'", artifact_path + ".zip")
+
+		artifact_directory = os.path.dirname(artifact_path)
+		if not simulate and not os.path.isdir(artifact_directory):
+			os.makedirs(artifact_directory)
+
+		if simulate:
+			for source, destination in artifact_files:
+				logging.info("+ '%s' => '%s'", source, destination)
+		else:
+			with zipfile.ZipFile(artifact_path + ".zip.tmp", "w", zipfile.ZIP_DEFLATED) as artifact_file:
+				for source, destination in artifact_files:
+					logging.info("+ '%s' => '%s'", source, destination)
+					artifact_file.write(source, destination)
+			shutil.move(artifact_path + ".zip.tmp", artifact_path + ".zip")
+
+
+	def verify(self, path_in_repository, artifact_name, simulate):
+		logging.info("Verifying artifact '%s'", artifact_name)
+
+		artifact_path = os.path.join(self.local_path, path_in_repository, artifact_name)
+		logging.info("Reading '%s'", artifact_path + ".zip")
+
+		if not simulate:
+			with zipfile.ZipFile(artifact_path + ".zip", 'r') as artifact_file:
+				if artifact_file.testzip():
+					raise RuntimeError('Artifact package is corrupted')
+
+
+	def upload(self, path_in_repository, artifact_name, overwrite, simulate):
+		self.server_client.upload(self.local_path, self.project_identifier, path_in_repository, artifact_name, ".zip", overwrite, simulate)
 
 
 
@@ -58,16 +104,19 @@ class ArtifactServerFileClient:
 
 
 	def upload(self, local_repository, remote_repository, path_in_repository, artifact_name, file_extension, overwrite, simulate): # pylint: disable = too-many-arguments
+		logging.info("Uploading artifact '%s' to repository '%s'", artifact_name, os.path.join(self.server_path, remote_repository))
+
 		local_artifact_path = os.path.join(local_repository, path_in_repository, artifact_name)
 		remote_artifact_path = os.path.join(self.server_path, remote_repository, path_in_repository, artifact_name)
 
-		if not os.path.exists(local_artifact_path + file_extension):
+		if not simulate and not os.path.exists(local_artifact_path + file_extension):
 			raise ValueError("Local artifact does not exist: '%s'" % local_artifact_path)
 		if not overwrite and self.exists(remote_repository, path_in_repository, artifact_name, file_extension):
 			raise ValueError("Remote artifact already exists: '%s'" % remote_artifact_path)
 
 		self.create_directory(remote_repository, path_in_repository, simulate)
 
+		logger.info("Copying '%s' to '%s'", local_artifact_path + file_extension, remote_artifact_path + file_extension)
 		if not simulate:
 			shutil.copyfile(local_artifact_path + file_extension, remote_artifact_path + file_extension + ".tmp")
 			shutil.move(remote_artifact_path + file_extension + ".tmp", remote_artifact_path + file_extension)
@@ -115,10 +164,12 @@ class ArtifactServerSshClient:
 
 
 	def upload(self, local_repository, remote_repository, path_in_repository, artifact_name, file_extension, overwrite, simulate): # pylint: disable = too-many-arguments
+		logging.info("Uploading artifact '%s' to repository '%s'", artifact_name, "ssh://" + self.server_host + ":" + self.server_path + "/" + remote_repository)
+
 		local_artifact_path = os.path.join(local_repository, path_in_repository, artifact_name)
 		remote_artifact_path = self.server_path + "/" + remote_repository + "/" + path_in_repository + "/" + artifact_name
 
-		if not os.path.exists(local_artifact_path + file_extension):
+		if not simulate and not os.path.exists(local_artifact_path + file_extension):
 			raise ValueError("Local artifact does not exist: '%s'" % local_artifact_path)
 		if not overwrite and self.exists(remote_repository, path_in_repository, artifact_name, file_extension):
 			raise ValueError("Remote artifact already exists: '%s'" % remote_artifact_path)

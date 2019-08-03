@@ -29,7 +29,7 @@ def configure_argument_parser(environment, configuration, subparsers): # pylint:
 	parser = subparsers.add_parser("artifact",
 		help = "execute commands related to build artifacts")
 	parser.add_argument("artifact_commands", type = parse_command_parameter,
-		metavar = "<command[+command]>", help = "set the command(s) to execute for the artifact, separated by '+'" + "\n" + "(%s)" % ", ".join(available_commands))
+		metavar = "<command[+command]>", help = "set the command(s) to execute for the artifact, separated by '+' (%s)" % ", ".join(available_commands))
 	parser.add_argument("artifact", choices = configuration["artifacts"].keys(),
 		metavar = "<artifact>", help = "set an artifact definition to use for the commands")
 	parser.add_argument("--parameters", nargs = "*", type = parse_key_value_parameter, default = [],

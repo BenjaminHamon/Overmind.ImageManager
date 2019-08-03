@@ -37,21 +37,21 @@ class ArtifactRepository:
 
 
 	def show(self, artifact_name, artifact_files): # pylint: disable = no-self-use
-		logging.info("Artifact '%s'", artifact_name)
+		logger.info("Artifact '%s'", artifact_name)
 
 		for file_path in artifact_files:
-			logging.info("+ '%s'", file_path)
+			logger.info("+ '%s'", file_path)
 
 
 	def package(self, path_in_repository, artifact_name, artifact_files, simulate):
-		logging.info("Packaging artifact '%s'", artifact_name)
+		logger.info("Packaging artifact '%s'", artifact_name)
 
 		if len(artifact_files) == 0:
 			raise ValueError("The artifact is empty")
 
 		artifact_path = os.path.join(self.local_path, path_in_repository, artifact_name)
 
-		logging.info("Writing '%s'", artifact_path + ".zip")
+		logger.info("Writing '%s'", artifact_path + ".zip")
 
 		artifact_directory = os.path.dirname(artifact_path)
 		if not simulate and not os.path.isdir(artifact_directory):
@@ -59,20 +59,20 @@ class ArtifactRepository:
 
 		if simulate:
 			for source, destination in artifact_files:
-				logging.info("+ '%s' => '%s'", source, destination)
+				logger.info("+ '%s' => '%s'", source, destination)
 		else:
 			with zipfile.ZipFile(artifact_path + ".zip.tmp", "w", zipfile.ZIP_DEFLATED) as artifact_file:
 				for source, destination in artifact_files:
-					logging.info("+ '%s' => '%s'", source, destination)
+					logger.info("+ '%s' => '%s'", source, destination)
 					artifact_file.write(source, destination)
 			shutil.move(artifact_path + ".zip.tmp", artifact_path + ".zip")
 
 
 	def verify(self, path_in_repository, artifact_name, simulate):
-		logging.info("Verifying artifact '%s'", artifact_name)
+		logger.info("Verifying artifact '%s'", artifact_name)
 
 		artifact_path = os.path.join(self.local_path, path_in_repository, artifact_name)
-		logging.info("Reading '%s'", artifact_path + ".zip")
+		logger.info("Reading '%s'", artifact_path + ".zip")
 
 		if not simulate:
 			with zipfile.ZipFile(artifact_path + ".zip", 'r') as artifact_file:
@@ -104,7 +104,7 @@ class ArtifactServerFileClient:
 
 
 	def upload(self, local_repository, remote_repository, path_in_repository, artifact_name, file_extension, overwrite, simulate): # pylint: disable = too-many-arguments
-		logging.info("Uploading artifact '%s' to repository '%s'", artifact_name, os.path.join(self.server_path, remote_repository))
+		logger.info("Uploading artifact '%s' to repository '%s'", artifact_name, os.path.join(self.server_path, remote_repository))
 
 		local_artifact_path = os.path.join(local_repository, path_in_repository, artifact_name)
 		remote_artifact_path = os.path.join(self.server_path, remote_repository, path_in_repository, artifact_name)
@@ -164,7 +164,7 @@ class ArtifactServerSshClient:
 
 
 	def upload(self, local_repository, remote_repository, path_in_repository, artifact_name, file_extension, overwrite, simulate): # pylint: disable = too-many-arguments
-		logging.info("Uploading artifact '%s' to repository '%s'", artifact_name, "ssh://" + self.server_host + ":" + self.server_path + "/" + remote_repository)
+		logger.info("Uploading artifact '%s' to repository '%s'", artifact_name, "ssh://" + self.server_host + ":" + self.server_path + "/" + remote_repository)
 
 		local_artifact_path = os.path.join(local_repository, path_in_repository, artifact_name)
 		remote_artifact_path = self.server_path + "/" + remote_repository + "/" + path_in_repository + "/" + artifact_name

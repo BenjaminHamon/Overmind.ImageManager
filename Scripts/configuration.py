@@ -74,6 +74,7 @@ def load_configuration(environment):
 		# Compilation output
 		"binaries": {
 			"file_name": "{project}.{assembly}_{version}_Binaries_{configuration}",
+			"installation_directory": ".build/{assembly}/Binaries/{configuration}",
 			"path_in_repository": "Binaries",
 			"filesets": [
 				{ "identifier": "binaries", "path_in_archive": "." },

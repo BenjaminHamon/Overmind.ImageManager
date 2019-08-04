@@ -58,7 +58,7 @@ def run(environment, configuration, arguments): # pylint: disable = unused-argum
 		artifact_server_parameters = environment.get("artifact_server_parameters", {})
 		artifact_repository.server_client = model.artifacts.create_artifact_server_client(artifact_server_url, artifact_server_parameters, environment)
 
-	if "upload" in arguments.artifact_commands and artifact_repository.server_client is None:
+	if ("upload" in arguments.artifact_commands or "download" in arguments.artifact_commands) and artifact_repository.server_client is None:
 		raise ValueError("Upload command requires an artifact server")
 
 	if "show" in arguments.artifact_commands:
@@ -82,7 +82,7 @@ def run(environment, configuration, arguments): # pylint: disable = unused-argum
 		artifact_repository.download(artifact["path_in_repository"], artifact_name, arguments.simulate)
 		print("")
 	if "install" in arguments.artifact_commands:
-		installation_directory = arguments.installation_directory if arguments.installation_directory else artifact["installation_directory"]
+		installation_directory = (arguments.installation_directory if arguments.installation_directory else artifact["installation_directory"]).format(**parameters)
 		artifact_repository.install(artifact["path_in_repository"], artifact_name, installation_directory, arguments.simulate)
 		print("")
 

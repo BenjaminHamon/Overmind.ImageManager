@@ -109,7 +109,7 @@
 
                 <Grid Grid.Row="3">
                     <Grid.Resources>
-                        <Style TargetType="Button">
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                             <Setter Property="Margin" Value="5"/>
                             <Setter Property="Padding" Value="5"/>
                             <Setter Property="MinWidth" Value="50"/>

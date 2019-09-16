@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Overmind.ImageManager.Model;
+using System;
 using System.Collections.Generic;
 
 namespace Overmind.ImageManager.Test
@@ -7,6 +8,24 @@ namespace Overmind.ImageManager.Test
 	[TestClass]
 	public class FileNameFormatterTest
 	{
+		[TestMethod]
+		public void FileNameFormatter_Format_Null()
+		{
+			FileNameFormatter fileNameFormatter = new FileNameFormatter();
+			Assert.ThrowsException<ArgumentNullException>(() => fileNameFormatter.Format(null, ".jpeg"));
+		}
+
+		[TestMethod]
+		public void FileNameFormatter_Format_NoFileExtension()
+		{
+			FileNameFormatter fileNameFormatter = new FileNameFormatter();
+			ImageModel image = new ImageModel() { Hash = "0800fc577294c34e0b28ad2839435945" };
+			ImageModel imageWithFileName = new ImageModel() { FileName = "Image", Hash = "0800fc577294c34e0b28ad2839435945" };
+
+			Assert.ThrowsException<ArgumentException>(() => fileNameFormatter.Format(image, null));
+			Assert.ThrowsException<ArgumentException>(() => fileNameFormatter.Format(imageWithFileName, null));
+		}
+
 		[TestMethod]
 		public void FileNameFormatter_Format_Default()
 		{
@@ -48,6 +67,13 @@ namespace Overmind.ImageManager.Test
 
 			Assert.IsTrue(actualResult.Length < 125);
 			Assert.AreEqual(actualResult, expectedResult);
+		}
+
+		[TestMethod]
+		public void FileNameFormatter_FormatElement_Null()
+		{
+			FileNameFormatter fileNameFormatter = new FileNameFormatter();
+			Assert.ThrowsException<ArgumentNullException>(() => fileNameFormatter.FormatElement(null, 10));
 		}
 
 		[TestMethod]

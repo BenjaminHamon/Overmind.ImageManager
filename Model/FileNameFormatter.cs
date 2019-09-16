@@ -23,8 +23,15 @@ namespace Overmind.ImageManager.Model
 
 		public string Format(ImageModel image, string fileExtension = null)
 		{
+			if (image == null)
+				throw new ArgumentNullException("Image must not be null.");
+
 			if (String.IsNullOrEmpty(fileExtension))
-				fileExtension = Path.GetExtension(image.FileName).TrimStart('.');
+				fileExtension = Path.GetExtension(image.FileName);
+			if (String.IsNullOrEmpty(fileExtension))
+				throw new ArgumentException("File extension or an image file name with one is required");
+
+			fileExtension = fileExtension.TrimStart('.');
 
 			string titleElement = FormatElement(new List<string>() { image.Title }, TitleLengthLimit)
 				?? FormatElement(image.SubjectCollection, TitleLengthLimit) ?? TitleDefaultValue;
@@ -35,6 +42,13 @@ namespace Overmind.ImageManager.Model
 
 		public string FormatElement(IEnumerable<string> valueCollection, int lengthLimit)
 		{
+			if (valueCollection == null)
+				throw new ArgumentNullException("Value collection must not be null.");
+			if (lengthLimit < 0)
+				throw new ArgumentException("Length limit must be positive.");
+			if (lengthLimit < EllipsisMark.Length)
+				throw new ArgumentException("Length limit is too short (smaller than the ellipsis mark).");
+
 			string fullValue = String.Join(ValueSeparator, valueCollection.Select(FormatValue));
 			if (String.IsNullOrEmpty(fullValue))
 				return null;

@@ -24,6 +24,14 @@ namespace Overmind.ImageManager.WindowsClient
 
 			gridDisplayMenuItem.Click += (s, e) => SelectListDisplayStyle("Grid");
 			listDisplayMenuItem.Click += (s, e) => SelectListDisplayStyle("List");
+
+			Loaded += RunPostLoad;
+		}
+
+		private void RunPostLoad(object sender, EventArgs eventArguments)
+		{
+			// The parent window is null until the control is loaded
+			Window.GetWindow(this).Deactivated += (s, e) => ForceUpdateOnFocusedElement();
 		}
 
 		private MainViewModel viewModel { get { return (MainViewModel)DataContext; } }
@@ -161,8 +169,8 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private void ForceUpdateOnFocusedElement()
 		{
-			// Some controls update their source when they lose focus, but this does not happen when switching focus scope.
-			// The issue occurs when using a menu command or closing the window (directly or from the system task bar).
+			// Some controls trigger the data binding update source when they lose the focus, but this does not happen when switching focus scope.
+			// The issue occurs when using a menu command, changing window or closing the window (directly or from the system task bar).
 
 			// See also https://stackoverflow.com/questions/57493/wpf-databind-before-saving
 			// - Disabling the menu focus scope is only a partial fix since it does not catch the issue when the main window is closed,
@@ -173,6 +181,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 			Window mainWindow = Window.GetWindow(this);
 			IInputElement focusedElement = FocusManager.GetFocusedElement(mainWindow);
+
 			if (focusedElement != null)
 			{
 				FocusManager.SetFocusedElement(mainWindow, this);
@@ -195,6 +204,8 @@ namespace Overmind.ImageManager.WindowsClient
 			if (style != collectionView.ListDisplayStyle)
 			{
 				collectionView.ListDisplayStyle = style;
+
+				ForceUpdateOnFocusedElement();
 
 				if (viewModel.ActiveCollection != null)
 					viewModel.ActiveCollection.ResetDisplay();

@@ -17,11 +17,11 @@ namespace Overmind.ImageManager.WallpaperService
 	{
 		private static readonly Logger Logger = LogManager.GetLogger(nameof(MainViewModel));
 
-		public MainViewModel(SettingsProvider settingsProvider, DataProvider dataProvider,
+		public MainViewModel(SettingsProvider settingsProvider, CollectionProvider collectionProvider,
 			IQueryEngine<ImageModel> queryEngine, Func<Random> randomFactory, string wallpaperStorage)
 		{
 			this.settingsProvider = settingsProvider;
-			this.dataProvider = dataProvider;
+			this.collectionProvider = collectionProvider;
 			this.queryEngine = queryEngine;
 			this.randomFactory = randomFactory;
 			this.wallpaperStorage = wallpaperStorage;
@@ -33,7 +33,7 @@ namespace Overmind.ImageManager.WallpaperService
 		}
 
 		private readonly SettingsProvider settingsProvider;
-		private readonly DataProvider dataProvider;
+		private readonly CollectionProvider collectionProvider;
 		private readonly IQueryEngine<ImageModel> queryEngine;
 		private readonly Func<Random> randomFactory;
 		private readonly string wallpaperStorage;
@@ -71,7 +71,7 @@ namespace Overmind.ImageManager.WallpaperService
 			{
 				try
 				{
-					wallpaperService = WallpaperServiceInstance.CreateInstance(ActiveConfiguration, dataProvider, queryEngine, SetWallpaper, randomFactory());
+					wallpaperService = WallpaperServiceInstance.CreateInstance(ActiveConfiguration, collectionProvider, queryEngine, SetWallpaper, randomFactory());
 				}
 				catch (Exception exception)
 				{

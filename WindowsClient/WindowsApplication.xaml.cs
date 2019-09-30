@@ -56,13 +56,13 @@ namespace Overmind.ImageManager.WindowsClient
 			FileNameFormatter fileNameFormatter = new FileNameFormatter();
 
 			settingsProvider = new SettingsProvider(serializer, applicationDataDirectory);
-			dataProvider = new DataProvider(serializer, fileNameFormatter);
+			collectionProvider = new CollectionProvider(serializer, fileNameFormatter);
 			queryEngine = new LuceneQueryEngine();
 			randomFactory = () => new Random();
 		}
 
 		private readonly SettingsProvider settingsProvider;
-		private readonly DataProvider dataProvider;
+		private readonly CollectionProvider collectionProvider;
 		private readonly IQueryEngine<ImageModel> queryEngine;
 		private readonly Func<Random> randomFactory;
 
@@ -76,7 +76,7 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			Logger.Info("Starting {0}", ApplicationName);
 
-			mainViewModel = new MainViewModel(this, dataProvider, queryEngine, randomFactory);
+			mainViewModel = new MainViewModel(this, collectionProvider, queryEngine, randomFactory);
 			mainView = new MainView() { DataContext = mainViewModel };
 			MainWindow = new Window() { Content = mainView };
 

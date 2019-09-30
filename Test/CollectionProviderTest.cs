@@ -9,11 +9,11 @@ using System.Text;
 namespace Overmind.ImageManager.Test
 {
 	[TestClass]
-	public class DataProviderTest
+	public class CollectionProviderTest
 	{
 		public TestContext TestContext { get; set; }
 
-		private DataProvider dataProvider;
+		private CollectionProvider collectionProvider;
 		private string workingDirectory;
 
 		[TestInitialize]
@@ -22,18 +22,18 @@ namespace Overmind.ImageManager.Test
 			JsonSerializer serializer = new JsonSerializer();
 			FileNameFormatter fileNameFormatter = new FileNameFormatter();
 
-			dataProvider = new DataProvider(serializer, fileNameFormatter);
+			collectionProvider = new CollectionProvider(serializer, fileNameFormatter);
 			workingDirectory = Path.Combine(TestContext.TestRunDirectory, "Working", TestContext.TestName);
 		}
 
 		[TestMethod]
-		public void DataProvider_SaveCollection_Empty()
+		public void CollectionProvider_SaveCollection_Empty()
 		{
-			dataProvider.SaveCollection(workingDirectory, new CollectionData(), new List<ImageModel>());
+			collectionProvider.SaveCollection(workingDirectory, new CollectionData(), new List<ImageModel>());
 		}
 
 		[TestMethod]
-		public void DataProvider_SaveCollection_Add()
+		public void CollectionProvider_SaveCollection_Add()
 		{
 			CollectionData collectionData = new CollectionData();
 			ImageModel imageModel = new ImageModel();
@@ -42,13 +42,13 @@ namespace Overmind.ImageManager.Test
 			collectionData.Images.Add(imageModel);
 
 			imageModel.Hash = ImageModel.CreateHash(initialImageData);
-			dataProvider.WriteImageFile(workingDirectory, imageModel, initialImageData);
+			collectionProvider.WriteImageFile(workingDirectory, imageModel, initialImageData);
 
 			Assert.IsNotNull(imageModel.FileNameAsTemporary);
 			Assert.IsNull(imageModel.FileNameAsSaved);
 			Assert.IsNotNull(imageModel.FileName);
 
-			dataProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>());
+			collectionProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>());
 
 			Assert.IsNull(imageModel.FileNameAsTemporary);
 			Assert.IsNotNull(imageModel.FileNameAsSaved);
@@ -57,7 +57,7 @@ namespace Overmind.ImageManager.Test
 		}
 
 		[TestMethod]
-		public void DataProvider_SaveCollection_Rename()
+		public void CollectionProvider_SaveCollection_Rename()
 		{
 			CollectionData collectionData = new CollectionData();
 			ImageModel imageModel = new ImageModel();
@@ -66,12 +66,12 @@ namespace Overmind.ImageManager.Test
 			collectionData.Images.Add(imageModel);
 
 			imageModel.Hash = ImageModel.CreateHash(initialImageData);
-			dataProvider.WriteImageFile(workingDirectory, imageModel, initialImageData);
-			dataProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>());
+			collectionProvider.WriteImageFile(workingDirectory, imageModel, initialImageData);
+			collectionProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>());
 
 			string initialFileName = imageModel.FileName;
 			imageModel.Title = "Renamed";
-			dataProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>());
+			collectionProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>());
 
 			Assert.AreNotEqual(initialFileName, imageModel.FileName);
 			Assert.IsNull(imageModel.FileNameAsTemporary);
@@ -81,7 +81,7 @@ namespace Overmind.ImageManager.Test
 		}
 
 		[TestMethod]
-		public void DataProvider_SaveCollection_Replace()
+		public void CollectionProvider_SaveCollection_Replace()
 		{
 			CollectionData collectionData = new CollectionData();
 			ImageModel imageModel = new ImageModel();
@@ -91,14 +91,14 @@ namespace Overmind.ImageManager.Test
 			collectionData.Images.Add(imageModel);
 
 			imageModel.Hash = ImageModel.CreateHash(initialImageData);
-			dataProvider.WriteImageFile(workingDirectory, imageModel, initialImageData);
-			dataProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>());
+			collectionProvider.WriteImageFile(workingDirectory, imageModel, initialImageData);
+			collectionProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>());
 
 			string initialFileName = imageModel.FileNameAsSaved;
 
 			imageModel.Hash = ImageModel.CreateHash(updatedImageData);
-			dataProvider.WriteImageFile(workingDirectory, imageModel, updatedImageData);
-			dataProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>());
+			collectionProvider.WriteImageFile(workingDirectory, imageModel, updatedImageData);
+			collectionProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>());
 
 			Assert.IsNull(imageModel.FileNameAsTemporary);
 			Assert.IsNotNull(imageModel.FileNameAsSaved);
@@ -107,7 +107,7 @@ namespace Overmind.ImageManager.Test
 		}
 
 		[TestMethod]
-		public void DataProvider_SaveCollection_RemoveSaved()
+		public void CollectionProvider_SaveCollection_RemoveSaved()
 		{
 			CollectionData collectionData = new CollectionData();
 			ImageModel imageModel = new ImageModel();
@@ -116,19 +116,19 @@ namespace Overmind.ImageManager.Test
 			collectionData.Images.Add(imageModel);
 
 			imageModel.Hash = ImageModel.CreateHash(imageData);
-			dataProvider.WriteImageFile(workingDirectory, imageModel, imageData);
-			dataProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>());
+			collectionProvider.WriteImageFile(workingDirectory, imageModel, imageData);
+			collectionProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>());
 			
 			Assert.IsTrue(File.Exists(Path.Combine(workingDirectory, "Images", imageModel.FileNameAsSaved)));
 
 			collectionData.Images.Remove(imageModel);
-			dataProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>() { imageModel });
+			collectionProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>() { imageModel });
 
 			Assert.IsFalse(File.Exists(Path.Combine(workingDirectory, "Images", imageModel.FileNameAsSaved)));
 		}
 
 		[TestMethod]
-		public void DataProvider_SaveCollection_RemoveTemporary()
+		public void CollectionProvider_SaveCollection_RemoveTemporary()
 		{
 			CollectionData collectionData = new CollectionData();
 			ImageModel imageModel = new ImageModel();
@@ -137,20 +137,20 @@ namespace Overmind.ImageManager.Test
 			collectionData.Images.Add(imageModel);
 
 			imageModel.Hash = ImageModel.CreateHash(imageData);
-			dataProvider.WriteImageFile(workingDirectory, imageModel, imageData);
+			collectionProvider.WriteImageFile(workingDirectory, imageModel, imageData);
 
 			Assert.IsTrue(File.Exists(Path.Combine(workingDirectory, "Images-Temporary", imageModel.FileNameAsTemporary)));
 
 			collectionData.Images.Remove(imageModel);
-			dataProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>() { imageModel });
+			collectionProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>() { imageModel });
 
 			Assert.IsFalse(File.Exists(Path.Combine(workingDirectory, "Images-Temporary", imageModel.FileNameAsTemporary)));
 		}
 
 		[TestMethod]
-		public void DataProvider_SaveCollection_LeftoverFiles()
+		public void CollectionProvider_SaveCollection_LeftoverFiles()
 		{
-			dataProvider.SaveCollection(workingDirectory, new CollectionData(), new List<ImageModel>());
+			collectionProvider.SaveCollection(workingDirectory, new CollectionData(), new List<ImageModel>());
 
 			Directory.CreateDirectory(Path.Combine(workingDirectory, "Data"));
 			Directory.CreateDirectory(Path.Combine(workingDirectory, "Data-Temporary"));
@@ -164,35 +164,35 @@ namespace Overmind.ImageManager.Test
 			File.Create(Path.Combine(workingDirectory, "Images", "Empty.txt")).Close();
 			File.Create(Path.Combine(workingDirectory, "Images-Temporary", "Empty.txt")).Close();
 
-			dataProvider.SaveCollection(workingDirectory, new CollectionData(), new List<ImageModel>());
+			collectionProvider.SaveCollection(workingDirectory, new CollectionData(), new List<ImageModel>());
 		}
 
 		[TestMethod]
-		public void DataProvider_WriteImageFile_Jpeg()
+		public void CollectionProvider_WriteImageFile_Jpeg()
 		{
 			ImageModel imageModel = new ImageModel();
 			byte[] imageData = File.ReadAllBytes("Resources/Red.jpg");
-			dataProvider.WriteImageFile(workingDirectory, imageModel, imageData);
+			collectionProvider.WriteImageFile(workingDirectory, imageModel, imageData);
 			Assert.IsTrue(File.Exists(Path.Combine(workingDirectory, "Images-Temporary", imageModel.FileNameAsTemporary)));
 			Assert.IsTrue(imageModel.FileNameAsTemporary.EndsWith(".jpeg"));
 		}
 
 		[TestMethod]
-		public void DataProvider_WriteImageFile_Png()
+		public void CollectionProvider_WriteImageFile_Png()
 		{
 			ImageModel imageModel = new ImageModel();
 			byte[] imageData = File.ReadAllBytes("Resources/Red.png");
-			dataProvider.WriteImageFile(workingDirectory, imageModel, imageData);
+			collectionProvider.WriteImageFile(workingDirectory, imageModel, imageData);
 			Assert.IsTrue(File.Exists(Path.Combine(workingDirectory, "Images-Temporary", imageModel.FileNameAsTemporary)));
 			Assert.IsTrue(imageModel.FileNameAsTemporary.EndsWith(".png"));
 		}
 
 		[TestMethod]
-		public void DataProvider_WriteImageFile_Text()
+		public void CollectionProvider_WriteImageFile_Text()
 		{
 			ImageModel imageModel = new ImageModel();
 			byte[] imageData = Encoding.UTF8.GetBytes("Not a image");
-			Assert.ThrowsException<ArgumentException>(() => dataProvider.WriteImageFile(workingDirectory, imageModel, imageData));
+			Assert.ThrowsException<ArgumentException>(() => collectionProvider.WriteImageFile(workingDirectory, imageModel, imageData));
 		}
 	}
 }

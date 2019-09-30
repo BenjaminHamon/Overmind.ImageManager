@@ -8,13 +8,13 @@ using System.Linq;
 
 namespace Overmind.ImageManager.Model
 {
-	public class DataProvider
+	public class CollectionProvider
 	{
-		private static readonly Logger Logger = LogManager.GetLogger(nameof(DataProvider));
+		private static readonly Logger Logger = LogManager.GetLogger(nameof(CollectionProvider));
 
 		private const string FormatVersion = "2.0";
 
-		public DataProvider(JsonSerializer serializer, FileNameFormatter fileNameFormatter)
+		public CollectionProvider(JsonSerializer serializer, FileNameFormatter fileNameFormatter)
 		{
 			this.serializer = serializer;
 			this.fileNameFormatter = fileNameFormatter;

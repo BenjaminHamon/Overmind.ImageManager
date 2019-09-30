@@ -46,13 +46,13 @@ namespace Overmind.ImageManager.WallpaperService
 
 			applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
 			settingsProvider = new SettingsProvider(serializer, applicationDataDirectory);
-			dataProvider = new DataProvider(serializer, null);
+			collectionProvider = new CollectionProvider(serializer, null);
 			queryEngine = new LuceneQueryEngine();
 			randomFactory = () => new Random();
 		}
 
 		private readonly string applicationDataDirectory;
-		private readonly DataProvider dataProvider;
+		private readonly CollectionProvider collectionProvider;
 		private readonly SettingsProvider settingsProvider;
 		private readonly IQueryEngine<ImageModel> queryEngine;
 		private readonly Func<Random> randomFactory;
@@ -63,7 +63,7 @@ namespace Overmind.ImageManager.WallpaperService
 		{
 			Logger.Info("Starting {0}", ApplicationName);
 
-			mainViewModel = new MainViewModel(settingsProvider, dataProvider, queryEngine, randomFactory, applicationDataDirectory);
+			mainViewModel = new MainViewModel(settingsProvider, collectionProvider, queryEngine, randomFactory, applicationDataDirectory);
 			mainViewModel.ReloadSettings();
 			mainViewModel.ApplyConfiguration();
 

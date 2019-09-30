@@ -12,10 +12,10 @@ namespace Overmind.ImageManager.WindowsClient
 	{
 		private static readonly Logger Logger = LogManager.GetLogger(nameof(MainViewModel));
 
-		public MainViewModel(WindowsApplication application, DataProvider dataProvider, IQueryEngine<ImageModel> queryEngine, Func<Random> randomFactory)
+		public MainViewModel(WindowsApplication application, CollectionProvider collectionProvider, IQueryEngine<ImageModel> queryEngine, Func<Random> randomFactory)
 		{
 			this.application = application;
-			this.dataProvider = dataProvider;
+			this.collectionProvider = collectionProvider;
 			this.queryEngine = queryEngine;
 			this.randomFactory = randomFactory;
 
@@ -40,7 +40,7 @@ namespace Overmind.ImageManager.WindowsClient
 		}
 
 		private readonly WindowsApplication application;
-		private readonly DataProvider dataProvider;
+		private readonly CollectionProvider collectionProvider;
 		private readonly IQueryEngine<ImageModel> queryEngine;
 		private readonly Func<Random> randomFactory;
 
@@ -117,16 +117,16 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private CollectionData CreateCollection(string collectionPath)
 		{
-			return dataProvider.CreateCollection(collectionPath);
+			return collectionProvider.CreateCollection(collectionPath);
 		}
 
 		private CollectionData LoadCollection(string collectionPath)
 		{
-			CollectionData collectionData = dataProvider.LoadCollection(collectionPath);
+			CollectionData collectionData = collectionProvider.LoadCollection(collectionPath);
 
 			try
 			{
-				dataProvider.ClearUnsavedFiles(collectionPath);
+				collectionProvider.ClearUnsavedFiles(collectionPath);
 			}
 			catch (Exception exception)
 			{
@@ -141,7 +141,7 @@ namespace Overmind.ImageManager.WindowsClient
 			if (ActiveCollection != null)
 				CloseCollection();
 
-			CollectionModel collectionModel = new CollectionModel(dataProvider, collectionData, collectionPath);
+			CollectionModel collectionModel = new CollectionModel(collectionProvider, collectionData, collectionPath);
 			ActiveCollection = new CollectionViewModel(application, collectionModel, queryEngine, randomFactory);
 			Downloader = new Downloader(ActiveCollection);
 		}
@@ -153,7 +153,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 			try
 			{
-				dataProvider.ClearUnsavedFiles(ActiveCollection.StoragePath);
+				collectionProvider.ClearUnsavedFiles(ActiveCollection.StoragePath);
 			}
 			catch (Exception exception)
 			{

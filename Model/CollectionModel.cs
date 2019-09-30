@@ -6,8 +6,8 @@ namespace Overmind.ImageManager.Model
 {
 	public class CollectionModel : ReadOnlyCollectionModel
 	{
-		public CollectionModel(DataProvider dataProvider, CollectionData data, string storagePath)
-			: base(dataProvider, data, storagePath)
+		public CollectionModel(CollectionProvider collectionProvider, CollectionData data, string storagePath)
+			: base(collectionProvider, data, storagePath)
 		{ }
 
 		private readonly List<ImageModel> removedImages = new List<ImageModel>();
@@ -30,25 +30,25 @@ namespace Overmind.ImageManager.Model
 
 		public void WriteImageFile(ImageModel image, byte[] imageData)
 		{
-			dataProvider.WriteImageFile(storagePath, image, imageData);
+			collectionProvider.WriteImageFile(storagePath, image, imageData);
 		}
 
 		public void Save()
 		{
-			dataProvider.SaveCollection(storagePath, data, removedImages);
+			collectionProvider.SaveCollection(storagePath, data, removedImages);
 			removedImages.Clear();
 		}
 
 		public bool IsSaved()
 		{
-			return dataProvider.IsCollectionSaved(storagePath, data, removedImages);
+			return collectionProvider.IsCollectionSaved(storagePath, data, removedImages);
 		}
 
 		public void Export(string destinationPath, IEnumerable<ImageModel> imagesToExport)
 		{
 			CollectionData exportData = new CollectionData();
 			exportData.Images = new List<ImageModel>(imagesToExport);
-			dataProvider.ExportCollection(storagePath, destinationPath, exportData);
+			collectionProvider.ExportCollection(storagePath, destinationPath, exportData);
 		}
 	}
 }

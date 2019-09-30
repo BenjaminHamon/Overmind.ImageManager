@@ -4,14 +4,14 @@ namespace Overmind.ImageManager.Model
 {
 	public class ReadOnlyCollectionModel
 	{
-		public ReadOnlyCollectionModel(CollectionProvider collectionProvider, CollectionData data, string storagePath)
+		public ReadOnlyCollectionModel(ICollectionProvider collectionProvider, CollectionData data, string storagePath)
 		{
 			this.collectionProvider = collectionProvider;
 			this.data = data;
 			this.storagePath = storagePath;
 		}
 
-		protected readonly CollectionProvider collectionProvider;
+		protected readonly ICollectionProvider collectionProvider;
 		protected readonly CollectionData data;
 		protected readonly string storagePath;
 

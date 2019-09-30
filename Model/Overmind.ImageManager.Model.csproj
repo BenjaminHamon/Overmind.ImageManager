@@ -59,6 +59,7 @@
     <Compile Include="CollectionModel.cs" />
     <Compile Include="CollectionProvider.cs" />
     <Compile Include="FileNameFormatter.cs" />
+    <Compile Include="ICollectionProvider.cs" />
     <Compile Include="ImageModel.cs" />
     <Compile Include="Queries\ImageQueryParser.cs" />
     <Compile Include="Queries\IQueryEngine.cs" />

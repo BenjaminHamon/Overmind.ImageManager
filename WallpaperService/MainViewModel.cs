@@ -17,7 +17,7 @@ namespace Overmind.ImageManager.WallpaperService
 	{
 		private static readonly Logger Logger = LogManager.GetLogger(nameof(MainViewModel));
 
-		public MainViewModel(SettingsProvider settingsProvider, CollectionProvider collectionProvider,
+		public MainViewModel(SettingsProvider settingsProvider, ICollectionProvider collectionProvider,
 			IQueryEngine<ImageModel> queryEngine, Func<Random> randomFactory, string wallpaperStorage)
 		{
 			this.settingsProvider = settingsProvider;
@@ -33,7 +33,7 @@ namespace Overmind.ImageManager.WallpaperService
 		}
 
 		private readonly SettingsProvider settingsProvider;
-		private readonly CollectionProvider collectionProvider;
+		private readonly ICollectionProvider collectionProvider;
 		private readonly IQueryEngine<ImageModel> queryEngine;
 		private readonly Func<Random> randomFactory;
 		private readonly string wallpaperStorage;

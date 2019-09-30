@@ -12,7 +12,7 @@ namespace Overmind.ImageManager.WindowsClient
 	{
 		private static readonly Logger Logger = LogManager.GetLogger(nameof(MainViewModel));
 
-		public MainViewModel(WindowsApplication application, CollectionProvider collectionProvider, IQueryEngine<ImageModel> queryEngine, Func<Random> randomFactory)
+		public MainViewModel(WindowsApplication application, ICollectionProvider collectionProvider, IQueryEngine<ImageModel> queryEngine, Func<Random> randomFactory)
 		{
 			this.application = application;
 			this.collectionProvider = collectionProvider;
@@ -40,7 +40,7 @@ namespace Overmind.ImageManager.WindowsClient
 		}
 
 		private readonly WindowsApplication application;
-		private readonly CollectionProvider collectionProvider;
+		private readonly ICollectionProvider collectionProvider;
 		private readonly IQueryEngine<ImageModel> queryEngine;
 		private readonly Func<Random> randomFactory;
 

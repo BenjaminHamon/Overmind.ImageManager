@@ -6,7 +6,7 @@ namespace Overmind.ImageManager.Model
 {
 	public class CollectionModel : ReadOnlyCollectionModel
 	{
-		public CollectionModel(CollectionProvider collectionProvider, CollectionData data, string storagePath)
+		public CollectionModel(ICollectionProvider collectionProvider, CollectionData data, string storagePath)
 			: base(collectionProvider, data, storagePath)
 		{ }
 

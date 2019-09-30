@@ -62,7 +62,7 @@ namespace Overmind.ImageManager.WindowsClient
 		}
 
 		private readonly SettingsProvider settingsProvider;
-		private readonly CollectionProvider collectionProvider;
+		private readonly ICollectionProvider collectionProvider;
 		private readonly IQueryEngine<ImageModel> queryEngine;
 		private readonly Func<Random> randomFactory;
 

@@ -52,7 +52,7 @@ namespace Overmind.ImageManager.WallpaperService
 		}
 
 		private readonly string applicationDataDirectory;
-		private readonly CollectionProvider collectionProvider;
+		private readonly ICollectionProvider collectionProvider;
 		private readonly SettingsProvider settingsProvider;
 		private readonly IQueryEngine<ImageModel> queryEngine;
 		private readonly Func<Random> randomFactory;

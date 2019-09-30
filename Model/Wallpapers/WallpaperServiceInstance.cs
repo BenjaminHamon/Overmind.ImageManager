@@ -15,7 +15,7 @@ namespace Overmind.ImageManager.Model.Wallpapers
 		private static readonly Logger Logger = LogManager.GetLogger(nameof(WallpaperServiceInstance));
 
 		public static WallpaperServiceInstance CreateInstance(WallpaperConfiguration configuration,
-			CollectionProvider collectionProvider, IQueryEngine<ImageModel> queryEngine, Action<string> setSystemWallpaperFromPath, Random random)
+			ICollectionProvider collectionProvider, IQueryEngine<ImageModel> queryEngine, Action<string> setSystemWallpaperFromPath, Random random)
 		{
 			CollectionData collectionData = collectionProvider.LoadCollection(configuration.CollectionPath);
 			ReadOnlyCollectionModel collectionModel = new ReadOnlyCollectionModel(collectionProvider, collectionData, configuration.CollectionPath);

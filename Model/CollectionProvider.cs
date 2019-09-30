@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Overmind.ImageManager.Model
 {
-	public class CollectionProvider
+	public class CollectionProvider : ICollectionProvider
 	{
 		private static readonly Logger Logger = LogManager.GetLogger(nameof(CollectionProvider));
 

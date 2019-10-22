@@ -51,6 +51,11 @@ namespace Overmind.ImageManager.WindowsClient
 			get { return selectedImageField; }
 			set
 			{
+				// Reset selection in case the image is not in DisplayedImages
+				// to ensure view elements do not keep the old selection value
+				selectedImageField = null;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedImage)));
+
 				selectedImageField = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedImage)));
 

@@ -31,7 +31,7 @@ namespace Overmind.ImageManager.WindowsClient
 		private void RunPostLoad(object sender, EventArgs eventArguments)
 		{
 			// The parent window is null until the control is loaded
-			Window.GetWindow(this).Deactivated += (s, e) => ForceUpdateOnFocusedElement();
+			Window.GetWindow(this).Deactivated += (s, e) => Dispatcher.BeginInvoke(new Action(ForceUpdateOnFocusedElement));
 		}
 
 		private MainViewModel viewModel { get { return (MainViewModel)DataContext; } }

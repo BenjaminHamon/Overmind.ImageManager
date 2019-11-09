@@ -55,7 +55,7 @@ def configure_logging(environment_instance):
 
 
 def configure_log_file(environment_instance, file_path):
-	logging_level = logging.getLevelName(environment_instance["logging_level"])
+	logging_level = logging.getLevelName(environment_instance["logging_level"].upper())
 
 	formatter = logging.Formatter(environment_instance["logging_format"], environment_instance["logging_date_format"], "{")
 	file_handler = logging.FileHandler(file_path, mode = "w")

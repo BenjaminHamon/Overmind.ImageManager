@@ -8,7 +8,7 @@ def load_configuration(environment):
 	configuration = {
 		"project": "Overmind.ImageManager",
 		"project_name": "Overmind Image Manager",
-		"project_version": { "identifier": "2.0" },
+		"project_version": { "identifier": "3.0" },
 	}
 
 	branch = subprocess.check_output([ environment["git_executable"], "rev-parse", "--abbrev-ref", "HEAD" ]).decode("utf-8").strip()

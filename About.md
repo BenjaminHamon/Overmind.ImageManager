@@ -19,6 +19,8 @@ Overmind Image Manager uses licensed assets and software from:
   ([BSD 3-Clause License](https://github.com/NLog/NLog/blob/master/LICENSE.txt))
 - [SharpZipLib](https://github.com/icsharpcode/SharpZipLib)
   ([MIT License](https://github.com/icsharpcode/SharpZipLib/blob/master/LICENSE.txt))
+- [Unsplash](https://unsplash.com/)
+  ([Unsplash License](https://unsplash.com/license))
 - [Windows API Code Pack](https://github.com/aybe/Windows-API-Code-Pack-1.1)
   ([Microsoft Software Licence](https://github.com/aybe/Windows-API-Code-Pack-1.1/blob/master/LICENCE))
 - [WPF CustomMessageBox](https://github.com/evanwon/WPFCustomMessageBox)

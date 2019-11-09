@@ -11,7 +11,9 @@ namespace Overmind.ImageManager.Model
 	{
 		[DataMember]
 		public string FileName { get; set; }
-		public string FileNameInStorage { get; set; }
+
+		public string FileNameAsTemporary { get; set; }
+		public string FileNameAsSaved { get; set; }
 
 		[DataMember]
 		public string Hash { get; set; }

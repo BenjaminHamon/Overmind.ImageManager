@@ -8,11 +8,20 @@
 # Build artifacts
 .artifacts/
 
-# Python
-__pycache__/
+# Environment
+environment.json
 
 # NuGet
 /packages/
+
+# Python
+__pycache__/
+
+# Python virtual environment
+.venv/
+
+# Test results
+/TestResults/
 
 # Visual Studio
 .vs/

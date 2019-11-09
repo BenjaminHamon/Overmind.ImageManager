@@ -11,7 +11,7 @@ namespace Overmind.ImageManager.WindowsClient
 {
 	public class CollectionViewModel : INotifyPropertyChanged
 	{
-		public CollectionViewModel(WindowsApplication application, CollectionModel model, IQueryEngine<ImageModel> queryEngine)
+		public CollectionViewModel(WindowsApplication application, CollectionModel model, IQueryEngine<ImageModel> queryEngine, Func<Random> randomFactory)
 		{
 			this.model = model;
 
@@ -19,7 +19,7 @@ namespace Overmind.ImageManager.WindowsClient
 			foreach (ImageModel image in model.AllImages)
 				allImages.Add(new ImageViewModel(image, () => model.GetImagePath(image)));
 
-			Query = new QueryViewModel(queryEngine);
+			Query = new QueryViewModel(queryEngine, randomFactory);
 			FilteredImages = new List<ImageViewModel>();
 			DisplayedImages = new ObservableCollection<ImageViewModel>();
 
@@ -51,6 +51,11 @@ namespace Overmind.ImageManager.WindowsClient
 			get { return selectedImageField; }
 			set
 			{
+				// Reset selection in case the image is not in DisplayedImages
+				// to ensure view elements do not keep the old selection value
+				selectedImageField = null;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedImage)));
+
 				selectedImageField = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedImage)));
 
@@ -107,18 +112,9 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public ImageViewModel AddImage(Uri source, byte[] data)
 		{
-			string hash = ImageModel.CreateHash(data);
-			DateTime now = DateTime.UtcNow;
-
-			// Change the datetime resolution to seconds
-			now = now.AddTicks( - (now.Ticks % TimeSpan.TicksPerSecond));
-
 			lock (modelLock)
 			{
-				ImageModel newImage = new ImageModel() { Hash = hash, AdditionDate = now, Source = source };
-				model.AddImage(newImage);
-				model.WriteImageFile(newImage, data);
-
+				ImageModel newImage = model.CreateImage(source, data);
 				ImageViewModel newImageViewModel = new ImageViewModel(newImage, () => model.GetImagePath(newImage)) { Group = "#New" };
 				allImages.Insert(0, newImageViewModel);
 				FilteredImages.Insert(0, newImageViewModel);
@@ -129,21 +125,14 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public void UpdateImageFile(ImageViewModel image, byte[] data)
 		{
-			string hash = ImageModel.CreateHash(data);
-
 			lock (modelLock)
 			{
-				if (allImages.Contains(image) == false)
-					throw new InvalidOperationException("Original image does not exist in the collection");
-
-				image.Model.Hash = hash;
-				model.WriteImageFile(image.Model, data);
+				model.UpdateImageFile(image.Model, data);
 
 				image.NotifyFileChanged();
 				if (SelectedImage == image)
 					SelectedImageProperties.NotifyFileChanged();
 			}
-
 		}
 
 		private void RemoveImage(ImageViewModel image)

@@ -3,6 +3,7 @@ using NLog.Common;
 using NLog.Config;
 using NLog.Targets;
 using System.IO;
+using System.Text;
 
 namespace Overmind.ImageManager.Model
 {
@@ -22,7 +23,7 @@ namespace Overmind.ImageManager.Model
 			DebuggerTarget debuggerTarget = new DebuggerTarget() { Layout = loggingLayout };
 			loggingConfiguration.AddRule(LogLevel.Debug, LogLevel.Fatal, debuggerTarget);
 
-			FileTarget fileTarget = new FileTarget() { Layout = loggingLayout };
+			FileTarget fileTarget = new FileTarget() { Layout = loggingLayout, Encoding = Encoding.UTF8 };
 			fileTarget.FileName = Path.Combine(applicationDataDirectory, applicationName + ".log");
 			loggingConfiguration.AddRule(LogLevel.Info, LogLevel.Fatal, fileTarget);
 

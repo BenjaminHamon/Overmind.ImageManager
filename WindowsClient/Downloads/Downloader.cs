@@ -39,7 +39,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 		public void RestartDownload(ImageViewModel image)
 		{
-			AddDownload(image.Model.Source.ToString(), (download, downloadData) => collection.UpdateImageFile(image, downloadData));
+			AddDownload(image.Model.Source?.ToString(), (download, downloadData) => collection.UpdateImageFile(image, downloadData));
 		}
 
 		private void AddDownload(string uri, Action<ObservableDownload, byte[]> consumer)

@@ -25,20 +25,6 @@
         <KeyBinding Key="F1" Command="Help"/>
     </UserControl.InputBindings>
 
-    <UserControl.Resources>
-        <Style x:Key="InnerMenuItemStyle" TargetType="MenuItem">
-            <Style.Resources>
-                <Style TargetType="ContentPresenter">
-                    <Style.Resources>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Margin" Value="5,0,0,0"/>
-                        </Style>
-                    </Style.Resources>
-                </Style>
-            </Style.Resources>
-        </Style>
-    </UserControl.Resources>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -47,29 +33,27 @@
 
         <Menu Grid.Row="0">
             <MenuItem Header="File">
-                <MenuItem Header="New collection" Style="{StaticResource InnerMenuItemStyle}" Command="New" InputGestureText="Ctrl+N"/>
-                <MenuItem Header="Open collection" Style="{StaticResource InnerMenuItemStyle}" Command="Open" InputGestureText="Ctrl+O"/>
-                <MenuItem Header="Save collection" Style="{StaticResource InnerMenuItemStyle}" Command="Save" InputGestureText="Ctrl+S"/>
-                <MenuItem Header="Close collection" Style="{StaticResource InnerMenuItemStyle}" Command="Close"/>
-                <Separator Margin="0,-3"/>
-                <MenuItem Header="Export query results" Style="{StaticResource InnerMenuItemStyle}" Command="main:MainView.ExportCommand"/>
-                <Separator Margin="0,-3"/>
-                <MenuItem Header="Settings" Style="{StaticResource InnerMenuItemStyle}" Command="{Binding Path=ShowSettingsCommand}"/>
-                <Separator Margin="0,-3"/>
-                <MenuItem Header="Exit" Style="{StaticResource InnerMenuItemStyle}" Command="main:MainView.ExitCommand" InputGestureText="Alt+F4"/>
+                <MenuItem Header="New collection" Command="New" InputGestureText="Ctrl+N"/>
+                <MenuItem Header="Open collection" Command="Open" InputGestureText="Ctrl+O"/>
+                <MenuItem Header="Save collection" Command="Save" InputGestureText="Ctrl+S"/>
+                <MenuItem Header="Close collection" Command="Close"/>
+                <Separator/>
+                <MenuItem Header="Export query results" Command="main:MainView.ExportCommand"/>
+                <Separator/>
+                <MenuItem Header="Settings" Command="{Binding Path=ShowSettingsCommand}"/>
+                <Separator/>
+                <MenuItem Header="Exit" Command="main:MainView.ExitCommand" InputGestureText="Alt+F4"/>
             </MenuItem>
             <MenuItem Header="View">
-                <MenuItem x:Name="gridDisplayMenuItem" x:FieldModifier="private"
-                          Header="Grid display" Style="{StaticResource InnerMenuItemStyle}" IsCheckable="True"/>
-                <MenuItem x:Name="listDisplayMenuItem" x:FieldModifier="private"
-                          Header="List display" Style="{StaticResource InnerMenuItemStyle}" IsCheckable="True"/>
-                <Separator Margin="0,-3"/>
-                <MenuItem Header="Play slide show" Style="{StaticResource InnerMenuItemStyle}" Command="{Binding Path=SpawnSlideShowCommand}"/>
-                <MenuItem Header="Play slide show (shuffle)" Style="{StaticResource InnerMenuItemStyle}" Command="{Binding Path=SpawnShuffledSlideShowCommand}"/>
+                <MenuItem x:Name="gridDisplayMenuItem" x:FieldModifier="private" Header="Grid display" IsCheckable="True"/>
+                <MenuItem x:Name="listDisplayMenuItem" x:FieldModifier="private" Header="List display" IsCheckable="True"/>
+                <Separator/>
+                <MenuItem Header="Play slide show" Command="{Binding Path=SpawnSlideShowCommand}"/>
+                <MenuItem Header="Play slide show (shuffle)" Command="{Binding Path=SpawnShuffledSlideShowCommand}"/>
             </MenuItem>
             <MenuItem Header="Help">
-                <MenuItem Header="Help" Style="{StaticResource InnerMenuItemStyle}" Command="Help" InputGestureText="F1"/>
-                <MenuItem Header="About" Style="{StaticResource InnerMenuItemStyle}" Command="{Binding Path=ShowAboutCommand}"/>
+                <MenuItem Header="Help" Command="Help" InputGestureText="F1"/>
+                <MenuItem Header="About" Command="{Binding Path=ShowAboutCommand}"/>
             </MenuItem>
         </Menu>
 
@@ -124,6 +108,13 @@
                 </main:ImagePropertiesView>
 
                 <Grid Grid.Row="3">
+                    <Grid.Resources>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                            <Setter Property="Margin" Value="5"/>
+                            <Setter Property="Padding" Value="5"/>
+                            <Setter Property="MinWidth" Value="50"/>
+                        </Style>
+                    </Grid.Resources>
                     <Grid.Style>
                         <Style TargetType="Grid">
                             <Style.Triggers>
@@ -133,13 +124,6 @@
                             </Style.Triggers>
                         </Style>
                     </Grid.Style>
-                    <Grid.Resources>
-                        <Style TargetType="Button">
-                            <Setter Property="Margin" Value="5"/>
-                            <Setter Property="Padding" Value="5"/>
-                            <Setter Property="MinWidth" Value="50"/>
-                        </Style>
-                    </Grid.Resources>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>

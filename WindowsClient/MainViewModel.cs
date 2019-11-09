@@ -1,4 +1,5 @@
-﻿using Overmind.ImageManager.Model;
+﻿using NLog;
+using Overmind.ImageManager.Model;
 using Overmind.ImageManager.Model.Queries;
 using Overmind.ImageManager.WindowsClient.Downloads;
 using Overmind.WpfExtensions;
@@ -9,11 +10,14 @@ namespace Overmind.ImageManager.WindowsClient
 {
 	public class MainViewModel : INotifyPropertyChanged, IDisposable
 	{
-		public MainViewModel(WindowsApplication application, DataProvider dataProvider, IQueryEngine<ImageModel> queryEngine)
+		private static readonly Logger Logger = LogManager.GetLogger(nameof(MainViewModel));
+
+		public MainViewModel(WindowsApplication application, ICollectionProvider collectionProvider, IQueryEngine<ImageModel> queryEngine, Func<Random> randomFactory)
 		{
 			this.application = application;
-			this.dataProvider = dataProvider;
+			this.collectionProvider = collectionProvider;
 			this.queryEngine = queryEngine;
+			this.randomFactory = randomFactory;
 
 			ShowDownloaderCommand = new DelegateCommand<object>(_ => application.ShowDownloader());
 			ShowSettingsCommand = new DelegateCommand<object>(_ => application.ShowSettings());
@@ -36,8 +40,9 @@ namespace Overmind.ImageManager.WindowsClient
 		}
 
 		private readonly WindowsApplication application;
-		private readonly DataProvider dataProvider;
+		private readonly ICollectionProvider collectionProvider;
 		private readonly IQueryEngine<ImageModel> queryEngine;
+		private readonly Func<Random> randomFactory;
 
 		public string WindowTitle
 		{
@@ -112,13 +117,22 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private CollectionData CreateCollection(string collectionPath)
 		{
-			return dataProvider.CreateCollection(collectionPath);
+			return collectionProvider.CreateCollection(collectionPath);
 		}
 
 		private CollectionData LoadCollection(string collectionPath)
 		{
-			CollectionData collectionData = dataProvider.LoadCollection(collectionPath);
-			dataProvider.ClearUnsavedFiles(collectionPath);
+			CollectionData collectionData = collectionProvider.LoadCollection(collectionPath);
+
+			try
+			{
+				collectionProvider.ClearUnsavedFiles(collectionPath);
+			}
+			catch (Exception exception)
+			{
+				Logger.Warn(exception, "Failed to clear unsaved files (Path: '{0}')", collectionPath);
+			}
+
 			return collectionData;
 		}
 
@@ -127,8 +141,8 @@ namespace Overmind.ImageManager.WindowsClient
 			if (ActiveCollection != null)
 				CloseCollection();
 
-			CollectionModel collectionModel = new CollectionModel(dataProvider, collectionData, collectionPath);
-			ActiveCollection = new CollectionViewModel(application, collectionModel, queryEngine);
+			CollectionModel collectionModel = new CollectionModel(collectionProvider, collectionData, collectionPath);
+			ActiveCollection = new CollectionViewModel(application, collectionModel, queryEngine, randomFactory);
 			Downloader = new Downloader(ActiveCollection);
 		}
 
@@ -137,7 +151,15 @@ namespace Overmind.ImageManager.WindowsClient
 			Downloader.Dispose();
 			Downloader = null;
 
-			dataProvider.ClearUnsavedFiles(ActiveCollection.StoragePath);
+			try
+			{
+				collectionProvider.ClearUnsavedFiles(ActiveCollection.StoragePath);
+			}
+			catch (Exception exception)
+			{
+				Logger.Warn(exception, "Failed to clear unsaved files (Path: '{0}')", ActiveCollection.StoragePath);
+			}
+
 			ActiveCollection = null;
 		}
 	}

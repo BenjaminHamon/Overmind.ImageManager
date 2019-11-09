@@ -24,6 +24,14 @@ namespace Overmind.ImageManager.WindowsClient
 
 			gridDisplayMenuItem.Click += (s, e) => SelectListDisplayStyle("Grid");
 			listDisplayMenuItem.Click += (s, e) => SelectListDisplayStyle("List");
+
+			Loaded += RunPostLoad;
+		}
+
+		private void RunPostLoad(object sender, EventArgs eventArguments)
+		{
+			// The parent window is null until the control is loaded
+			Window.GetWindow(this).Deactivated += (s, e) => Dispatcher.BeginInvoke(new Action(ForceUpdateOnFocusedElement));
 		}
 
 		private MainViewModel viewModel { get { return (MainViewModel)DataContext; } }
@@ -56,12 +64,12 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private void LoadCollection(object sender, EventArgs eventArguments)
 		{
-			CloseCollection(sender, eventArguments);
-			if (viewModel.ActiveCollection != null)
-				return;
-
 			CommonOpenFileDialog fileDialog = new CommonOpenFileDialog("Open Collection") { IsFolderPicker = true };
 			if (fileDialog.ShowDialog() != CommonFileDialogResult.Ok)
+				return;
+
+			CloseCollection(sender, eventArguments);
+			if (viewModel.ActiveCollection != null)
 				return;
 
 			try
@@ -108,7 +116,17 @@ namespace Overmind.ImageManager.WindowsClient
 
 				if (result == MessageBoxResult.Yes)
 				{
-					viewModel.SaveCollectionCommand.Execute(null);
+					try
+					{
+						viewModel.SaveCollectionCommand.Execute(null);
+					}
+					catch (Exception exception)
+					{
+						Logger.Error(exception, "Failed to save collection (Path: '{0}')", viewModel.ActiveCollection.StoragePath);
+						WindowsApplication.ShowError("Save Collection", "Failed to save the image collection.", exception);
+						return;
+					}
+
 					viewModel.CloseCollectionCommand.Execute(null);
 				}
 				else if (result == MessageBoxResult.No)
@@ -151,8 +169,8 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private void ForceUpdateOnFocusedElement()
 		{
-			// Some controls update their source when they lose focus, but this does not happen when switching focus scope.
-			// The issue occurs when using a menu command or closing the window (directly or from the system task bar).
+			// Some controls trigger the data binding update source when they lose the focus, but this does not happen when switching focus scope.
+			// The issue occurs when using a menu command, changing window or closing the window (directly or from the system task bar).
 
 			// See also https://stackoverflow.com/questions/57493/wpf-databind-before-saving
 			// - Disabling the menu focus scope is only a partial fix since it does not catch the issue when the main window is closed,
@@ -163,6 +181,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 			Window mainWindow = Window.GetWindow(this);
 			IInputElement focusedElement = FocusManager.GetFocusedElement(mainWindow);
+
 			if (focusedElement != null)
 			{
 				FocusManager.SetFocusedElement(mainWindow, this);
@@ -185,6 +204,8 @@ namespace Overmind.ImageManager.WindowsClient
 			if (style != collectionView.ListDisplayStyle)
 			{
 				collectionView.ListDisplayStyle = style;
+
+				ForceUpdateOnFocusedElement();
 
 				if (viewModel.ActiveCollection != null)
 					viewModel.ActiveCollection.ResetDisplay();

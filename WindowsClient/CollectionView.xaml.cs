@@ -55,6 +55,8 @@ namespace Overmind.ImageManager.WindowsClient
 				CollectionViewModel newDataContext = (CollectionViewModel)eventArguments.NewValue;
 				newDataContext.DisplayedImages.CollectionChanged += HandleCollectionReset;
 				newDataContext.PropertyChanged += ScrollToSelection;
+
+				searchTextBox.Focus();
 			}
 		}
 

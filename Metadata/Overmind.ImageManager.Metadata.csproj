@@ -24,7 +24,7 @@
 
   <!-- Only enabled for Visual Studio to avoid re-entering the build script and failing on the lock -->
   <Target Name="Metadata" BeforeTargets="PrepareForBuild" Condition="$(BuildingInsideVisualStudio) == 'true'">
-    <Exec Command="$(PythonExecutable) $(SolutionDir)/Scripts/main.py --verbosity warning metadata"/>
+    <Exec Command="$(PythonExecutable) $(SolutionDir)/development/main.py --verbosity warning metadata"/>
   </Target>
 
 </Project>

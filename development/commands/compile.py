@@ -2,6 +2,9 @@ import logging
 import subprocess
 
 
+logger = logging.getLogger("Main")
+
+
 def configure_argument_parser(environment, configuration, subparsers): # pylint: disable = unused-argument
 	parser = subparsers.add_parser("compile", help = "compile the project")
 	parser.add_argument("--configuration", required = True, choices = configuration["compilation_configurations"],
@@ -15,7 +18,7 @@ def run(environment, configuration, arguments): # pylint: disable = unused-argum
 
 
 def compile(environment, solution, configuration, verbose, simulate): # pylint: disable = redefined-builtin
-	logging.info("Compiling %s with configuration %s", solution, configuration)
+	logger.info("Compiling %s with configuration %s", solution, configuration)
 	print("")
 
 	nuget_command = [ environment["nuget_executable"], "restore" ]
@@ -23,7 +26,7 @@ def compile(environment, solution, configuration, verbose, simulate): # pylint: 
 		nuget_command += [ "-Verbosity", "quiet" ]
 	nuget_command += [ solution ]
 
-	logging.info("+ %s", " ".join(("'" + x + "'") if " " in x else x for x in nuget_command))
+	logger.info("+ %s", " ".join(("'" + x + "'") if " " in x else x for x in nuget_command))
 	if not simulate:
 		subprocess.check_call(nuget_command)
 		if verbose:
@@ -36,6 +39,6 @@ def compile(environment, solution, configuration, verbose, simulate): # pylint: 
 	msbuild_command += [ "/p:Configuration=" + configuration ]
 	msbuild_command += [ solution ]
 
-	logging.info("+ %s", " ".join(("'" + x + "'") if " " in x else x for x in msbuild_command))
+	logger.info("+ %s", " ".join(("'" + x + "'") if " " in x else x for x in msbuild_command))
 	if not simulate:
 		subprocess.check_call(msbuild_command)

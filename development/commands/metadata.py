@@ -2,6 +2,9 @@ import logging
 import os
 
 
+logger = logging.getLogger("Main")
+
+
 def configure_argument_parser(environment, configuration, subparsers): # pylint: disable = unused-argument
 	return subparsers.add_parser("metadata", help = "generate the project metadata files")
 
@@ -24,9 +27,9 @@ def write_product_information(configuration, simulate):
 	if not simulate and not os.path.isdir(output_directory):
 		os.makedirs(output_directory)
 
-	logging.info("Writing ProductInformation.cs")
+	logger.info("Writing ProductInformation.cs")
 	for key, value in information.items():
-		logging.info("%s: '%s'", key, value)
+		logger.info("%s: '%s'", key, value)
 
 	with open(os.path.join("Metadata", "ProductInformation.template.cs"), "r") as template_file:
 		file_content = template_file.read()

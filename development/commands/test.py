@@ -1,4 +1,5 @@
 import logging
+import shutil
 import subprocess
 
 
@@ -14,15 +15,19 @@ def configure_argument_parser(environment, configuration, subparsers): # pylint:
 
 
 def run(environment, configuration, arguments): # pylint: disable = unused-argument
+	vstest_executable = environment.get("vstest_executable", None)
+	if vstest_executable is None or not shutil.which(vstest_executable):
+		raise RuntimeError("VSTest is required (Path: '%s')" % vstest_executable)
+
 	test_container = ".build/{assembly}/Binaries/{configuration}/{project}.{assembly}.dll"
 	test_container = test_container.format(project = configuration["project"], assembly = "Test", configuration = arguments.configuration)
-	test(environment, test_container, arguments.filter)
+	test(vstest_executable, test_container, arguments.configuration, arguments.filter)
 
 
-def test(environment, test_container, filter_expression):
-	logger.info("Running test suite")
+def test(vstest_executable, test_container, configuration, filter_expression):
+	logger.info("Running test suite (Configuration: '%s')", configuration)
 
-	mstest_command = [ environment["vstest_executable"], "/Logger:trx" ]
+	vstest_command = [ vstest_executable, "/Logger:trx" ]
 	if filter_expression:
 		vstest_command += [ "/TestCaseFilter:" + filter_expression ]
 	vstest_command += [ test_container ]

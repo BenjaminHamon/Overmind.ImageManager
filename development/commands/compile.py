@@ -1,4 +1,5 @@
 import logging
+import shutil
 import subprocess
 
 
@@ -13,15 +14,24 @@ def configure_argument_parser(environment, configuration, subparsers): # pylint:
 
 
 def run(environment, configuration, arguments): # pylint: disable = unused-argument
+	nuget_executable = environment.get("nuget_executable", None)
+	if nuget_executable is None or not shutil.which(nuget_executable):
+		raise RuntimeError("NuGet is required (Path: '%s')" % nuget_executable)
+
+	msbuild_executable = environment.get("msbuild_executable", None)
+	if msbuild_executable is None or not shutil.which(msbuild_executable):
+		raise RuntimeError("MSBuild is required (Path: '%s')" % msbuild_executable)
+
 	solution = configuration["project"] + ".sln"
-	compile(environment, solution, arguments.configuration, arguments.verbosity == "debug", arguments.simulate)
+	compile(nuget_executable, msbuild_executable, solution, arguments.configuration, arguments.verbosity == "debug", arguments.simulate)
 
 
-def compile(environment, solution, configuration, verbose, simulate): # pylint: disable = redefined-builtin
-	logger.info("Compiling %s with configuration %s", solution, configuration)
+def compile( # pylint: disable = redefined-builtin, too-many-arguments
+		nuget_executable, msbuild_executable, solution, configuration, verbose, simulate):
+	logger.info("Compiling '%s' (Configuration: '%s')", solution, configuration)
 	print("")
 
-	nuget_command = [ environment["nuget_executable"], "restore" ]
+	nuget_command = [ nuget_executable, "restore" ]
 	if not verbose:
 		nuget_command += [ "-Verbosity", "quiet" ]
 	nuget_command += [ solution ]
@@ -32,7 +42,7 @@ def compile(environment, solution, configuration, verbose, simulate): # pylint: 
 		if verbose:
 			print("")
 
-	msbuild_command = [ environment["msbuild_executable"], "/m", "/NoLogo" ]
+	msbuild_command = [ msbuild_executable, "/m", "/NoLogo" ]
 	if not verbose:
 		msbuild_command += [ "/v:Minimal" ]
 	msbuild_command += [ "/target:build" ]

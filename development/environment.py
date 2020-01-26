@@ -14,11 +14,11 @@ def create_default_environment():
 		"logging_date_format": "%Y-%m-%dT%H:%M:%S",
 
 		"git_executable": "git",
-		"msbuild_2017_executable": "msbuild_2017",
+		"msbuild_executable": find_msbuild("2019"),
 		"nuget_executable": "nuget",
 		"scp_executable": "scp",
 		"ssh_executable": "ssh",
-		"vstest_2017_executable": "vstest_2017",
+		"vstest_executable": find_vstest("2019"),
 	}
 
 
@@ -62,3 +62,27 @@ def configure_log_file(environment_instance, file_path):
 	file_handler.setLevel(logging_level)
 	file_handler.formatter = formatter
 	logging.root.addHandler(file_handler)
+
+
+def find_msbuild(version):
+	possible_paths = [
+		"C:/Program Files (x86)/Microsoft Visual Studio/%s/Community/MSBuild/Current/Bin/MSBuild.exe" % version,
+	]
+
+	for file_path in possible_paths:
+		if os.path.exists(file_path):
+			return file_path
+
+	return "msbuild"
+
+
+def find_vstest(version):
+	possible_paths = [
+		"C:/Program Files (x86)/Microsoft Visual Studio/%s/Community/Common7/IDE/CommonExtensions/Microsoft/TestWindow/VSTest.Console.exe" % version,
+	]
+
+	for file_path in possible_paths:
+		if os.path.exists(file_path):
+			return file_path
+
+	return "vstest"

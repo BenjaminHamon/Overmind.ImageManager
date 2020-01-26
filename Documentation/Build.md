@@ -2,7 +2,7 @@ This page describes how to build the project from its sources.
 
 # Requirements
 
-- MSBuild 2017 (included with Visual Studio 2017) is required to build the solution.
+- MSBuild 2019 (included with Visual Studio 2019) is required to build the solution.
 - Python3 is required to run build scripts, of which one generating metadata files for assembly information is integrated in the msbuild projects.
 
 # Development

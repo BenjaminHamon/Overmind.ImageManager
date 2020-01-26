@@ -32,7 +32,7 @@ def compile(environment, solution, configuration, verbose, simulate): # pylint: 
 		if verbose:
 			print("")
 
-	msbuild_command = [ environment["msbuild_2017_executable"], "/m", "/NoLogo" ]
+	msbuild_command = [ environment["msbuild_executable"], "/m", "/NoLogo" ]
 	if not verbose:
 		msbuild_command += [ "/v:Minimal" ]
 	msbuild_command += [ "/target:build" ]

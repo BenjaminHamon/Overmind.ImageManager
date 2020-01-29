@@ -21,15 +21,17 @@ def run(environment, configuration, arguments): # pylint: disable = unused-argum
 
 	test_container = ".build/{assembly}/Binaries/{configuration}/{project}.{assembly}.dll"
 	test_container = test_container.format(project = configuration["project"], assembly = "Test", configuration = arguments.configuration)
-	test(vstest_executable, test_container, arguments.configuration, arguments.filter)
+	test(vstest_executable, test_container, arguments.configuration, arguments.filter, simulate = arguments.simulate)
 
 
-def test(vstest_executable, test_container, configuration, filter_expression):
+def test(vstest_executable, test_container, configuration, filter_expression, simulate = False):
 	logger.info("Running test suite (Configuration: '%s')", configuration)
 
 	vstest_command = [ vstest_executable, "/Logger:trx" ]
 	if filter_expression:
 		vstest_command += [ "/TestCaseFilter:" + filter_expression ]
+	if simulate:
+		vstest_command += [ "/ListTests" ]
 	vstest_command += [ test_container ]
 
 	logger.info("+ %s", " ".join(("'" + x + "'") if " " in x else x for x in vstest_command))

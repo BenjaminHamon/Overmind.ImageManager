@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -27,6 +28,8 @@ namespace Overmind.ImageManager.WindowsClient
 		public static void Main(string[] arguments)
 		{
 			AppDomain.CurrentDomain.UnhandledException += ReportFatalError;
+			TaskScheduler.UnobservedTaskException += (sender, eventArguments)
+				=> { Logger.Error(eventArguments.Exception, "Unhandled exception in task"); };
 
 			string applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
 			Model.Application.InitializeLogging(ApplicationFullName, ApplicationName, applicationDataDirectory);
@@ -222,7 +225,6 @@ namespace Overmind.ImageManager.WindowsClient
 			InternalLogger.Fatal(exception, "Unhandled exception");
 			Logger.Fatal(exception, "Unhandled exception");
 			ShowError(ApplicationTitle, "A fatal error has occured.", exception);
-
 		}
 
 		public static void ShowError(string context, string message, Exception exception)

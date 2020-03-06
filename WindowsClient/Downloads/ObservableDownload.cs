@@ -2,11 +2,11 @@
 using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Net;
+using System.Threading;
 
 namespace Overmind.ImageManager.WindowsClient.Downloads
 {
-	public class ObservableDownload : IDisposable, INotifyPropertyChanged
+	public class ObservableDownload : INotifyPropertyChanged, IDisposable
 	{
 		public ObservableDownload(string uriString)
 		{
@@ -16,136 +16,95 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		}
 
 		private readonly string uriStringField;
-		private readonly object downloadLock = new object();
-
-		private WebClient webClient;
+		private CancellationTokenSource cancellationTokenSource;
 
 		public Uri Uri { get; private set; }
 		public string UriString { get { return Uri == null ? uriStringField : Uri.ToString(); } }
 		public string Name { get { return Uri == null ? uriStringField : Uri.UnescapeDataString(Uri.Segments.Last()); } }
 
-		public Action<ObservableDownload, byte[]> DataVerificationHook { get; set; }
-		public Action<ObservableDownload, byte[]> DataConsumer { get; set; }
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		public event Action<ObservableDownload, byte[]> DownloadCompleted;
-
 		public bool IsDownloading { get; private set; }
 		public bool IsCompleted { get; private set; }
 		public bool Success { get; private set; }
+		public Exception Exception { get; private set; }
 		public string StatusMessage { get; private set; }
 
-		public double TotalSize { get; private set; }
-		public double Progress { get; private set; }
-		public double ProgressPercentage { get { return TotalSize != 0 ? 100 * Progress / TotalSize : 0; } }
+		public long TotalSize { get; private set; }
+		public long Progress { get; private set; }
+		public double ProgressPercentage { get { return TotalSize != 0 ? 100 * Convert.ToDouble(Progress) / TotalSize : 0; } }
 
+		public event PropertyChangedEventHandler PropertyChanged;
 		public DelegateCommand<object> CancelCommand { get; }
 
-		public void Execute()
+		public void Reset()
 		{
-			lock (downloadLock)
-			{
-				if (IsDownloading)
-					throw new InvalidOperationException("Already executing");
-				IsDownloading = true;
+			IsDownloading = false;
+			IsCompleted = false;
+			Success = false;
 
-				IsCompleted = false;
-				Success = false;
-				StatusMessage = null;
-				TotalSize = 0;
-				Progress = 0;
+			Exception = null;
+			StatusMessage = null;
 
-				try
-				{
-					Uri = new Uri(uriStringField, UriKind.Absolute);
-				}
-				catch (UriFormatException exception)
-				{
-					IsDownloading = false;
-					IsCompleted = true;
-					StatusMessage = FormatExtensions.FormatExceptionSummary(exception);
-				}
+			Progress = 0;
+			TotalSize = 0;
 
-				if (Uri != null)
-				{
-					webClient = new WebClient();
-					webClient.DownloadProgressChanged += HandleDownloadProgress;
-					webClient.DownloadDataCompleted += HandleDownloadCompleted;
-					webClient.DownloadDataAsync(Uri);
-				}
-			}
+			PropertyChanged?.Invoke(this, null);
+		}
+
+		public void Start(Uri uri, CancellationTokenSource cancellationTokenSource)
+		{
+			this.Uri = uri;
+			this.cancellationTokenSource = cancellationTokenSource;
+
+			IsDownloading = true;
 
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Uri)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UriString)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsDownloading)));
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsCompleted)));
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Success)));
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StatusMessage)));
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TotalSize)));
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Progress)));
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ProgressPercentage)));
 			CancelCommand.RaiseCanExecuteChanged();
 		}
 
-		public void Dispose()
+		public void UpdateProgress(long progress, long totalSize)
 		{
-			Cancel();
-		}
-
-		private void HandleDownloadProgress(object sender, DownloadProgressChangedEventArgs eventArguments)
-		{
-			TotalSize = eventArguments.TotalBytesToReceive;
-			Progress = eventArguments.BytesReceived;
+			this.Progress = progress;
+			this.TotalSize = totalSize;
 
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TotalSize)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Progress)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ProgressPercentage)));
 		}
 
-		private void HandleDownloadCompleted(object sender, DownloadDataCompletedEventArgs eventArguments)
+		public void Complete(Exception exception)
 		{
-			lock (downloadLock)
-			{
-				IsDownloading = false;
-				webClient.Dispose();
-				webClient = null;
+			this.cancellationTokenSource?.Dispose();
+			this.cancellationTokenSource = null;
 
-				byte[] downloadData = null;
+			this.Exception = exception;
 
-				try
-				{
-					if (eventArguments.Error != null)
-						throw eventArguments.Error;
-					downloadData = eventArguments.Result;
-					DataVerificationHook?.Invoke(this, downloadData);
-					DataConsumer?.Invoke(this, downloadData);
-					Success = true;
-				}
-				catch (Exception exception)
-				{
-					StatusMessage = FormatExtensions.FormatExceptionSummary(exception);
-				}
+			IsDownloading = false;
+			IsCompleted = true;
+			Success = exception == null;
 
-				IsCompleted = true;
-
-				DownloadCompleted?.Invoke(this, downloadData);
-			}
+			if (exception != null)
+				StatusMessage = FormatExtensions.FormatExceptionSummary(exception);
 
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsDownloading)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsCompleted)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Success)));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Exception)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StatusMessage)));
 			CancelCommand.RaiseCanExecuteChanged();
 		}
 
-		private void Cancel()
+		public void Cancel()
 		{
-			lock (downloadLock)
-			{
-				if (IsDownloading)
-					webClient.CancelAsync();
-			}
+			this.cancellationTokenSource.Cancel();
+		}
+
+		public void Dispose()
+		{
+			this.cancellationTokenSource?.Cancel();
+			this.cancellationTokenSource?.Dispose();
 		}
 	}
 }

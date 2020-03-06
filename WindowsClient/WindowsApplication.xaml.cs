@@ -2,6 +2,7 @@
 using NLog;
 using NLog.Common;
 using Overmind.ImageManager.Model;
+using Overmind.ImageManager.Model.Downloads;
 using Overmind.ImageManager.Model.Queries;
 using Overmind.ImageManager.WindowsClient.Downloads;
 using Overmind.ImageManager.WindowsClient.Extensions;
@@ -11,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
@@ -61,15 +63,19 @@ namespace Overmind.ImageManager.WindowsClient
 			JsonSerializerProxy serializer = new JsonSerializerProxy(serializerImplementation);
 			FileNameFormatter fileNameFormatter = new FileNameFormatter();
 
+			httpClient = new HttpClient();
 			settingsProvider = new SettingsProvider(serializer, applicationDataDirectory);
 			collectionProvider = new CollectionProvider(serializer, fileNameFormatter);
 			queryEngine = new LuceneQueryEngine();
+			downloader = new Downloader(httpClient);
 			randomFactory = () => new Random();
 		}
 
+		private readonly HttpClient httpClient;
 		private readonly SettingsProvider settingsProvider;
 		private readonly ICollectionProvider collectionProvider;
 		private readonly IQueryEngine<ImageModel> queryEngine;
+		private readonly IDownloader downloader;
 		private readonly Func<Random> randomFactory;
 
 		private MainViewModel mainViewModel;
@@ -82,7 +88,7 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			Logger.Info("Starting {0}", ApplicationName);
 
-			mainViewModel = new MainViewModel(this, collectionProvider, queryEngine, randomFactory);
+			mainViewModel = new MainViewModel(this, collectionProvider, queryEngine, downloader, randomFactory);
 			mainView = new MainView() { DataContext = mainViewModel };
 			MainWindow = new Window() { Content = mainView };
 
@@ -101,6 +107,8 @@ namespace Overmind.ImageManager.WindowsClient
 
 			if (mainViewModel != null)
 				mainViewModel.Dispose();
+
+			httpClient.Dispose();
 		}
 
 		private void MainWindow_Closing(object sender, CancelEventArgs eventArguments)

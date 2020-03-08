@@ -17,6 +17,8 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 
+using JsonSerializerProxy = Overmind.ImageManager.Model.Serialization.JsonSerializer;
+
 namespace Overmind.ImageManager.WindowsClient
 {
 	public partial class WindowsApplication : System.Windows.Application
@@ -52,7 +54,8 @@ namespace Overmind.ImageManager.WindowsClient
 		public WindowsApplication()
 		{
 			string applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
-			JsonSerializer serializer = new JsonSerializer() { Formatting = Formatting.Indented };
+			JsonSerializer serializerImplementation = new JsonSerializer() { Formatting = Formatting.Indented };
+			JsonSerializerProxy serializer = new JsonSerializerProxy(serializerImplementation);
 			FileNameFormatter fileNameFormatter = new FileNameFormatter();
 
 			settingsProvider = new SettingsProvider(serializer, applicationDataDirectory);

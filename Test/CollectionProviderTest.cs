@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
+using JsonSerializerProxy = Overmind.ImageManager.Model.Serialization.JsonSerializer;
+
 namespace Overmind.ImageManager.Test
 {
 	[TestClass]
@@ -19,7 +21,8 @@ namespace Overmind.ImageManager.Test
 		[TestInitialize]
 		public void Initialize()
 		{
-			JsonSerializer serializer = new JsonSerializer();
+			JsonSerializer serializerImplementation = new JsonSerializer() { Formatting = Formatting.Indented };
+			JsonSerializerProxy serializer = new JsonSerializerProxy(serializerImplementation);
 			FileNameFormatter fileNameFormatter = new FileNameFormatter();
 
 			collectionProvider = new CollectionProvider(serializer, fileNameFormatter);

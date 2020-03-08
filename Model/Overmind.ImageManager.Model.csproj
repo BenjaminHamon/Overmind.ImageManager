@@ -66,6 +66,8 @@
     <Compile Include="Queries\LuceneQueryEngine.cs" />
     <Compile Include="Queries\SimpleQueryEngine.cs" />
     <Compile Include="ReadOnlyCollectionModel.cs" />
+    <Compile Include="Serialization\ISerializer.cs" />
+    <Compile Include="Serialization\JsonSerializer.cs" />
     <Compile Include="SettingsProvider.cs" />
     <Compile Include="Wallpapers\WallpaperConfiguration.cs" />
     <Compile Include="Wallpapers\WallpaperServiceInstance.cs" />

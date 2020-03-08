@@ -12,6 +12,8 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 
+using JsonSerializerProxy = Overmind.ImageManager.Model.Serialization.JsonSerializer;
+
 namespace Overmind.ImageManager.WallpaperService
 {
 	public partial class WindowsApplication : System.Windows.Application
@@ -42,7 +44,8 @@ namespace Overmind.ImageManager.WallpaperService
 
 		public WindowsApplication()
 		{
-			JsonSerializer serializer = new JsonSerializer() { Formatting = Formatting.Indented };
+			JsonSerializer serializerImplementation = new JsonSerializer() { Formatting = Formatting.Indented };
+			JsonSerializerProxy serializer = new JsonSerializerProxy(serializerImplementation);
 
 			applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
 			settingsProvider = new SettingsProvider(serializer, applicationDataDirectory);

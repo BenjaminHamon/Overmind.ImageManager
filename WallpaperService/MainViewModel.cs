@@ -109,7 +109,7 @@ namespace Overmind.ImageManager.WallpaperService
 			{
 				wallpaperSettings = settingsProvider.LoadWallpaperSettings();
 				if (wallpaperSettings == null)
-					throw new ArgumentNullException("Value cannot be null", nameof(wallpaperSettings));
+					throw new ArgumentNullException(nameof(wallpaperSettings), "Wallpaper settings cannot be null");
 			}
 			catch (Exception exception)
 			{

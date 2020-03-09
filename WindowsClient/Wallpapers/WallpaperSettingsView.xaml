@@ -14,6 +14,10 @@
         </DataTemplate>
     </UserControl.Resources>
 
+    <UserControl.CommandBindings>
+        <CommandBinding Command="Save" Executed="SaveSettings" CanExecute="CanSaveSettings"/>
+    </UserControl.CommandBindings>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -37,7 +41,7 @@
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Content="New Configuration" Command="{Binding Path=AddConfigurationCommand}" Margin="5" Width="150" Height="30"/>
-                <Button Content="Save Settings" Command="{Binding Path=SaveSettingsCommand}" Margin="5" Width="150" Height="30"/>
+                <Button Content="Save Settings" Command="Save" Margin="5" Width="150" Height="30"/>
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Content="Expand All" Click="ExpandAll" Margin="5" Width="100" Height="30"/>

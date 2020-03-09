@@ -20,6 +20,8 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 			InitializeComponent();
 
 			DataContextChanged += HandleDataContextChanged;
+
+			Loaded += RunPostLoad;
 		}
 
 		private WallpaperSettingsViewModel ViewModel { get { return (WallpaperSettingsViewModel) DataContext; } }
@@ -37,6 +39,23 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 				WallpaperSettingsViewModel newDataContext = (WallpaperSettingsViewModel)eventArguments.NewValue;
 				newDataContext.ConfigurationCollection.CollectionChanged += ShowNewConfiguration_Dispatch;
 			}
+		}
+
+		private void RunPostLoad(object sender, EventArgs eventArguments)
+		{
+			ViewModel.ConfigurationCollection.CollectionChanged -= ShowNewConfiguration_Dispatch;
+
+			try
+			{
+				ViewModel.ReloadSettings();
+			}
+			catch (Exception exception)
+			{
+				Logger.Error(exception, "Failed to reload settings");
+				WindowsApplication.ShowError("Settings", "Failed to reload wallpaper settings.", exception);
+			}
+
+			ViewModel.ConfigurationCollection.CollectionChanged += ShowNewConfiguration_Dispatch;
 		}
 
 		private void CanSaveSettings(object sender, CanExecuteRoutedEventArgs eventArguments)

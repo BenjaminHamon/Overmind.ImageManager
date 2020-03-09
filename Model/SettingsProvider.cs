@@ -1,6 +1,6 @@
 ﻿using NLog;
 using Overmind.ImageManager.Model.Serialization;
-using Overmind.ImageManager.Model.Wallpapers;
+using System;
 using System.IO;
 
 namespace Overmind.ImageManager.Model
@@ -9,8 +9,7 @@ namespace Overmind.ImageManager.Model
 	{
 		private static readonly Logger Logger = LogManager.GetLogger(nameof(SettingsProvider));
 
-		private const string WallpaperSettingsFile = "WallpaperService.json";
-		private const string ActiveWallpaperConfigurationFile = "WallpaperService.active.txt";
+		private const string ApplicationSettingsFileName = "ApplicationSettings.json";
 
 		public SettingsProvider(ISerializer serializer, string settingsDirectory)
 		{
@@ -21,38 +20,33 @@ namespace Overmind.ImageManager.Model
 		private readonly ISerializer serializer;
 		private readonly string settingsDirectory;
 
-		public WallpaperSettings LoadWallpaperSettings()
+		public ApplicationSettings LoadApplicationSettings()
 		{
-			Logger.Info("Loading wallpaper settings");
+			Logger.Info("Loading application settings");
 
-			string path = Path.Combine(settingsDirectory, WallpaperSettingsFile);
+			string path = Path.Combine(settingsDirectory, ApplicationSettingsFileName);
 
 			if (File.Exists(path) == false)
-				return new WallpaperSettings();
+				return new ApplicationSettings();
 
-			return serializer.DeserializeFromFile<WallpaperSettings>(path);
+			return serializer.DeserializeFromFile<ApplicationSettings>(path);
 		}
 
-		public void SaveWallpaperSettings(WallpaperSettings settings)
+		public void SaveApplicationSettings(ApplicationSettings settings)
 		{
-			Logger.Info("Saving wallpaper settings");
+			Logger.Info("Saving application settings");
 
-			string path = Path.Combine(settingsDirectory, WallpaperSettingsFile);
+			string path = Path.Combine(settingsDirectory, ApplicationSettingsFileName);
 			serializer.SerializeToFile(path, settings);
 		}
 
-		public string LoadActiveWallpaperConfiguration()
+		public void UpdateApplicationSettings(Action<ApplicationSettings> updater)
 		{
-			string path = Path.Combine(settingsDirectory, ActiveWallpaperConfigurationFile);
-			if (File.Exists(path) == false)
-				return null;
-			return File.ReadAllText(path).Trim();
-		}
+			ApplicationSettings settings = LoadApplicationSettings() ?? new ApplicationSettings();
 
-		public void SaveActiveWallpaperConfiguration(string configurationName)
-		{
-			string path = Path.Combine(settingsDirectory, ActiveWallpaperConfigurationFile);
-			File.WriteAllText(path, configurationName);
+			updater(settings);
+
+			SaveApplicationSettings(settings);
 		}
 	}
 }

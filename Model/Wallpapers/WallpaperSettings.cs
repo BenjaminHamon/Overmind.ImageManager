@@ -11,6 +11,9 @@ namespace Overmind.ImageManager.Model.Wallpapers
 		[DataMember(Name = "Configurations")]
 		public List<WallpaperConfiguration> ConfigurationCollection { get; set; } = new List<WallpaperConfiguration>();
 
+		[DataMember]
+		public string ActiveConfiguration { get; set; }
+
 		public Dictionary<string, List<Exception>> Validate()
 		{
 			Dictionary<string, List<Exception>> errorCollection = new Dictionary<string, List<Exception>>()

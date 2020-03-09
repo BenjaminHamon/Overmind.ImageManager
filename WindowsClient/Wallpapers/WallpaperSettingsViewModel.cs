@@ -60,7 +60,8 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 
 		public void ReloadSettings()
 		{
-			settings = settingsProvider.LoadWallpaperSettings();
+			settings = settingsProvider.LoadApplicationSettings().WallpaperSettings
+				?? throw new ArgumentNullException(nameof(settings), "Wallpaper settings must not be null");
 
 			foreach (WallpaperConfigurationViewModel configurationViewModel in ConfigurationCollection)
 				configurationViewModel.PropertyChanged -= HandleConfigurationChanged;
@@ -86,7 +87,16 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 
 		private void SaveSettings()
 		{
-			settingsProvider.SaveWallpaperSettings(settings);
+			settingsProvider.UpdateApplicationSettings(
+				applicationSettings =>
+				{
+					if (applicationSettings.WallpaperSettings == null)
+						applicationSettings.WallpaperSettings = new WallpaperSettings();
+
+					this.settings.ActiveConfiguration = applicationSettings.WallpaperSettings.ActiveConfiguration;
+
+					applicationSettings.WallpaperSettings = settings;
+				});
 		}
 
 		private void AddConfiguration()

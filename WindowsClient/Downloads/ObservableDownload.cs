@@ -31,6 +31,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		public long TotalSize { get; private set; }
 		public long Progress { get; private set; }
 		public double ProgressPercentage { get { return TotalSize != 0 ? 100 * Convert.ToDouble(Progress) / TotalSize : 0; } }
+		public bool IsProgressIndeterminate { get { return TotalSize == 0; } }
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		public DelegateCommand<object> CancelCommand { get; }
@@ -72,6 +73,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TotalSize)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Progress)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ProgressPercentage)));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsProgressIndeterminate)));
 		}
 
 		public void Complete(Exception exception)

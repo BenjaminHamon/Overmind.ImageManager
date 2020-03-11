@@ -59,6 +59,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ProgressBar Value="{Binding Path=ProgressPercentage, Mode=OneWay}" Width="60" Height="16"
+                                             IsIndeterminate="{Binding Path=IsProgressIndeterminate}"
                                              Visibility="{Binding Path=IsDownloading, Converter={StaticResource VisibilityConverter}}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>

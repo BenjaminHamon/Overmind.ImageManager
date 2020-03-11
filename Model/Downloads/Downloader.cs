@@ -1,9 +1,12 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.XPath;
 
 namespace Overmind.ImageManager.Model.Downloads
 {
@@ -77,6 +80,34 @@ namespace Overmind.ImageManager.Model.Downloads
 				timer.Stop();
 
 				return dataStream.ToArray();
+			}
+		}
+
+		public async Task<Uri> ResolveUri(Uri uri, string xPath, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+
+			using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Head, uri))
+			using (HttpResponseMessage response = await httpClient.SendAsync(request, cancellationToken))
+			{
+				response.EnsureSuccessStatusCode();
+
+				if (response.Content.Headers.ContentType.MediaType != "text/html")
+					return uri;
+			}
+
+			using (HttpResponseMessage response = await httpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, cancellationToken))
+			{
+				response.EnsureSuccessStatusCode();
+
+				HtmlDocument htmlDocument = new HtmlDocument();
+				htmlDocument.LoadHtml(await response.Content.ReadAsStringAsync());
+
+				XPathNavigator xPathNavigator = htmlDocument.CreateNavigator().SelectSingleNode(xPath);
+				if (xPathNavigator == null)
+					throw new NodeNotFoundException("HTML node not found for the provided XPath");
+
+				return new Uri(uri, xPathNavigator.Value);
 			}
 		}
 	}

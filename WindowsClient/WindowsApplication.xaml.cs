@@ -88,7 +88,7 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			Logger.Info("Starting {0}", ApplicationName);
 
-			mainViewModel = new MainViewModel(this, collectionProvider, queryEngine, downloader, randomFactory);
+			mainViewModel = new MainViewModel(this, settingsProvider, collectionProvider, queryEngine, downloader, randomFactory);
 			mainView = new MainView() { DataContext = mainViewModel };
 			MainWindow = new Window() { Content = mainView };
 

@@ -13,10 +13,11 @@ namespace Overmind.ImageManager.WindowsClient
 	{
 		private static readonly Logger Logger = LogManager.GetLogger(nameof(MainViewModel));
 
-		public MainViewModel(WindowsApplication application,
+		public MainViewModel(WindowsApplication application, SettingsProvider settingsProvider,
 			ICollectionProvider collectionProvider, IQueryEngine<ImageModel> queryEngine, IDownloader downloader, Func<Random> randomFactory)
 		{
 			this.application = application;
+			this.settingsProvider = settingsProvider;
 			this.collectionProvider = collectionProvider;
 			this.queryEngine = queryEngine;
 			this.downloader = downloader;
@@ -43,6 +44,7 @@ namespace Overmind.ImageManager.WindowsClient
 		}
 
 		private readonly WindowsApplication application;
+		private readonly SettingsProvider settingsProvider;
 		private readonly ICollectionProvider collectionProvider;
 		private readonly IQueryEngine<ImageModel> queryEngine;
 		private readonly IDownloader downloader;
@@ -147,7 +149,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 			CollectionModel collectionModel = new CollectionModel(collectionProvider, collectionData, collectionPath);
 			ActiveCollection = new CollectionViewModel(application, collectionModel, queryEngine, randomFactory);
-			Downloader = new DownloaderViewModel(downloader, ActiveCollection, application.Dispatcher);
+			Downloader = new DownloaderViewModel(downloader, ActiveCollection, settingsProvider, application.Dispatcher);
 		}
 
 		private void CloseCollection()

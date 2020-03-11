@@ -1,4 +1,5 @@
-﻿using Overmind.ImageManager.Model;
+﻿using NLog;
+using Overmind.ImageManager.Model;
 using Overmind.ImageManager.Model.Downloads;
 using Overmind.WpfExtensions;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
@@ -14,12 +16,15 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 {
 	public class DownloaderViewModel : IDisposable
 	{
+		private static readonly Logger Logger = LogManager.GetLogger(nameof(DownloaderViewModel));
+
 		private delegate void DownloadConsumer(ObservableDownload download, byte[] downloadData);
 
-		public DownloaderViewModel(IDownloader downloader, CollectionViewModel collection, Dispatcher dispatcher)
+		public DownloaderViewModel(IDownloader downloader, CollectionViewModel collection, SettingsProvider settingsProvider, Dispatcher dispatcher)
 		{
 			this.downloader = downloader;
 			this.collection = collection;
+			this.settingsProvider = settingsProvider;
 			this.dispatcher = dispatcher;
 
 			AddDownloadCommand = new DelegateCommand<string>(AddDownload);
@@ -29,6 +34,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		private readonly Dispatcher dispatcher;
 		private readonly IDownloader downloader;
 		private readonly CollectionViewModel collection;
+		private readonly SettingsProvider settingsProvider;
 
 		public ObservableCollection<ObservableDownload> DownloadCollection { get; } = new ObservableCollection<ObservableDownload>();
 		private Dictionary<ObservableDownload, string> downloadHashCache = new Dictionary<ObservableDownload, string>();
@@ -76,6 +82,15 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 				dispatcher.Invoke(() => download.Start(uri, cancellationTokenSource));
 
+				if ((uri.Scheme == "http") || (uri.Scheme == "https"))
+				{
+					DownloadSourceConfiguration sourceConfiguration = TryLoadSettings()
+						.SourceConfigurationCollection.FirstOrDefault(configuration => configuration.DomainName == uri.Host);
+
+					if (sourceConfiguration != null)
+						uri = await downloader.ResolveUri(uri, sourceConfiguration.XPath, cancellationTokenSource.Token);
+				}
+
 				ProgressHandler progressHandler = (_, progress, totalSize) => dispatcher.Invoke(() => download.UpdateProgress(progress, totalSize));
 				downloadData = await downloader.Download(uri, progressHandler, cancellationTokenSource.Token);
 
@@ -112,6 +127,23 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 					SelectImageCommand.RaiseCanExecuteChanged();
 				});
 			}
+		}
+
+		private DownloaderSettings TryLoadSettings()
+		{
+			DownloaderSettings downloaderSettings = null;
+
+			try
+			{
+				downloaderSettings = settingsProvider.LoadApplicationSettings().DownloaderSettings
+					?? throw new ArgumentNullException(nameof(downloaderSettings), "Downloader settings must not be null");
+			}
+			catch (Exception exception)
+			{
+				Logger.Error(exception, "Failed to load downloader settings");
+			}
+
+			return downloaderSettings ?? new DownloaderSettings();
 		}
 
 		private bool IsImage(byte[] data)

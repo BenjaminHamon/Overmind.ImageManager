@@ -59,6 +59,8 @@
     <Compile Include="CollectionMetadata.cs" />
     <Compile Include="CollectionModel.cs" />
     <Compile Include="CollectionProvider.cs" />
+    <Compile Include="Downloads\DownloaderSettings.cs" />
+    <Compile Include="Downloads\DownloadSourceConfiguration.cs" />
     <Compile Include="FileNameFormatter.cs" />
     <Compile Include="ICollectionProvider.cs" />
     <Compile Include="ImageModel.cs" />

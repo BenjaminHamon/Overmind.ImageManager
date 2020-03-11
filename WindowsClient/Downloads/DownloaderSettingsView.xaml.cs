@@ -1,5 +1,4 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
-using NLog;
+﻿using NLog;
 using Overmind.WpfExtensions;
 using System;
 using System.Collections.Specialized;
@@ -8,13 +7,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Overmind.ImageManager.WindowsClient.Wallpapers
+namespace Overmind.ImageManager.WindowsClient.Downloads
 {
-	public partial class WallpaperSettingsView : UserControl
+	public partial class DownloaderSettingsView : UserControl
 	{
-		private static readonly Logger Logger = LogManager.GetLogger(nameof(WallpaperSettingsView));
+		private static readonly Logger Logger = LogManager.GetLogger(nameof(DownloaderSettingsView));
 
-		public WallpaperSettingsView()
+		public DownloaderSettingsView()
 		{
 			InitializeComponent();
 
@@ -23,26 +22,26 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 			Loaded += RunPostLoad;
 		}
 
-		private WallpaperSettingsViewModel ViewModel { get { return (WallpaperSettingsViewModel) DataContext; } }
+		private DownloaderSettingsViewModel ViewModel { get { return (DownloaderSettingsViewModel) DataContext; } }
 
 		private void HandleDataContextChanged(object sender, DependencyPropertyChangedEventArgs eventArguments)
 		{
 			if (eventArguments.OldValue != null)
 			{
-				WallpaperSettingsViewModel oldDataContext = (WallpaperSettingsViewModel)eventArguments.OldValue;
-				oldDataContext.ConfigurationCollection.CollectionChanged -= ShowNewConfiguration_Dispatch;
+				DownloaderSettingsViewModel oldDataContext = (DownloaderSettingsViewModel)eventArguments.OldValue;
+				oldDataContext.SourceConfigurationCollection.CollectionChanged -= ShowNewConfiguration_Dispatch;
 			}
 
 			if (eventArguments.NewValue != null)
 			{
-				WallpaperSettingsViewModel newDataContext = (WallpaperSettingsViewModel)eventArguments.NewValue;
-				newDataContext.ConfigurationCollection.CollectionChanged += ShowNewConfiguration_Dispatch;
+				DownloaderSettingsViewModel newDataContext = (DownloaderSettingsViewModel)eventArguments.NewValue;
+				newDataContext.SourceConfigurationCollection.CollectionChanged += ShowNewConfiguration_Dispatch;
 			}
 		}
 
 		private void RunPostLoad(object sender, EventArgs eventArguments)
 		{
-			ViewModel.ConfigurationCollection.CollectionChanged -= ShowNewConfiguration_Dispatch;
+			ViewModel.SourceConfigurationCollection.CollectionChanged -= ShowNewConfiguration_Dispatch;
 
 			try
 			{
@@ -51,10 +50,10 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 			catch (Exception exception)
 			{
 				Logger.Error(exception, "Failed to reload settings");
-				WindowsApplication.ShowError("Settings", "Failed to reload wallpaper settings.", exception);
+				WindowsApplication.ShowError("Settings", "Failed to reload downloader settings.", exception);
 			}
 
-			ViewModel.ConfigurationCollection.CollectionChanged += ShowNewConfiguration_Dispatch;
+			ViewModel.SourceConfigurationCollection.CollectionChanged += ShowNewConfiguration_Dispatch;
 		}
 
 		private void CanSaveSettings(object sender, CanExecuteRoutedEventArgs eventArguments)
@@ -71,7 +70,7 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 			catch (Exception exception)
 			{
 				Logger.Error(exception, "Failed to save settings");
-				WindowsApplication.ShowError("Settings", "Failed to save wallpaper settings.", exception);
+				WindowsApplication.ShowError("Settings", "Failed to save downloader settings.", exception);
 			}
 		}
 
@@ -117,21 +116,6 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 				FrameworkElement itemElement = (FrameworkElement)itemsControl.ItemContainerGenerator.ContainerFromItem(item);
 				VisualTreeExtensions.GetDescendant<Expander>(itemElement).IsExpanded = false;
 			}
-		}
-
-		private void BrowseForCollectionPath(object sender, RoutedEventArgs eventArguments)
-		{
-			FrameworkElement senderElement = (FrameworkElement)sender;
-			WallpaperConfigurationViewModel viewModel = (WallpaperConfigurationViewModel)senderElement.DataContext;
-
-			CommonOpenFileDialog fileDialog = new CommonOpenFileDialog("Select Collection")
-			{
-				IsFolderPicker = true,
-				DefaultDirectory = viewModel.CollectionPath,
-			};
-
-			if (fileDialog.ShowDialog(Window.GetWindow(this)) == CommonFileDialogResult.Ok)
-				viewModel.CollectionPath = fileDialog.FileName;
 		}
 	}
 }

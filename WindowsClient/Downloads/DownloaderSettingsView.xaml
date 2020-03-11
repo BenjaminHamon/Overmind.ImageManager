@@ -1,0 +1,156 @@
+﻿<UserControl x:Class="Overmind.ImageManager.WindowsClient.Downloads.DownloaderSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:downloads="clr-namespace:Overmind.ImageManager.WindowsClient.Downloads"
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=downloads:DownloaderSettingsViewModel}"
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="ExceptionTemplate">
+            <TextBlock Text="{Binding StringFormat=- {0}, Converter={StaticResource ExceptionConverter}}"/>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <UserControl.CommandBindings>
+        <CommandBinding Command="Save" Executed="SaveSettings" CanExecute="CanSaveSettings"/>
+    </UserControl.CommandBindings>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Margin="5" BorderBrush="{StaticResource BlueBrush}" BorderThickness="1" CornerRadius="5">
+            <StackPanel Orientation="Horizontal">
+                <fa:ImageAwesome Icon="InfoCircle" Margin="4" Height="16" Width="16" Foreground="{StaticResource BlueBrush}"/>
+                <TextBlock Text="Settings defined here are website source configurations to resolve the image download URL from a webpage"
+                           Margin="5" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="50"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="New Configuration" Command="{Binding Path=AddConfigurationCommand}" Margin="5" Width="150" Height="30"/>
+                <Button Content="Save Settings" Command="Save" Margin="5" Width="150" Height="30"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Expand All" Click="ExpandAll" Margin="5" Width="100" Height="30"/>
+                <Button Content="Collapse All" Click="CollapseAll" Margin="5" Width="100" Height="30"/>
+            </StackPanel>
+            <fa:ImageAwesome Grid.Column="2" Icon="Warning" Foreground="{StaticResource OrangeBrush}"
+                             ToolTipService.ShowDuration="30000" Margin="4" Height="16" Width="16"
+                             Visibility="{Binding Path=HasWarnings, Converter={StaticResource VisibilityConverter}}">
+                <fa:ImageAwesome.ToolTip>
+                    <StackPanel Margin="5">
+                        <TextBlock Text="The settings have warnings:"/>
+                        <!-- Using explicit keys instead of an ItemsControl of ItemsControl to match order with the rest of the view -->
+                        <ItemsControl ItemsSource="{Binding Path=WarningCollection[SourceConfigurationCollection]}"
+                                      ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                    </StackPanel>
+                </fa:ImageAwesome.ToolTip>
+            </fa:ImageAwesome>
+        </Grid>
+
+        <ScrollViewer x:Name="scrollViewer" x:FieldModifier="private" Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="itemsControl" x:FieldModifier="private" ItemsSource="{Binding Path=SourceConfigurationCollection}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="5" BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
+                            <Expander Margin="5">
+                                <Expander.Header>
+                                    <Grid>
+                                        <Grid.HorizontalAlignment>
+                                            <!-- Hack to stretch the header without modifying the expander control template -->
+                                            <Binding RelativeSource="{RelativeSource AncestorType=ContentPresenter}" Path="HorizontalAlignment" Mode="OneWayToSource"/>
+                                        </Grid.HorizontalAlignment>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Path=Title}" Margin="5" FontWeight="Bold"/>
+                                        <fa:ImageAwesome Grid.Column="1" Icon="Warning" Foreground="{StaticResource OrangeBrush}"
+                                                         ToolTipService.ShowDuration="30000" Margin="4" Height="16" Width="16"
+                                                         Visibility="{Binding Path=HasWarnings, Converter={StaticResource VisibilityConverter}}">
+                                            <fa:ImageAwesome.ToolTip>
+                                                <StackPanel Margin="5">
+                                                    <TextBlock Text="The configuration has warnings:"/>
+                                                    <!-- Using explicit keys instead of an ItemsControl of ItemsControl to match order with the rest of the view -->
+                                                    <ItemsControl ItemsSource="{Binding Path=WarningCollection[Name]}"
+                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                    <ItemsControl ItemsSource="{Binding Path=WarningCollection[DomainName]}"
+                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                    <ItemsControl ItemsSource="{Binding Path=WarningCollection[XPath]}"
+                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                </StackPanel>
+                                            </fa:ImageAwesome.ToolTip>
+                                        </fa:ImageAwesome>
+                                        <fa:ImageAwesome Grid.Column="2" Icon="ExclamationCircle" Foreground="{StaticResource RedBrush}"
+                                                         ToolTipService.ShowDuration="30000" Margin="4" Height="16" Width="16"
+                                                         Visibility="{Binding Path=HasErrors, Converter={StaticResource VisibilityConverter}}">
+                                            <fa:ImageAwesome.ToolTip>
+                                                <StackPanel Margin="5">
+                                                    <TextBlock Text="The configuration has errors:"/>
+                                                    <!-- Using explicit keys instead of an ItemsControl of ItemsControl to match order with the rest of the view -->
+                                                    <ItemsControl ItemsSource="{Binding Path=ErrorCollection[Name]}"
+                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                    <ItemsControl ItemsSource="{Binding Path=ErrorCollection[DomainName]}"
+                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                    <ItemsControl ItemsSource="{Binding Path=ErrorCollection[XPath]}"
+                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                </StackPanel>
+                                            </fa:ImageAwesome.ToolTip>
+                                        </fa:ImageAwesome>
+                                    </Grid>
+                                </Expander.Header>
+
+                                <Grid Style="{StaticResource FormStyle}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Separator Grid.Row="0" Grid.ColumnSpan="4" Margin="5"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Name"/>
+                                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Path=Name}"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Domain Name"/>
+                                    <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Path=DomainName}"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="XPath"/>
+                                    <TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Path=XPath}"/>
+                                    <Button Grid.Row="4" Grid.Column="2" Content="Remove" Width="80" HorizontalAlignment="Right">
+                                        <Button.Command>
+                                            <Binding RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}" Path="DataContext.RemoveConfigurationCommand"/>
+                                        </Button.Command>
+                                        <Button.CommandParameter>
+                                            <Binding/>
+                                        </Button.CommandParameter>
+                                    </Button>
+                                </Grid>
+                            </Expander>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+    </Grid>
+</UserControl>

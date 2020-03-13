@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -84,61 +85,62 @@ namespace Overmind.ImageManager.Model.Downloads
 			}
 		}
 
-		public async Task<Uri> ResolveUriFromWebApi(Uri uri, string responsePath, CancellationToken cancellationToken)
+		public async Task<Uri> ResolveUri(Uri uri, string expression, CancellationToken cancellationToken)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 
-			using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Head, uri))
-			using (HttpResponseMessage response = await httpClient.SendAsync(request, cancellationToken))
-			{
-				response.EnsureSuccessStatusCode();
+			List<string> commandList = expression.Split(new string[] { "|" }, StringSplitOptions.None)
+				.Select(command => command.Trim()).ToList();
 
-				if (response.Content.Headers.ContentType.MediaType != "application/json")
-					throw new InvalidDataException(String.Format("Unsupported content type: '{0}'", response.Content.Headers.ContentType));
+			string result = uri.ToString();
+
+			foreach (string command in commandList)
+			{
+				List<string> commandElements = command.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries).ToList();
+
+				switch (commandElements[0])
+				{
+					case "Request": result = await ExecuteRequest(String.Format(commandElements.ElementAtOrDefault(1) ?? result, uri.Segments), cancellationToken); break;
+					case "Json": result = ExecuteJson(result, String.Format(commandElements[1], uri.Segments)); break;
+					case "XPath": result = ExecuteXPath(result, String.Format(commandElements[1], uri.Segments)); break;
+					default: throw new ArgumentException(String.Format("Unknown operation '{0}'", commandElements[0]));
+				}
 			}
 
+			return new Uri(result);
+		}
+
+		private async Task<string> ExecuteRequest(string uri, CancellationToken cancellationToken)
+		{
 			cancellationToken.ThrowIfCancellationRequested();
 
 			using (HttpResponseMessage response = await httpClient.GetAsync(uri, cancellationToken))
 			{
 				response.EnsureSuccessStatusCode();
 
-				JToken jsonToken = JObject.Parse(await response.Content.ReadAsStringAsync()).SelectToken(responsePath);
-				if (jsonToken == null)
-					throw new InvalidDataException("The API response path matched no property");
-
-				return new Uri(jsonToken.Value<string>());
+				return await response.Content.ReadAsStringAsync();
 			}
 		}
 
-		public async Task<Uri> ResolveUriFromWebPage(Uri uri, string xPath, CancellationToken cancellationToken)
+		private string ExecuteJson(string json, string path)
 		{
-			cancellationToken.ThrowIfCancellationRequested();
+			JToken jsonToken = JObject.Parse(json).SelectToken(path);
+			if (jsonToken == null)
+				throw new InvalidDataException("The JSON path matched no value");
 
-			using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Head, uri))
-			using (HttpResponseMessage response = await httpClient.SendAsync(request, cancellationToken))
-			{
-				response.EnsureSuccessStatusCode();
+			return jsonToken.Value<string>();
+		}
 
-				if (response.Content.Headers.ContentType.MediaType != "text/html")
-					throw new InvalidDataException(String.Format("Unsupported content type: '{0}'", response.Content.Headers.ContentType));
-			}
+		private string ExecuteXPath(string data, string xPath)
+		{
+			HtmlDocument htmlDocument = new HtmlDocument();
+			htmlDocument.LoadHtml(data);
 
-			cancellationToken.ThrowIfCancellationRequested();
+			XPathNavigator xPathNavigator = htmlDocument.CreateNavigator().SelectSingleNode(xPath);
+			if (xPathNavigator == null)
+				throw new InvalidDataException("The XPath matched no node");
 
-			using (HttpResponseMessage response = await httpClient.GetAsync(uri, cancellationToken))
-			{
-				response.EnsureSuccessStatusCode();
-
-				HtmlDocument htmlDocument = new HtmlDocument();
-				htmlDocument.LoadHtml(await response.Content.ReadAsStringAsync());
-
-				XPathNavigator xPathNavigator = htmlDocument.CreateNavigator().SelectSingleNode(xPath);
-				if (xPathNavigator == null)
-					throw new InvalidDataException("The XPath matched no HTML node");
-
-				return new Uri(uri, xPathNavigator.Value);
-			}
+			return xPathNavigator.Value;
 		}
 	}
 }

@@ -130,25 +130,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 					.SourceConfigurationCollection.FirstOrDefault(configuration => configuration.DomainName == uri.Host);
 
 				if (sourceConfiguration != null)
-				{
-					try
-					{
-						if (String.IsNullOrEmpty(sourceConfiguration.ApiUriFormat) == false)
-						{
-							Uri apiUri = new Uri(uri, String.Format(sourceConfiguration.ApiUriFormat, uri.Segments));
-							return await downloader.ResolveUriFromWebApi(apiUri, sourceConfiguration.ApiResponsePath, cancellationToken);
-						}
-
-						if (String.IsNullOrEmpty(sourceConfiguration.XPath) == false)
-						{
-							return await downloader.ResolveUriFromWebPage(uri, sourceConfiguration.XPath, cancellationToken);
-						}
-					}
-					catch (InvalidDataException)
-					{
-						return uri;
-					}
-				}
+					return await downloader.ResolveUri(uri, sourceConfiguration.Expression, cancellationToken);
 			}
 
 			return uri;

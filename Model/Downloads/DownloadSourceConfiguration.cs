@@ -12,11 +12,7 @@ namespace Overmind.ImageManager.Model.Downloads
 		[DataMember]
 		public string DomainName { get; set; }
 		[DataMember]
-		public string ApiUriFormat { get; set; }
-		[DataMember]
-		public string ApiResponsePath { get; set; }
-		[DataMember]
-		public string XPath { get; set; }
+		public string Expression { get; set; }
 
 		public Dictionary<string, List<Exception>> Validate()
 		{
@@ -24,7 +20,7 @@ namespace Overmind.ImageManager.Model.Downloads
 			{
 				{ nameof(Name), new List<Exception>() },
 				{ nameof(DomainName), new List<Exception>() },
-				{ nameof(XPath), new List<Exception>() },
+				{ nameof(Expression), new List<Exception>() },
 			};
 
 			if (String.IsNullOrWhiteSpace(Name))

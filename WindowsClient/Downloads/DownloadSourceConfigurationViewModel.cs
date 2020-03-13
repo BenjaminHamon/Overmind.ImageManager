@@ -90,6 +90,36 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 			}
 		}
 
+		public string ApiUriFormat
+		{
+			get { return Model.ApiUriFormat; }
+			set
+			{
+				if (Model.ApiUriFormat == value)
+					return;
+
+				Model.ApiUriFormat = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ApiUriFormat)));
+
+				UpdateValidation();
+			}
+		}
+
+		public string ApiResponsePath
+		{
+			get { return Model.ApiResponsePath; }
+			set
+			{
+				if (Model.ApiResponsePath == value)
+					return;
+
+				Model.ApiResponsePath = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ApiResponsePath)));
+
+				UpdateValidation();
+			}
+		}
+
 		public string XPath
 		{
 			get { return Model.XPath; }

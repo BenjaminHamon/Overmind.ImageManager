@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -83,7 +84,34 @@ namespace Overmind.ImageManager.Model.Downloads
 			}
 		}
 
-		public async Task<Uri> ResolveUri(Uri uri, string xPath, CancellationToken cancellationToken)
+		public async Task<Uri> ResolveUriFromWebApi(Uri uri, string responsePath, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+
+			using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Head, uri))
+			using (HttpResponseMessage response = await httpClient.SendAsync(request, cancellationToken))
+			{
+				response.EnsureSuccessStatusCode();
+
+				if (response.Content.Headers.ContentType.MediaType != "application/json")
+					throw new InvalidDataException(String.Format("Unsupported content type: '{0}'", response.Content.Headers.ContentType));
+			}
+
+			cancellationToken.ThrowIfCancellationRequested();
+
+			using (HttpResponseMessage response = await httpClient.GetAsync(uri, cancellationToken))
+			{
+				response.EnsureSuccessStatusCode();
+
+				JToken jsonToken = JObject.Parse(await response.Content.ReadAsStringAsync()).SelectToken(responsePath);
+				if (jsonToken == null)
+					throw new InvalidDataException("The API response path matched no property");
+
+				return new Uri(jsonToken.Value<string>());
+			}
+		}
+
+		public async Task<Uri> ResolveUriFromWebPage(Uri uri, string xPath, CancellationToken cancellationToken)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 
@@ -93,10 +121,12 @@ namespace Overmind.ImageManager.Model.Downloads
 				response.EnsureSuccessStatusCode();
 
 				if (response.Content.Headers.ContentType.MediaType != "text/html")
-					return uri;
+					throw new InvalidDataException(String.Format("Unsupported content type: '{0}'", response.Content.Headers.ContentType));
 			}
 
-			using (HttpResponseMessage response = await httpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, cancellationToken))
+			cancellationToken.ThrowIfCancellationRequested();
+
+			using (HttpResponseMessage response = await httpClient.GetAsync(uri, cancellationToken))
 			{
 				response.EnsureSuccessStatusCode();
 
@@ -105,7 +135,7 @@ namespace Overmind.ImageManager.Model.Downloads
 
 				XPathNavigator xPathNavigator = htmlDocument.CreateNavigator().SelectSingleNode(xPath);
 				if (xPathNavigator == null)
-					throw new NodeNotFoundException("HTML node not found for the provided XPath");
+					throw new InvalidDataException("The XPath matched no HTML node");
 
 				return new Uri(uri, xPathNavigator.Value);
 			}

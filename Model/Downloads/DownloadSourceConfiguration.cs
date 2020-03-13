@@ -12,6 +12,10 @@ namespace Overmind.ImageManager.Model.Downloads
 		[DataMember]
 		public string DomainName { get; set; }
 		[DataMember]
+		public string ApiUriFormat { get; set; }
+		[DataMember]
+		public string ApiResponsePath { get; set; }
+		[DataMember]
 		public string XPath { get; set; }
 
 		public Dictionary<string, List<Exception>> Validate()
@@ -28,9 +32,6 @@ namespace Overmind.ImageManager.Model.Downloads
 
 			if (String.IsNullOrWhiteSpace(DomainName))
 				errorCollection[nameof(DomainName)].Add(new ArgumentException("The domain name cannot be empty.", nameof(DomainName)));
-
-			if (String.IsNullOrWhiteSpace(XPath))
-				errorCollection[nameof(XPath)].Add(new ArgumentException("XPath cannot be empty.", nameof(XPath)));
 
 			return errorCollection;
 		}

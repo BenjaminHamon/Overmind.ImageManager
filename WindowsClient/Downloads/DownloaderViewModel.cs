@@ -82,14 +82,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 				dispatcher.Invoke(() => download.Start(uri, cancellationTokenSource));
 
-				if ((uri.Scheme == "http") || (uri.Scheme == "https"))
-				{
-					DownloadSourceConfiguration sourceConfiguration = TryLoadSettings()
-						.SourceConfigurationCollection.FirstOrDefault(configuration => configuration.DomainName == uri.Host);
-
-					if (sourceConfiguration != null)
-						uri = await downloader.ResolveUri(uri, sourceConfiguration.XPath, cancellationTokenSource.Token);
-				}
+				uri = await ResolveUri(uri, cancellationTokenSource.Token);
 
 				ProgressHandler progressHandler = (_, progress, totalSize) => dispatcher.Invoke(() => download.UpdateProgress(progress, totalSize));
 				downloadData = await downloader.Download(uri, progressHandler, cancellationTokenSource.Token);
@@ -127,6 +120,38 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 					SelectImageCommand.RaiseCanExecuteChanged();
 				});
 			}
+		}
+
+		private async Task<Uri> ResolveUri(Uri uri, CancellationToken cancellationToken)
+		{
+			if ((uri.Scheme == "http") || (uri.Scheme == "https"))
+			{
+				DownloadSourceConfiguration sourceConfiguration = TryLoadSettings()
+					.SourceConfigurationCollection.FirstOrDefault(configuration => configuration.DomainName == uri.Host);
+
+				if (sourceConfiguration != null)
+				{
+					try
+					{
+						if (String.IsNullOrEmpty(sourceConfiguration.ApiUriFormat) == false)
+						{
+							Uri apiUri = new Uri(uri, String.Format(sourceConfiguration.ApiUriFormat, uri.Segments));
+							return await downloader.ResolveUriFromWebApi(apiUri, sourceConfiguration.ApiResponsePath, cancellationToken);
+						}
+
+						if (String.IsNullOrEmpty(sourceConfiguration.XPath) == false)
+						{
+							return await downloader.ResolveUriFromWebPage(uri, sourceConfiguration.XPath, cancellationToken);
+						}
+					}
+					catch (InvalidDataException)
+					{
+						return uri;
+					}
+				}
+			}
+
+			return uri;
 		}
 
 		private DownloaderSettings TryLoadSettings()

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -63,7 +64,8 @@ namespace Overmind.ImageManager.WindowsClient
 			JsonSerializerProxy serializer = new JsonSerializerProxy(serializerImplementation);
 			FileNameFormatter fileNameFormatter = new FileNameFormatter();
 
-			httpClient = new HttpClient();
+			CookieContainer cookieContainer = new CookieContainer();
+			httpClient = new HttpClient(new HttpClientHandler() { CookieContainer = cookieContainer });
 			httpClient.DefaultRequestHeaders.Add("User-Agent", ApplicationFullName + "/" + ApplicationFullVersion);
 
 			settingsProvider = new SettingsProvider(serializer, applicationDataDirectory);

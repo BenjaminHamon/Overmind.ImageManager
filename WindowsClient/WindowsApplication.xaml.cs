@@ -64,6 +64,8 @@ namespace Overmind.ImageManager.WindowsClient
 			FileNameFormatter fileNameFormatter = new FileNameFormatter();
 
 			httpClient = new HttpClient();
+			httpClient.DefaultRequestHeaders.Add("User-Agent", ApplicationFullName + "/" + ApplicationFullVersion);
+
 			settingsProvider = new SettingsProvider(serializer, applicationDataDirectory);
 			collectionProvider = new CollectionProvider(serializer, fileNameFormatter);
 			queryEngine = new LuceneQueryEngine();

@@ -80,7 +80,14 @@ namespace Overmind.ImageManager.WallpaperService
 
 				try
 				{
-					settingsProvider.SaveActiveWallpaperConfiguration(ActiveConfiguration.Name);
+					settingsProvider.UpdateApplicationSettings(
+						applicationSettings =>
+						{
+							if (applicationSettings.WallpaperSettings == null)
+								applicationSettings.WallpaperSettings = new WallpaperSettings();
+
+							applicationSettings.WallpaperSettings.ActiveConfiguration = ActiveConfiguration.Name;
+						});
 				}
 				catch (Exception exception)
 				{
@@ -95,9 +102,11 @@ namespace Overmind.ImageManager.WallpaperService
 		public void ReloadSettings()
 		{
 			wallpaperSettings = TryLoadSettings();
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConfigurationCollection)));
 
-			ActiveConfiguration = TryLoadActiveConfiguration();
+			ActiveConfiguration = wallpaperSettings.ConfigurationCollection
+				.SingleOrDefault(configuration => configuration.Name == wallpaperSettings.ActiveConfiguration);
+
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConfigurationCollection)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActiveConfiguration)));
 		}
 
@@ -107,9 +116,8 @@ namespace Overmind.ImageManager.WallpaperService
 
 			try
 			{
-				wallpaperSettings = settingsProvider.LoadWallpaperSettings();
-				if (wallpaperSettings == null)
-					throw new ArgumentNullException(nameof(wallpaperSettings), "Wallpaper settings cannot be null");
+				wallpaperSettings = settingsProvider.LoadApplicationSettings().WallpaperSettings
+					?? throw new ArgumentNullException(nameof(wallpaperSettings), "Wallpaper settings must not be null");
 			}
 			catch (Exception exception)
 			{
@@ -137,21 +145,6 @@ namespace Overmind.ImageManager.WallpaperService
 			}
 
 			return wallpaperSettings;
-		}
-
-		private WallpaperConfiguration TryLoadActiveConfiguration()
-		{
-			try
-			{
-				string activeConfiguration = settingsProvider.LoadActiveWallpaperConfiguration();
-				return wallpaperSettings.ConfigurationCollection.Single(configuration => configuration.Name == activeConfiguration);
-			}
-			catch (Exception exception)
-			{
-				Logger.Error(exception, "Failed to load active configuration");
-			}
-
-			return null;
 		}
 
 		private void SetWallpaper(string imagePath)

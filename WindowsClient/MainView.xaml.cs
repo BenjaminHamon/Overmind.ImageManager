@@ -34,17 +34,17 @@ namespace Overmind.ImageManager.WindowsClient
 			Window.GetWindow(this).Deactivated += (s, e) => Dispatcher.BeginInvoke(new Action(ForceUpdateOnFocusedElement));
 		}
 
-		private MainViewModel viewModel { get { return (MainViewModel)DataContext; } }
+		private MainViewModel ViewModel { get { return (MainViewModel) DataContext; } }
 
 		private void IsCollectionOpened(object sender, CanExecuteRoutedEventArgs eventArguments)
 		{
-			eventArguments.CanExecute = viewModel.ActiveCollection != null;
+			eventArguments.CanExecute = ViewModel?.ActiveCollection != null;
 		}
 
 		private void CreateCollection(object sender, EventArgs eventArguments)
 		{
 			CloseCollection(sender, eventArguments);
-			if (viewModel.ActiveCollection != null)
+			if (ViewModel.ActiveCollection != null)
 				return;
 
 			CommonOpenFileDialog fileDialog = new CommonOpenFileDialog("Create Collection") { IsFolderPicker = true };
@@ -53,7 +53,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 			try
 			{
-				viewModel.CreateCollectionCommand.Execute(fileDialog.FileName);
+				ViewModel.CreateCollectionCommand.Execute(fileDialog.FileName);
 			}
 			catch (Exception exception)
 			{
@@ -69,12 +69,12 @@ namespace Overmind.ImageManager.WindowsClient
 				return;
 
 			CloseCollection(sender, eventArguments);
-			if (viewModel.ActiveCollection != null)
+			if (ViewModel.ActiveCollection != null)
 				return;
 
 			try
 			{
-				viewModel.LoadCollectionCommand.Execute(fileDialog.FileName);
+				ViewModel.LoadCollectionCommand.Execute(fileDialog.FileName);
 			}
 			catch (Exception exception)
 			{
@@ -89,25 +89,25 @@ namespace Overmind.ImageManager.WindowsClient
 
 			try
 			{
-				viewModel.SaveCollectionCommand.Execute(null);
+				ViewModel.SaveCollectionCommand.Execute(null);
 			}
 			catch (Exception exception)
 			{
-				Logger.Error(exception, "Failed to save collection (Path: '{0}')", viewModel.ActiveCollection.StoragePath);
+				Logger.Error(exception, "Failed to save collection (Path: '{0}')", ViewModel.ActiveCollection.StoragePath);
 				WindowsApplication.ShowError("Save Collection", "Failed to save the image collection.", exception);
 			}
 		}
 
 		private void CloseCollection(object sender, EventArgs eventArguments)
 		{
-			if (viewModel.ActiveCollection == null)
+			if (ViewModel.ActiveCollection == null)
 				return;
 
 			ForceUpdateOnFocusedElement();
 
-			if (viewModel.ActiveCollection.IsSaved())
+			if (ViewModel.ActiveCollection.IsSaved())
 			{
-				viewModel.CloseCollectionCommand.Execute(null);
+				ViewModel.CloseCollectionCommand.Execute(null);
 			}
 			else
 			{
@@ -118,20 +118,20 @@ namespace Overmind.ImageManager.WindowsClient
 				{
 					try
 					{
-						viewModel.SaveCollectionCommand.Execute(null);
+						ViewModel.SaveCollectionCommand.Execute(null);
 					}
 					catch (Exception exception)
 					{
-						Logger.Error(exception, "Failed to save collection (Path: '{0}')", viewModel.ActiveCollection.StoragePath);
+						Logger.Error(exception, "Failed to save collection (Path: '{0}')", ViewModel.ActiveCollection.StoragePath);
 						WindowsApplication.ShowError("Save Collection", "Failed to save the image collection.", exception);
 						return;
 					}
 
-					viewModel.CloseCollectionCommand.Execute(null);
+					ViewModel.CloseCollectionCommand.Execute(null);
 				}
 				else if (result == MessageBoxResult.No)
 				{
-					viewModel.CloseCollectionCommand.Execute(null);
+					ViewModel.CloseCollectionCommand.Execute(null);
 				}
 				else
 				{
@@ -149,11 +149,11 @@ namespace Overmind.ImageManager.WindowsClient
 
 			try
 			{
-				viewModel.ExportCollectionCommand.Execute(fileDialog.FileName);
+				ViewModel.ExportCollectionCommand.Execute(fileDialog.FileName);
 			}
 			catch (Exception exception)
 			{
-				Logger.Error(exception, "Failed to export collection ('{0}' => '{1}')", viewModel.ActiveCollection.StoragePath, fileDialog.FileName);
+				Logger.Error(exception, "Failed to export collection ('{0}' => '{1}')", ViewModel.ActiveCollection.StoragePath, fileDialog.FileName);
 				WindowsApplication.ShowError("Export Collection", "Failed to export the image collection.", exception);
 			}
 }
@@ -161,10 +161,10 @@ namespace Overmind.ImageManager.WindowsClient
 		internal void ExitApplication(object sender, EventArgs eventArguments)
 		{
 			CloseCollection(sender, eventArguments);
-			if (viewModel.ActiveCollection != null)
+			if (ViewModel.ActiveCollection != null)
 				return;
 
-			viewModel.ExitApplicationCommand.Execute(null);
+			ViewModel.ExitApplicationCommand.Execute(null);
 		}
 
 		private void ForceUpdateOnFocusedElement()
@@ -207,8 +207,8 @@ namespace Overmind.ImageManager.WindowsClient
 
 				ForceUpdateOnFocusedElement();
 
-				if (viewModel.ActiveCollection != null)
-					viewModel.ActiveCollection.ResetDisplay();
+				if (ViewModel.ActiveCollection != null)
+					ViewModel.ActiveCollection.ResetDisplay();
 			}
 		}
 

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows.Threading;
 
 namespace Overmind.ImageManager.WindowsClient
 {
@@ -16,6 +17,7 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			this.model = model;
 			this.imageOperations = imageOperations;
+			this.dispatcher = application.Dispatcher;
 
 			allImages = new List<ImageViewModel>();
 			foreach (ImageModel image in model.AllImages)
@@ -33,8 +35,9 @@ namespace Overmind.ImageManager.WindowsClient
 		}
 
 		private readonly CollectionModel model;
-		private readonly IImageOperations imageOperations;
 		private readonly List<ImageViewModel> allImages;
+		private readonly IImageOperations imageOperations;
+		private readonly Dispatcher dispatcher;
 		private readonly object modelLock = new object();
 
 		public string Name { get { return model.StoragePath; } }
@@ -63,7 +66,7 @@ namespace Overmind.ImageManager.WindowsClient
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedImage)));
 
 				SelectedImageProperties = selectedImageField == null ? null
-					: new ImagePropertiesViewModel(selectedImageField.Model, () => model.GetImagePath(selectedImageField.Model), imageOperations)
+					: new ImagePropertiesViewModel(selectedImageField.Model, () => model.GetImagePath(selectedImageField.Model), imageOperations, dispatcher)
 				{
 					AllSubjects = model.AllImages.SelectMany(image => image.SubjectCollection).Distinct().OrderBy(x => x).ToList(),
 					AllArtists = model.AllImages.SelectMany(image => image.ArtistCollection).Distinct().OrderBy(x => x).ToList(),

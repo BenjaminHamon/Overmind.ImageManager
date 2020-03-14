@@ -6,25 +6,33 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace Overmind.ImageManager.WindowsClient
 {
 	public class ImagePropertiesViewModel : INotifyPropertyChanged, INotifyDataErrorInfo
 	{
-		public ImagePropertiesViewModel(ImageModel model, Func<string> getImagePath, IImageOperations imageOperations)
+		public ImagePropertiesViewModel(ImageModel model, Func<string> getImagePath, IImageOperations imageOperations, Dispatcher dispatcher)
 		{
 			this.model = model;
 			this.getImagePath = getImagePath;
 			this.imageOperations = imageOperations;
+			this.dispatcher = dispatcher;
 
 			sourceField = model.Source?.OriginalString;
+			Format = GetFormatFromFilePath();
 
 			ErrorCollection = new Dictionary<string, List<Exception>>();
+
+			Task.Run(RefreshFileProperties);
 		}
 
 		private readonly ImageModel model;
 		private readonly Func<string> getImagePath;
 		private readonly IImageOperations imageOperations;
+		private readonly Dispatcher dispatcher;
+		private readonly object refreshLock = new object();
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
@@ -52,9 +60,19 @@ namespace Overmind.ImageManager.WindowsClient
 		public DateTime AdditionDate { get { return model.AdditionDate.ToLocalTime(); } }
 
 		public string Hash { get { return model.Hash; } }
-		public string Format { get { return GetFormatFromFilePath(); } }
-		public string FileSize { get { return FormatExtensions.FormatUnit(new FileInfo(FilePath).Length, "B"); } }
-		public string Dimensions { get { return imageOperations.GetDimensions(File.ReadAllBytes(FilePath)); } }
+		public string Format { get; private set; }
+		public long FileSize { get; private set; }
+		public string Dimensions { get; private set; }
+
+		public string FileSizeFormatted
+		{
+			get
+			{
+				if (FileSize == 0)
+					return "0 B";
+				return FormatExtensions.FormatUnit(FileSize, "B", "N1");
+			}
+		}
 
 		private string sourceField;
 		public string Source
@@ -88,10 +106,43 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public void NotifyFileChanged()
 		{
+			Task.Run(RefreshFileProperties);
+
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FilePath)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Hash)));
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FileSize)));
+		}
+
+		private void RefreshFileProperties()
+		{
+			byte[] imageData;
+
+			try
+			{
+				imageData = File.ReadAllBytes(FilePath);
+			}
+			catch (SystemException)
+			{
+				return;
+			}
+
+			string formatResult = imageOperations.GetFormat(imageData).ToUpperInvariant();
+			string dimensionsResult = imageOperations.GetDimensions(imageData);
+
+			lock (refreshLock)
+			{
+				this.Format = formatResult;
+				this.FileSize = imageData.Length;
+				this.Dimensions = dimensionsResult;
+			}
+
+			dispatcher.Invoke(() =>
+			{
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Format)));
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FileSize)));
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FileSizeFormatted)));
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Dimensions)));
+			});
 		}
 
 		private string GetFormatFromFilePath()

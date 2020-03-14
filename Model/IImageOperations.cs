@@ -11,5 +11,8 @@
 
 		/// <summary>Get an image format from its data</summary>
 		string GetFormat(byte[] data);
+
+		/// <summary>Get an image dimensions from its data</summary>
+		string GetDimensions(byte[] data);
 	}
 }

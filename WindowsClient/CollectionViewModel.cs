@@ -11,9 +11,11 @@ namespace Overmind.ImageManager.WindowsClient
 {
 	public class CollectionViewModel : INotifyPropertyChanged
 	{
-		public CollectionViewModel(WindowsApplication application, CollectionModel model, IQueryEngine<ImageModel> queryEngine, Func<Random> randomFactory)
+		public CollectionViewModel(WindowsApplication application, CollectionModel model,
+			IImageOperations imageOperations, IQueryEngine<ImageModel> queryEngine, Func<Random> randomFactory)
 		{
 			this.model = model;
+			this.imageOperations = imageOperations;
 
 			allImages = new List<ImageViewModel>();
 			foreach (ImageModel image in model.AllImages)
@@ -31,6 +33,7 @@ namespace Overmind.ImageManager.WindowsClient
 		}
 
 		private readonly CollectionModel model;
+		private readonly IImageOperations imageOperations;
 		private readonly List<ImageViewModel> allImages;
 		private readonly object modelLock = new object();
 
@@ -60,12 +63,13 @@ namespace Overmind.ImageManager.WindowsClient
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedImage)));
 
 				SelectedImageProperties = selectedImageField == null ? null
-					: new ImagePropertiesViewModel(selectedImageField.Model, () => model.GetImagePath(selectedImageField.Model))
+					: new ImagePropertiesViewModel(selectedImageField.Model, () => model.GetImagePath(selectedImageField.Model), imageOperations)
 				{
 					AllSubjects = model.AllImages.SelectMany(image => image.SubjectCollection).Distinct().OrderBy(x => x).ToList(),
 					AllArtists = model.AllImages.SelectMany(image => image.ArtistCollection).Distinct().OrderBy(x => x).ToList(),
 					AllTags = model.AllImages.SelectMany(image => image.TagCollection).Distinct().OrderBy(x => x).ToList(),
 				};
+
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedImageProperties)));
 			}
 		}

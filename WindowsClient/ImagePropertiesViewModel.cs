@@ -11,10 +11,11 @@ namespace Overmind.ImageManager.WindowsClient
 {
 	public class ImagePropertiesViewModel : INotifyPropertyChanged, INotifyDataErrorInfo
 	{
-		public ImagePropertiesViewModel(ImageModel model, Func<string> getImagePath)
+		public ImagePropertiesViewModel(ImageModel model, Func<string> getImagePath, IImageOperations imageOperations)
 		{
 			this.model = model;
 			this.getImagePath = getImagePath;
+			this.imageOperations = imageOperations;
 
 			sourceField = model.Source?.OriginalString;
 
@@ -23,6 +24,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private readonly ImageModel model;
 		private readonly Func<string> getImagePath;
+		private readonly IImageOperations imageOperations;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
@@ -51,6 +53,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public string Hash { get { return model.Hash; } }
 		public string FileSize { get { return FormatExtensions.FormatUnit(new FileInfo(FilePath).Length, "B"); } }
+		public string Dimensions { get { return imageOperations.GetDimensions(File.ReadAllBytes(FilePath)); } }
 
 		private string sourceField;
 		public string Source

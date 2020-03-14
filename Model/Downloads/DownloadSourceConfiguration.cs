@@ -29,6 +29,9 @@ namespace Overmind.ImageManager.Model.Downloads
 			if (String.IsNullOrWhiteSpace(DomainName))
 				errorCollection[nameof(DomainName)].Add(new ArgumentException("The domain name cannot be empty.", nameof(DomainName)));
 
+			try { Uri baseUri = new Uri("http://" + DomainName + "/"); }
+			catch (UriFormatException exception) { errorCollection[nameof(DomainName)].Add(exception); }
+			
 			return errorCollection;
 		}
 	}

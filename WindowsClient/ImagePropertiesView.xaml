@@ -7,7 +7,7 @@
              xmlns:globalization="clr-namespace:System.Globalization;assembly=mscorlib"
              xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:ImagePropertiesViewModel}"
-             d:DesignHeight="400" d:DesignWidth="300">
+             d:DesignHeight="600" d:DesignWidth="300">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Style="{StaticResource FormStyle}" Orientation="Vertical" Grid.IsSharedSizeScope="True">
@@ -114,10 +114,13 @@
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="Hash"/>
                     <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=Hash, Mode=OneWay}" IsReadOnly="True"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="File size"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Path=FileSize, Mode=OneWay}" IsReadOnly="True"/>
 
                 </Grid>
             </Expander>

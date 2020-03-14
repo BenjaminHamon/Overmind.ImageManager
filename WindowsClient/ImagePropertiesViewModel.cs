@@ -57,22 +57,9 @@ namespace Overmind.ImageManager.WindowsClient
 		public List<string> TagCollection { get { return model.TagCollection; } set { model.TagCollection = value; } }
 		public int Score { get { return model.Score; } set { model.Score = value; } }
 
-		public DateTime AdditionDate { get { return model.AdditionDate.ToLocalTime(); } }
-
-		public string Hash { get { return model.Hash; } }
-		public string Format { get; private set; }
-		public long FileSize { get; private set; }
-		public string Dimensions { get; private set; }
-
-		public string FileSizeFormatted
-		{
-			get
-			{
-				if (FileSize == 0)
-					return "0 B";
-				return FormatExtensions.FormatUnit(FileSize, "B", "N1");
-			}
-		}
+		public List<string> AllSubjects { get; set; } = new List<string>();
+		public List<string> AllArtists { get; set; } = new List<string>();
+		public List<string> AllTags { get; set; } = new List<string>();
 
 		private string sourceField;
 		public string Source
@@ -100,9 +87,22 @@ namespace Overmind.ImageManager.WindowsClient
 			}
 		}
 
-		public List<string> AllSubjects { get; set; } = new List<string>();
-		public List<string> AllArtists { get; set; } = new List<string>();
-		public List<string> AllTags { get; set; } = new List<string>();
+		public DateTime AdditionDate { get { return model.AdditionDate.ToLocalTime(); } }
+
+		public string Hash { get { return model.Hash; } }
+		public string Format { get; private set; }
+		public long FileSize { get; private set; }
+		public string Dimensions { get; private set; }
+
+		public string FileSizeFormatted
+		{
+			get
+			{
+				if (FileSize == 0)
+					return "0 B";
+				return FormatExtensions.FormatUnit(FileSize, "B", "N1");
+			}
+		}
 
 		public void NotifyFileChanged()
 		{

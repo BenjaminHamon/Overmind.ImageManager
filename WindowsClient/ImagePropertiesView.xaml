@@ -95,7 +95,7 @@
                     <TextBlock Grid.Row="1" Grid.Column="0" Text="Added on"/>
                     <TextBox Grid.Row="1" Grid.Column="1" IsReadOnly="True">
                         <Binding Path="AdditionDate" Mode="OneWay" StringFormat="g"
-                         ConverterCulture="{x:Static globalization:CultureInfo.CurrentCulture}"/>
+                                 ConverterCulture="{x:Static globalization:CultureInfo.CurrentCulture}"/>
                     </TextBox>
 
                 </Grid>

@@ -15,6 +15,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
@@ -68,16 +69,21 @@ namespace Overmind.ImageManager.WindowsClient
 			httpClient = new HttpClient(new HttpClientHandler() { CookieContainer = cookieContainer });
 			httpClient.DefaultRequestHeaders.Add("User-Agent", ApplicationFullName + "/" + ApplicationFullVersion);
 
+			hashAlgorithm = MD5.Create();
+			imageOperations = new ImageOperations(hashAlgorithm);
+
 			settingsProvider = new SettingsProvider(serializer, applicationDataDirectory);
-			collectionProvider = new CollectionProvider(serializer, fileNameFormatter);
+			collectionProvider = new CollectionProvider(serializer, imageOperations, fileNameFormatter);
 			queryEngine = new LuceneQueryEngine();
 			downloader = new Downloader(httpClient);
 			randomFactory = () => new Random();
 		}
 
 		private readonly HttpClient httpClient;
+		private readonly HashAlgorithm hashAlgorithm;
 		private readonly SettingsProvider settingsProvider;
 		private readonly ICollectionProvider collectionProvider;
+		private readonly IImageOperations imageOperations;
 		private readonly IQueryEngine<ImageModel> queryEngine;
 		private readonly IDownloader downloader;
 		private readonly Func<Random> randomFactory;
@@ -92,7 +98,7 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			Logger.Info("Starting {0}", ApplicationName);
 
-			mainViewModel = new MainViewModel(this, settingsProvider, collectionProvider, queryEngine, downloader, randomFactory);
+			mainViewModel = new MainViewModel(this, settingsProvider, collectionProvider, imageOperations, queryEngine, downloader, randomFactory);
 			mainView = new MainView() { DataContext = mainViewModel };
 			MainWindow = new Window() { Content = mainView };
 
@@ -112,6 +118,7 @@ namespace Overmind.ImageManager.WindowsClient
 			if (mainViewModel != null)
 				mainViewModel.Dispose();
 
+			hashAlgorithm.Dispose();
 			httpClient.Dispose();
 		}
 

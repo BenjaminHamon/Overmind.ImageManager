@@ -14,13 +14,15 @@ namespace Overmind.ImageManager.Model
 
 		private const string FormatVersion = "2.0";
 
-		public CollectionProvider(ISerializer serializer, FileNameFormatter fileNameFormatter)
+		public CollectionProvider(ISerializer serializer, IImageOperations imageOperations, FileNameFormatter fileNameFormatter)
 		{
 			this.serializer = serializer;
+			this.imageOperations = imageOperations;
 			this.fileNameFormatter = fileNameFormatter;
 		}
 
 		private readonly ISerializer serializer;
+		private readonly IImageOperations imageOperations;
 		private readonly FileNameFormatter fileNameFormatter;
 
 		public CollectionData CreateCollection(string collectionPath)
@@ -154,11 +156,7 @@ namespace Overmind.ImageManager.Model
 
 		public void WriteImageFile(string collectionPath, ImageModel image, byte[] imageData)
 		{
-			string fileExtension;
-
-			using (MemoryStream stream = new MemoryStream(imageData))
-			using (Image imageObject = Image.FromStream(stream))
-				fileExtension = new ImageFormatConverter().ConvertToString(imageObject.RawFormat).ToLower();
+			string fileExtension = imageOperations.GetFormat(imageData);
 
 			Directory.CreateDirectory(Path.Combine(collectionPath, "Images-Temporary"));
 

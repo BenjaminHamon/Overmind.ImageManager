@@ -5,8 +5,6 @@ using Overmind.WpfExtensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,21 +18,24 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 		private delegate void DownloadConsumer(ObservableDownload download, byte[] downloadData);
 
-		public DownloaderViewModel(IDownloader downloader, CollectionViewModel collection, SettingsProvider settingsProvider, Dispatcher dispatcher)
+		public DownloaderViewModel(IDownloader downloader, CollectionViewModel collection,
+			SettingsProvider settingsProvider, IImageOperations imageOperations, Dispatcher dispatcher)
 		{
 			this.downloader = downloader;
 			this.collection = collection;
 			this.settingsProvider = settingsProvider;
+			this.imageOperations = imageOperations;
 			this.dispatcher = dispatcher;
 
 			AddDownloadCommand = new DelegateCommand<string>(AddDownload);
 			SelectImageCommand = new DelegateCommand<ObservableDownload>(SelectImage, CanSelectImage);
 		}
 
-		private readonly Dispatcher dispatcher;
 		private readonly IDownloader downloader;
 		private readonly CollectionViewModel collection;
 		private readonly SettingsProvider settingsProvider;
+		private readonly IImageOperations imageOperations;
+		private readonly Dispatcher dispatcher;
 
 		public ObservableCollection<ObservableDownload> DownloadCollection { get; } = new ObservableCollection<ObservableDownload>();
 		private Dictionary<ObservableDownload, string> downloadHashCache = new Dictionary<ObservableDownload, string>();
@@ -87,7 +88,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 				ProgressHandler progressHandler = (_, progress, totalSize) => dispatcher.Invoke(() => download.UpdateProgress(progress, totalSize));
 				downloadData = await downloader.Download(uri, progressHandler, cancellationTokenSource.Token);
 
-				if (IsImage(downloadData) == false)
+				if (imageOperations.IsImage(downloadData) == false)
 					throw new InvalidOperationException("The file is not an image");
 
 				if (downloadData != null)
@@ -116,7 +117,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 			{
 				dispatcher.Invoke(() =>
 				{
-					downloadHashCache[download] = ImageModel.CreateHash(downloadData);
+					downloadHashCache[download] = imageOperations.ComputeHash(downloadData);
 					SelectImageCommand.RaiseCanExecuteChanged();
 				});
 			}
@@ -151,20 +152,6 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 			}
 
 			return downloaderSettings ?? new DownloaderSettings();
-		}
-
-		private bool IsImage(byte[] data)
-		{
-			try
-			{
-				using (MemoryStream stream = new MemoryStream(data))
-				using (Image imageObject = Image.FromStream(stream))
-					return true;
-			}
-			catch (ArgumentException)
-			{
-				return false;
-			}
 		}
 
 		private bool CanSelectImage(ObservableDownload download)

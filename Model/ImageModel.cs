@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Security.Cryptography;
 
 namespace Overmind.ImageManager.Model
 {
@@ -33,12 +32,6 @@ namespace Overmind.ImageManager.Model
 		public DateTime AdditionDate { get; set; }
 		[DataMember]
 		public Uri Source { get; set; }
-
-		public static string CreateHash(byte[] imageData)
-		{
-			using (MD5 md5 = MD5.Create())
-				return BitConverter.ToString(md5.ComputeHash(imageData)).Replace("-", "").ToLowerInvariant();
-		}
 
 		public IEnumerable<string> GetSearchableValues()
 		{

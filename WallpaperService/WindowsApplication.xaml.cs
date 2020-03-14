@@ -49,7 +49,7 @@ namespace Overmind.ImageManager.WallpaperService
 
 			applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
 			settingsProvider = new SettingsProvider(serializer, applicationDataDirectory);
-			collectionProvider = new CollectionProvider(serializer, null);
+			collectionProvider = new CollectionProvider(serializer, null, null);
 			queryEngine = new LuceneQueryEngine();
 			randomFactory = () => new Random();
 		}

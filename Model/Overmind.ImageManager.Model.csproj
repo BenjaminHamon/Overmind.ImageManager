@@ -70,7 +70,9 @@
     <Compile Include="Downloads\IDownloader.cs" />
     <Compile Include="FileNameFormatter.cs" />
     <Compile Include="ICollectionProvider.cs" />
+    <Compile Include="IImageOperations.cs" />
     <Compile Include="ImageModel.cs" />
+    <Compile Include="ImageOperations.cs" />
     <Compile Include="Queries\ImageQueryParser.cs" />
     <Compile Include="Queries\IQueryEngine.cs" />
     <Compile Include="Queries\LuceneQueryEngine.cs" />

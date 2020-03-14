@@ -52,6 +52,7 @@ namespace Overmind.ImageManager.WindowsClient
 		public DateTime AdditionDate { get { return model.AdditionDate.ToLocalTime(); } }
 
 		public string Hash { get { return model.Hash; } }
+		public string Format { get { return GetFormatFromFilePath(); } }
 		public string FileSize { get { return FormatExtensions.FormatUnit(new FileInfo(FilePath).Length, "B"); } }
 		public string Dimensions { get { return imageOperations.GetDimensions(File.ReadAllBytes(FilePath)); } }
 
@@ -91,6 +92,16 @@ namespace Overmind.ImageManager.WindowsClient
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Hash)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FileSize)));
+		}
+
+		private string GetFormatFromFilePath()
+		{
+			string format = Path.GetExtension(FilePath).TrimStart('.').ToUpperInvariant();
+
+			if (format == "JPG")
+				return "JPEG";
+
+			return format;
 		}
 	}
 }

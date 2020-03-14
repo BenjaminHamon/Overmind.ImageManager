@@ -1,5 +1,6 @@
 ﻿using NLog;
 using Overmind.ImageManager.Model;
+using Overmind.ImageManager.Model.Downloads;
 using Overmind.ImageManager.Model.Queries;
 using Overmind.ImageManager.WindowsClient.Downloads;
 using Overmind.WpfExtensions;
@@ -12,11 +13,14 @@ namespace Overmind.ImageManager.WindowsClient
 	{
 		private static readonly Logger Logger = LogManager.GetLogger(nameof(MainViewModel));
 
-		public MainViewModel(WindowsApplication application, ICollectionProvider collectionProvider, IQueryEngine<ImageModel> queryEngine, Func<Random> randomFactory)
+		public MainViewModel(WindowsApplication application, SettingsProvider settingsProvider,
+			ICollectionProvider collectionProvider, IQueryEngine<ImageModel> queryEngine, IDownloader downloader, Func<Random> randomFactory)
 		{
 			this.application = application;
+			this.settingsProvider = settingsProvider;
 			this.collectionProvider = collectionProvider;
 			this.queryEngine = queryEngine;
+			this.downloader = downloader;
 			this.randomFactory = randomFactory;
 
 			ShowDownloaderCommand = new DelegateCommand<object>(_ => application.ShowDownloader());
@@ -40,8 +44,10 @@ namespace Overmind.ImageManager.WindowsClient
 		}
 
 		private readonly WindowsApplication application;
+		private readonly SettingsProvider settingsProvider;
 		private readonly ICollectionProvider collectionProvider;
 		private readonly IQueryEngine<ImageModel> queryEngine;
+		private readonly IDownloader downloader;
 		private readonly Func<Random> randomFactory;
 
 		public string WindowTitle
@@ -75,8 +81,8 @@ namespace Overmind.ImageManager.WindowsClient
 			}
 		}
 
-		private Downloader downloaderField;
-		public Downloader Downloader
+		private DownloaderViewModel downloaderField;
+		public DownloaderViewModel Downloader
 		{
 			get { return downloaderField; }
 			private set
@@ -143,7 +149,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 			CollectionModel collectionModel = new CollectionModel(collectionProvider, collectionData, collectionPath);
 			ActiveCollection = new CollectionViewModel(application, collectionModel, queryEngine, randomFactory);
-			Downloader = new Downloader(ActiveCollection);
+			Downloader = new DownloaderViewModel(downloader, ActiveCollection, settingsProvider, application.Dispatcher);
 		}
 
 		private void CloseCollection()

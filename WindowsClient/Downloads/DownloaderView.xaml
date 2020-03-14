@@ -6,7 +6,7 @@
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:downloads="clr-namespace:Overmind.ImageManager.WindowsClient.Downloads"
              mc:Ignorable="d" d:DesignHeight="400" d:DesignWidth="600"
-             d:DataContext="{d:DesignInstance Type=downloads:Downloader}">
+             d:DataContext="{d:DesignInstance Type=downloads:DownloaderViewModel}">
 
     <UserControl.Style>
         <Style TargetType="UserControl">
@@ -59,6 +59,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ProgressBar Value="{Binding Path=ProgressPercentage, Mode=OneWay}" Width="60" Height="16"
+                                             IsIndeterminate="{Binding Path=IsProgressIndeterminate}"
                                              Visibility="{Binding Path=IsDownloading, Converter={StaticResource VisibilityConverter}}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>

@@ -3,31 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 
-namespace Overmind.ImageManager.Model.Wallpapers
+namespace Overmind.ImageManager.Model.Downloads
 {
 	[DataContract]
-	public class WallpaperSettings
+	public class DownloaderSettings
 	{
-		[DataMember(Name = "Configurations")]
-		public List<WallpaperConfiguration> ConfigurationCollection { get; set; } = new List<WallpaperConfiguration>();
-
 		[DataMember]
-		public string ActiveConfiguration { get; set; }
+		public List<DownloadSourceConfiguration> SourceConfigurationCollection { get; set; } = new List<DownloadSourceConfiguration>();
 
 		public Dictionary<string, List<Exception>> Validate()
 		{
 			Dictionary<string, List<Exception>> errorCollection = new Dictionary<string, List<Exception>>()
 			{
-				{ nameof(ConfigurationCollection), new List<Exception>() },
+				{ nameof(SourceConfigurationCollection), new List<Exception>() },
 			};
 
-			IEnumerable<string> configurationNameDuplicates = ConfigurationCollection
+			IEnumerable<string> configurationNameDuplicates = SourceConfigurationCollection
 				.GroupBy(configuration => configuration.Name).Where(group => group.Count() > 1).Select(group => group.Key);
 
 			foreach (string nameDuplicate in configurationNameDuplicates)
 			{
 				Exception exception = new ArgumentException(String.Format("The configuration name '{0}' is used several times.", nameDuplicate));
-				errorCollection[nameof(ConfigurationCollection)].Add(exception);
+				errorCollection[nameof(SourceConfigurationCollection)].Add(exception);
 			}
 
 			return errorCollection;

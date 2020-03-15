@@ -64,6 +64,7 @@
     <Compile Include="CollectionMetadata.cs" />
     <Compile Include="CollectionModel.cs" />
     <Compile Include="CollectionProvider.cs" />
+    <Compile Include="Compatibility\ImageModel_V2_Converter.cs" />
     <Compile Include="Downloads\Downloader.cs" />
     <Compile Include="Downloads\DownloaderSettings.cs" />
     <Compile Include="Downloads\DownloadSource.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="IImageOperations.cs" />
     <Compile Include="ImageModel.cs" />
     <Compile Include="ImageOperations.cs" />
+    <Compile Include="ImageSource.cs" />
     <Compile Include="Queries\ImageQueryParser.cs" />
     <Compile Include="Queries\IQueryEngine.cs" />
     <Compile Include="Queries\LuceneQueryEngine.cs" />

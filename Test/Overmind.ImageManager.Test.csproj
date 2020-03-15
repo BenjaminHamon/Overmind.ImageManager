@@ -68,6 +68,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\Collection_V2\Data\Images.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Collection_V2\Data\Metadata.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Collection_V3\Data\Images.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Collection_V3\Data\Metadata.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Blue.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -31,7 +31,7 @@ namespace Overmind.ImageManager.Model
 		[DataMember]
 		public DateTime AdditionDate { get; set; }
 		[DataMember]
-		public Uri Source { get; set; }
+		public ImageSource Source { get; set; } = new ImageSource();
 
 		public IEnumerable<string> GetSearchableValues()
 		{

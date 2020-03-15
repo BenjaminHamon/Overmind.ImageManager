@@ -41,6 +41,19 @@ namespace Overmind.ImageManager.Test
 		}
 
 		[TestMethod]
+		public void CollectionProvider_LoadCollection_Compatibility_V2()
+		{
+			JsonSerializer serializerImplementation = new JsonSerializer() { Formatting = Formatting.Indented };
+			JsonSerializerProxy serializer = new JsonSerializerProxy(serializerImplementation);
+
+			CollectionData actual = collectionProvider.LoadCollection("Resources/Collection_V2");
+			CollectionData expected = collectionProvider.LoadCollection("Resources/Collection_V3");
+
+			if (serializer.SerializeToString(expected) != serializer.SerializeToString(actual))
+				Assert.Fail("Collection data does not match");
+		}
+
+		[TestMethod]
 		public void CollectionProvider_SaveCollection_Empty()
 		{
 			collectionProvider.SaveCollection(workingDirectory, new CollectionData(), new List<ImageModel>());

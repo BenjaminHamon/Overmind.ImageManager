@@ -15,7 +15,7 @@ namespace Overmind.ImageManager.Model
 		private readonly List<ImageModel> removedImages = new List<ImageModel>();
 		private readonly IImageOperations imageOperations;
 
-		public ImageModel CreateImage(Uri source, byte[] imageData)
+		public ImageModel CreateImage(ImageSource source, byte[] imageData)
 		{
 			string hash = imageOperations.ComputeHash(imageData);
 			DateTime now = DateTime.UtcNow;

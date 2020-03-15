@@ -1,8 +1,8 @@
 ﻿using NLog;
+using Overmind.ImageManager.Model.Compatibility;
 using Overmind.ImageManager.Model.Serialization;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 
@@ -12,7 +12,7 @@ namespace Overmind.ImageManager.Model
 	{
 		private static readonly Logger Logger = LogManager.GetLogger(nameof(CollectionProvider));
 
-		private const string FormatVersion = "2.0";
+		private const string FormatVersion = "3.0";
 
 		public CollectionProvider(ISerializer serializer, IImageOperations imageOperations, FileNameFormatter fileNameFormatter)
 		{
@@ -41,15 +41,16 @@ namespace Overmind.ImageManager.Model
 		{
 			Logger.Info("Loading collection (Path: '{0}')", collectionPath);
 
-			CollectionData collectionData = new CollectionData();
+			CollectionMetadata collectionMetadata = serializer.DeserializeFromFile<CollectionMetadata>(Path.Combine(collectionPath, "Data", "Metadata.json"));
+			ISerializer localSerializer = GetSerializerForLoad(collectionMetadata.FormatVersion);
 
-			collectionData.Metadata = serializer.DeserializeFromFile<CollectionMetadata>(Path.Combine(collectionPath, "Data", "Metadata.json"));
-			if (collectionData.Metadata.FormatVersion != FormatVersion)
-				throw new InvalidDataException("The collection format version is not supported.");
+			CollectionData collectionData = new CollectionData() { Metadata = collectionMetadata };
 
-			collectionData.Images = serializer.DeserializeFromFile<List<ImageModel>>(Path.Combine(collectionPath, "Data", "Images.json"));
+			collectionData.Images = localSerializer.DeserializeFromFile<List<ImageModel>>(Path.Combine(collectionPath, "Data", "Images.json"));
 			foreach (ImageModel image in collectionData.Images)
 				image.FileNameAsSaved = image.FileName;
+
+			collectionData.Metadata.FormatVersion = FormatVersion;
 
 			return collectionData;
 		}
@@ -171,6 +172,21 @@ namespace Overmind.ImageManager.Model
 			string temporaryDirectory = Path.Combine(collectionPath, "Images-Temporary");
 			if (Directory.Exists(temporaryDirectory))
 				Directory.Delete(temporaryDirectory, true);
+		}
+
+		private ISerializer GetSerializerForLoad(string sourceFormatVersion)
+		{
+			if (sourceFormatVersion == FormatVersion)
+				return serializer;
+
+			if (sourceFormatVersion == "2.0")
+			{
+				Newtonsoft.Json.JsonSerializer compatibilitySerializer = new Newtonsoft.Json.JsonSerializer();
+				compatibilitySerializer.Converters.Add(new ImageModel_V2_Converter());
+				return new JsonSerializer(compatibilitySerializer);
+			}
+
+			throw new InvalidDataException("The collection format version is not supported.");
 		}
 	}
 }

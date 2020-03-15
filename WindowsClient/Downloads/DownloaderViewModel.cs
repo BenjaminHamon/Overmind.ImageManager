@@ -51,12 +51,12 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 		public void AddDownload(string uri)
 		{
-			AddDownload(uri, (download, downloadData) => collection.AddImage(download.Uri, downloadData));
+			AddDownload(uri, (download, downloadData) => collection.AddImage(new ImageSource() { Uri = download.Uri }, downloadData));
 		}
 
 		public void RestartDownload(ImageViewModel image)
 		{
-			AddDownload(image.Model.Source?.ToString(), (download, downloadData) => collection.UpdateImageFile(image, downloadData));
+			AddDownload(image.Model.Source.Uri?.ToString(), (download, downloadData) => collection.UpdateImageFile(image, downloadData));
 		}
 
 		private void AddDownload(string uri, DownloadConsumer consumer)

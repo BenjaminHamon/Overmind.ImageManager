@@ -117,7 +117,7 @@ namespace Overmind.ImageManager.WindowsClient
 			}
 		}
 
-		public ImageViewModel AddImage(Uri source, byte[] data)
+		public ImageViewModel AddImage(ImageSource source, byte[] data)
 		{
 			lock (modelLock)
 			{

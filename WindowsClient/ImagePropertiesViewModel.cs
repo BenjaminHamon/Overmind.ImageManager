@@ -20,7 +20,7 @@ namespace Overmind.ImageManager.WindowsClient
 			this.imageOperations = imageOperations;
 			this.dispatcher = dispatcher;
 
-			sourceField = model.Source?.OriginalString;
+			sourceField = model.Source.Uri?.OriginalString;
 			Format = GetFormatFromFilePath();
 
 			ErrorCollection = new Dictionary<string, List<Exception>>();
@@ -80,7 +80,7 @@ namespace Overmind.ImageManager.WindowsClient
 					ErrorCollection[nameof(Source)].Add(new ArgumentException("The URI is invalid.", nameof(Source)));
 
 				if (ErrorCollection[nameof(Source)].Any() == false)
-					model.Source = valueAsUri;
+					model.Source.Uri = valueAsUri;
 
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Source)));
 				ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(Source)));

@@ -8,5 +8,11 @@ namespace Overmind.ImageManager.Model
 	{
 		[DataMember]
 		public Uri Uri { get; set; }
+		[DataMember]
+		public string FileName { get; set; }
+		[DataMember]
+		public string Title { get; set; }
+		[DataMember]
+		public string Hash { get; set; }
 	}
 }

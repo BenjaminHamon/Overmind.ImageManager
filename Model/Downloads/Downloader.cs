@@ -87,7 +87,7 @@ namespace Overmind.ImageManager.Model.Downloads
 
 		public async Task<DownloadSource> ResolveSource(Uri uri, DownloadSourceConfiguration sourceConfiguration, CancellationToken cancellationToken)
 		{
-			DownloadSource downloadSource = new DownloadSource() { Uri = uri };
+			DownloadSource downloadSource = new DownloadSource() { WebUri = uri, DownloadUri = uri };
 
 			if (String.IsNullOrEmpty(sourceConfiguration.RootResolver) == false)
 			{
@@ -95,7 +95,7 @@ namespace Overmind.ImageManager.Model.Downloads
 
 				if (String.IsNullOrEmpty(sourceConfiguration.UriResolver) == false)
 				{
-					downloadSource.Uri = new Uri(await Execute(uri, sourceConfiguration.UriResolver, rootResult, cancellationToken));
+					downloadSource.DownloadUri = new Uri(await Execute(uri, sourceConfiguration.UriResolver, rootResult, cancellationToken));
 				}
 
 				if (String.IsNullOrEmpty(sourceConfiguration.TitleResolver) == false)
@@ -104,7 +104,7 @@ namespace Overmind.ImageManager.Model.Downloads
 				}
 			}
 
-			downloadSource.FileName = await ResolveFileName(downloadSource.Uri, cancellationToken);
+			downloadSource.FileName = await ResolveFileName(downloadSource.DownloadUri, cancellationToken);
 
 			return downloadSource;
 		}

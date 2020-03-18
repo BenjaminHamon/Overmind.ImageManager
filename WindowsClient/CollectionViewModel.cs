@@ -1,4 +1,5 @@
 ﻿using Overmind.ImageManager.Model;
+using Overmind.ImageManager.Model.Downloads;
 using Overmind.ImageManager.Model.Queries;
 using Overmind.WpfExtensions;
 using System;
@@ -127,6 +128,17 @@ namespace Overmind.ImageManager.WindowsClient
 				FilteredImages.Insert(0, newImageViewModel);
 				DisplayedImages.Insert(0, newImageViewModel);
 				return newImageViewModel;
+			}
+		}
+
+		public void UpdateImageSource(ImageViewModel image, ImageSource source)
+		{
+			lock (modelLock)
+			{
+				image.Model.Source = source;
+
+				if (SelectedImage == image)
+					SelectedImageProperties.NotifySourceChanged();
 			}
 		}
 

@@ -11,7 +11,10 @@
     "Score": 0,
     "AdditionDate": "2019-09-15T11:48:27Z",
     "Source": {
-      "Uri": "https://unsplash.com/photos/KMn4VEeEPR8"
+      "Uri": "https://unsplash.com/photos/KMn4VEeEPR8",
+      "FileName": null,
+      "Title": null,
+      "Hash": null
     }
   },
   {
@@ -26,7 +29,10 @@
     "Score": 0,
     "AdditionDate": "2019-09-15T11:51:39Z",
     "Source": {
-      "Uri": "https://unsplash.com/photos/OD9EOzfSOh0"
+      "Uri": "https://unsplash.com/photos/OD9EOzfSOh0",
+      "FileName": null,
+      "Title": null,
+      "Hash": null
     }
   },
   {
@@ -41,7 +47,10 @@
     "Score": 0,
     "AdditionDate": "2019-09-15T11:52:49Z",
     "Source": {
-      "Uri": "https://unsplash.com/photos/lBL7rSRaNGs"
+      "Uri": "https://unsplash.com/photos/lBL7rSRaNGs",
+      "FileName": null,
+      "Title": null,
+      "Hash": null
     }
   },
   {
@@ -56,7 +65,10 @@
     "Score": 0,
     "AdditionDate": "2019-09-15T11:54:10Z",
     "Source": {
-      "Uri": "https://unsplash.com/photos/ndN00KmbJ1c"
+      "Uri": "https://unsplash.com/photos/ndN00KmbJ1c",
+      "FileName": null,
+      "Title": null,
+      "Hash": null
     }
   },
   {
@@ -71,7 +83,10 @@
     "Score": 0,
     "AdditionDate": "2019-09-15T11:54:37Z",
     "Source": {
-      "Uri": "https://unsplash.com/photos/NDuPLKYRXQU"
+      "Uri": "https://unsplash.com/photos/NDuPLKYRXQU",
+      "FileName": null,
+      "Title": null,
+      "Hash": null
     }
   },
   {
@@ -86,7 +101,10 @@
     "Score": 0,
     "AdditionDate": "2019-09-15T11:55:24Z",
     "Source": {
-      "Uri": "https://unsplash.com/photos/m6RCv8K0rTM"
+      "Uri": "https://unsplash.com/photos/m6RCv8K0rTM",
+      "FileName": null,
+      "Title": null,
+      "Hash": null
     }
   },
   {
@@ -101,7 +119,10 @@
     "Score": 0,
     "AdditionDate": "2019-09-15T11:55:48Z",
     "Source": {
-      "Uri": "https://unsplash.com/photos/zNN6ubHmruI"
+      "Uri": "https://unsplash.com/photos/zNN6ubHmruI",
+      "FileName": null,
+      "Title": null,
+      "Hash": null
     }
   },
   {
@@ -116,7 +137,10 @@
     "Score": 0,
     "AdditionDate": "2019-09-15T11:56:12Z",
     "Source": {
-      "Uri": "https://unsplash.com/photos/byqgHC0XFME"
+      "Uri": "https://unsplash.com/photos/byqgHC0XFME",
+      "FileName": null,
+      "Title": null,
+      "Hash": null
     }
   },
   {
@@ -131,7 +155,10 @@
     "Score": 0,
     "AdditionDate": "2019-09-15T11:56:31Z",
     "Source": {
-      "Uri": "https://unsplash.com/photos/0Ebrm0d-G_E"
+      "Uri": "https://unsplash.com/photos/0Ebrm0d-G_E",
+      "FileName": null,
+      "Title": null,
+      "Hash": null
     }
   }
 ]

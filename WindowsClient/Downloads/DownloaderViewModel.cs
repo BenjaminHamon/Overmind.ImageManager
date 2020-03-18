@@ -16,7 +16,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 	{
 		private static readonly Logger Logger = LogManager.GetLogger(nameof(DownloaderViewModel));
 
-		private delegate void DownloadConsumer(ObservableDownload download, byte[] downloadData);
+		private delegate void DownloadConsumer(DownloadSource source, byte[] data);
 
 		public DownloaderViewModel(IDownloader downloader, CollectionViewModel collection,
 			SettingsProvider settingsProvider, IImageOperations imageOperations, Dispatcher dispatcher)
@@ -51,12 +51,17 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 		public void AddDownload(string uri)
 		{
-			AddDownload(uri, (download, downloadData) => collection.AddImage(new ImageSource() { Uri = download.Uri }, downloadData));
+			AddDownload(uri, (source, data) => collection.AddImage(CreateImageSource(source, data), data));
 		}
 
 		public void RestartDownload(ImageViewModel image)
 		{
-			AddDownload(image.Model.Source.Uri?.ToString(), (download, downloadData) => collection.UpdateImageFile(image, downloadData));
+			AddDownload(image.Model.Source.Uri?.ToString(),
+				(source, data) =>
+				{
+					collection.UpdateImageSource(image, CreateImageSource(source, data));
+					collection.UpdateImageFile(image, data);
+				});
 		}
 
 		private void AddDownload(string uri, DownloadConsumer consumer)
@@ -87,7 +92,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 				download.UpdateFileName(source.FileName);
 
 				ProgressHandler progressHandler = (_, progress, totalSize) => dispatcher.Invoke(() => download.UpdateProgress(progress, totalSize));
-				downloadData = await downloader.Download(source.Uri, progressHandler, cancellationTokenSource.Token);
+				downloadData = await downloader.Download(source.DownloadUri, progressHandler, cancellationTokenSource.Token);
 
 				if (imageOperations.IsImage(downloadData) == false)
 					throw new InvalidOperationException("The file is not an image");
@@ -98,7 +103,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 					{
 						try
 						{
-							consumer.Invoke(download, downloadData);
+							consumer.Invoke(source, downloadData);
 						}
 						catch (Exception exception)
 						{
@@ -136,6 +141,17 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 			}
 
 			return await downloader.ResolveSource(uri, new DownloadSourceConfiguration(), cancellationToken);
+		}
+
+		private ImageSource CreateImageSource(DownloadSource source, byte[] data)
+		{
+			return new ImageSource()
+			{
+				Uri = source.WebUri,
+				FileName = source.FileName,
+				Title = source.Title,
+				Hash = imageOperations.ComputeHash(data),
+			};
 		}
 
 		private DownloaderSettings TryLoadSettings()

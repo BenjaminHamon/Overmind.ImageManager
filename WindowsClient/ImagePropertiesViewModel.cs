@@ -20,7 +20,7 @@ namespace Overmind.ImageManager.WindowsClient
 			this.imageOperations = imageOperations;
 			this.dispatcher = dispatcher;
 
-			sourceField = model.Source.Uri?.OriginalString;
+			sourceUriField = model.Source.Uri?.OriginalString;
 			Format = GetFormatFromFilePath();
 
 			ErrorCollection = new Dictionary<string, List<Exception>>();
@@ -61,33 +61,44 @@ namespace Overmind.ImageManager.WindowsClient
 		public List<string> AllArtists { get; set; } = new List<string>();
 		public List<string> AllTags { get; set; } = new List<string>();
 
-		private string sourceField;
-		public string Source
+		private string sourceUriField;
+		public string SourceUri
 		{
-			get { return sourceField; }
+			get { return sourceUriField; }
 			set
 			{
 				if (String.IsNullOrWhiteSpace(value))
 					value = null;
-				if (sourceField == value)
+				if (sourceUriField == value)
 					return;
 
-				sourceField = value;
-				ErrorCollection[nameof(Source)] = new List<Exception>();
+				sourceUriField = value;
+				ErrorCollection[nameof(SourceUri)] = new List<Exception>();
 
 				Uri valueAsUri = null;
-				if ((sourceField != null) && (Uri.TryCreate(sourceField, UriKind.Absolute, out valueAsUri) == false))
-					ErrorCollection[nameof(Source)].Add(new ArgumentException("The URI is invalid.", nameof(Source)));
+				if ((sourceUriField != null) && (Uri.TryCreate(sourceUriField, UriKind.Absolute, out valueAsUri) == false))
+					ErrorCollection[nameof(SourceUri)].Add(new ArgumentException("The URI is invalid.", nameof(SourceUri)));
 
-				if (ErrorCollection[nameof(Source)].Any() == false)
+				if (ErrorCollection[nameof(SourceUri)].Any() == false)
 					model.Source.Uri = valueAsUri;
 
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Source)));
-				ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(Source)));
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SourceUri)));
+				ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(SourceUri)));
 			}
 		}
 
+		public string SourceFileName { get { return model.Source.FileName; } }
+		public string SourceTitle { get { return model.Source.Title; } }
+		public string SourceHash { get { return model.Source.Hash; } }
 		public DateTime AdditionDate { get { return model.AdditionDate.ToLocalTime(); } }
+
+		public void NotifySourceChanged()
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SourceUri)));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SourceFileName)));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SourceTitle)));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SourceHash)));
+		}
 
 		public string Hash { get { return model.Hash; } }
 		public string Format { get; private set; }

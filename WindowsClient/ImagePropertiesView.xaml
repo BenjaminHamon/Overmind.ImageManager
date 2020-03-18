@@ -88,12 +88,21 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="Uri"/>
-                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=Source}" TextWrapping="Wrap"/>
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Added on"/>
-                    <TextBox Grid.Row="1" Grid.Column="1" IsReadOnly="True">
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=SourceUri}"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="File name"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Path=SourceFileName, Mode=OneWay}" IsReadOnly="True"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Title"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Path=SourceTitle, Mode=OneWay}" IsReadOnly="True"/>
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Hash"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Path=SourceHash, Mode=OneWay}" IsReadOnly="True"/>
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Added on"/>
+                    <TextBox Grid.Row="4" Grid.Column="1" IsReadOnly="True">
                         <Binding Path="AdditionDate" Mode="OneWay" StringFormat="g"
                                  ConverterCulture="{x:Static globalization:CultureInfo.CurrentCulture}"/>
                     </TextBox>

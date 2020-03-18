@@ -173,6 +173,12 @@
         </Style>
 
         <!-- Expanders -->
+        <Style x:Key="ExpanderHeaderTextStyle" TargetType="TextBlock">
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
         <Style x:Key="ExpanderHeaderStyle" TargetType="ToggleButton">
             <Setter Property="Template">
                 <Setter.Value>

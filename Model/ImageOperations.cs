@@ -43,5 +43,13 @@ namespace Overmind.ImageManager.Model
 			using (Image image = Image.FromStream(stream))
 				return new ImageFormatConverter().ConvertToString(image.RawFormat).ToLower();
 		}
+
+		/// <summary>Get an image dimensions from its data</summary>
+		public string GetDimensions(byte[] data)
+		{
+			using (MemoryStream stream = new MemoryStream(data))
+			using (Image image = Image.FromStream(stream))
+				return image.Width + "x" + image.Height;
+		}
 	}
 }

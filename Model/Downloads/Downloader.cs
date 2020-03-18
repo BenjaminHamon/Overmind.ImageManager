@@ -104,7 +104,34 @@ namespace Overmind.ImageManager.Model.Downloads
 				}
 			}
 
+			downloadSource.FileName = await ResolveFileName(downloadSource.Uri, cancellationToken);
+
 			return downloadSource;
+		}
+
+		public async Task<string> ResolveFileName(Uri uri, CancellationToken cancellationToken)
+		{
+			if (uri.IsFile)
+				return Path.GetFileName(uri.LocalPath);
+
+			if ((uri.Scheme == "http") || (uri.Scheme == "https"))
+			{
+				using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Head, uri))
+				using (HttpResponseMessage response = await httpClient.SendAsync(request, cancellationToken))
+				{
+					response.EnsureSuccessStatusCode();
+
+					if (response.Content.Headers.ContentDisposition != null)
+						return response.Content.Headers.ContentDisposition.FileName;
+				}
+
+				if (uri.AbsoluteUri.EndsWith("/") == false)
+					return uri.Segments.Last();
+
+				return null;
+			}
+
+			throw new ArgumentException(String.Format("Scheme is unsupported: '{0}'", uri.Scheme));
 		}
 
 		private async Task<string> Execute(Uri sourceUri, string expression, string input, CancellationToken cancellationToken)

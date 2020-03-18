@@ -1,7 +1,6 @@
 ﻿using Overmind.WpfExtensions;
 using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading;
 
 namespace Overmind.ImageManager.WindowsClient.Downloads
@@ -19,8 +18,10 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		private CancellationTokenSource cancellationTokenSource;
 
 		public Uri Uri { get; private set; }
+		public string FileName { get; private set; }
+
 		public string UriString { get { return Uri == null ? uriStringField : Uri.ToString(); } }
-		public string Name { get { return Uri == null ? uriStringField : Uri.UnescapeDataString(Uri.Segments.Last()); } }
+		public string Name { get { return FileName ?? UriString; } }
 
 		public bool IsDownloading { get; private set; }
 		public bool IsCompleted { get; private set; }
@@ -63,6 +64,14 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsDownloading)));
 			CancelCommand.RaiseCanExecuteChanged();
+		}
+
+		public void UpdateFileName(string fileName)
+		{
+			this.FileName = fileName;
+
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FileName)));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
 		}
 
 		public void UpdateProgress(long progress, long totalSize)

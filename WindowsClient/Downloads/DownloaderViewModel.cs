@@ -83,10 +83,11 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 				dispatcher.Invoke(() => download.Start(uri, cancellationTokenSource));
 
-				uri = await ResolveUri(uri, cancellationTokenSource.Token);
+				DownloadSource source = await ResolveSource(uri, cancellationTokenSource.Token);
+				download.UpdateFileName(source.FileName);
 
 				ProgressHandler progressHandler = (_, progress, totalSize) => dispatcher.Invoke(() => download.UpdateProgress(progress, totalSize));
-				downloadData = await downloader.Download(uri, progressHandler, cancellationTokenSource.Token);
+				downloadData = await downloader.Download(source.Uri, progressHandler, cancellationTokenSource.Token);
 
 				if (imageOperations.IsImage(downloadData) == false)
 					throw new InvalidOperationException("The file is not an image");
@@ -123,7 +124,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 			}
 		}
 
-		private async Task<Uri> ResolveUri(Uri uri, CancellationToken cancellationToken)
+		private async Task<DownloadSource> ResolveSource(Uri uri, CancellationToken cancellationToken)
 		{
 			if ((uri.Scheme == "http") || (uri.Scheme == "https"))
 			{
@@ -131,10 +132,10 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 					.SourceConfigurationCollection.FirstOrDefault(configuration => configuration.DomainName == uri.Host);
 
 				if (sourceConfiguration != null)
-					return (await downloader.ResolveSource(uri, sourceConfiguration, cancellationToken)).Uri;
+					return await downloader.ResolveSource(uri, sourceConfiguration, cancellationToken);
 			}
 
-			return uri;
+			return await downloader.ResolveSource(uri, new DownloadSourceConfiguration(), cancellationToken);
 		}
 
 		private DownloaderSettings TryLoadSettings()

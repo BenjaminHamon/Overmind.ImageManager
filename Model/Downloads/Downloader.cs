@@ -85,14 +85,36 @@ namespace Overmind.ImageManager.Model.Downloads
 			}
 		}
 
-		public async Task<Uri> ResolveUri(Uri uri, string expression, CancellationToken cancellationToken)
+		public async Task<DownloadSource> ResolveSource(Uri uri, DownloadSourceConfiguration sourceConfiguration, CancellationToken cancellationToken)
+		{
+			DownloadSource downloadSource = new DownloadSource() { Uri = uri };
+
+			if (String.IsNullOrEmpty(sourceConfiguration.RootResolver) == false)
+			{
+				string rootResult = await Execute(uri, sourceConfiguration.RootResolver, uri.ToString(), cancellationToken);
+
+				if (String.IsNullOrEmpty(sourceConfiguration.UriResolver) == false)
+				{
+					downloadSource.Uri = new Uri(await Execute(uri, sourceConfiguration.UriResolver, rootResult, cancellationToken));
+				}
+
+				if (String.IsNullOrEmpty(sourceConfiguration.TitleResolver) == false)
+				{
+					downloadSource.Title = await Execute(uri, sourceConfiguration.TitleResolver, rootResult, cancellationToken);
+				}
+			}
+
+			return downloadSource;
+		}
+
+		private async Task<string> Execute(Uri sourceUri, string expression, string input, CancellationToken cancellationToken)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 
 			List<string> commandList = expression.Split(new string[] { "|" }, StringSplitOptions.None)
 				.Select(command => command.Trim()).ToList();
 
-			string result = uri.ToString();
+			string result = input;
 
 			foreach (string command in commandList)
 			{
@@ -100,14 +122,14 @@ namespace Overmind.ImageManager.Model.Downloads
 
 				switch (commandElements[0])
 				{
-					case "Request": result = await ExecuteRequest(String.Format(commandElements.ElementAtOrDefault(1) ?? result, uri.Segments), cancellationToken); break;
-					case "Json": result = ExecuteJson(result, String.Format(commandElements[1], uri.Segments)); break;
-					case "XPath": result = ExecuteXPath(result, String.Format(commandElements[1], uri.Segments)); break;
+					case "Request": result = await ExecuteRequest(String.Format(commandElements.ElementAtOrDefault(1) ?? result, sourceUri.Segments), cancellationToken); break;
+					case "Json": result = ExecuteJson(result, String.Format(commandElements[1], sourceUri.Segments)); break;
+					case "XPath": result = ExecuteXPath(result, String.Format(commandElements[1], sourceUri.Segments)); break;
 					default: throw new ArgumentException(String.Format("Unknown operation '{0}'", commandElements[0]));
 				}
 			}
 
-			return new Uri(result);
+			return result;
 		}
 
 		private async Task<string> ExecuteRequest(string uri, CancellationToken cancellationToken)

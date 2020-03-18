@@ -85,7 +85,11 @@
                                                         ItemTemplate="{StaticResource ExceptionTemplate}"/>
                                                 <ItemsControl ItemsSource="{Binding Path=WarningCollection[DomainName]}"
                                                         ItemTemplate="{StaticResource ExceptionTemplate}"/>
-                                                <ItemsControl ItemsSource="{Binding Path=WarningCollection[Expression]}"
+                                                <ItemsControl ItemsSource="{Binding Path=WarningCollection[RootResolver]}"
+                                                        ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                <ItemsControl ItemsSource="{Binding Path=WarningCollection[UriResolver]}"
+                                                        ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                <ItemsControl ItemsSource="{Binding Path=WarningCollection[TitleResolver]}"
                                                         ItemTemplate="{StaticResource ExceptionTemplate}"/>
                                             </StackPanel>
                                         </fa:ImageAwesome.ToolTip>
@@ -101,7 +105,11 @@
                                                         ItemTemplate="{StaticResource ExceptionTemplate}"/>
                                                 <ItemsControl ItemsSource="{Binding Path=ErrorCollection[DomainName]}"
                                                         ItemTemplate="{StaticResource ExceptionTemplate}"/>
-                                                <ItemsControl ItemsSource="{Binding Path=ErrorCollection[Expression]}"
+                                                <ItemsControl ItemsSource="{Binding Path=ErrorCollection[RootResolver]}"
+                                                        ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                <ItemsControl ItemsSource="{Binding Path=ErrorCollection[UriResolver]}"
+                                                        ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                <ItemsControl ItemsSource="{Binding Path=ErrorCollection[TitleResolver]}"
                                                         ItemTemplate="{StaticResource ExceptionTemplate}"/>
                                             </StackPanel>
                                         </fa:ImageAwesome.ToolTip>
@@ -121,15 +129,21 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Name"/>
                                 <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=Name}"/>
                                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Domain Name"/>
                                 <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Path=DomainName}"/>
-                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Expression"/>
-                                <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Path=Expression}"/>
-                                <Button Grid.Row="3" Grid.Column="2" Content="Remove" Width="80" HorizontalAlignment="Right">
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Root Resolver"/>
+                                <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Path=RootResolver}"/>
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Uri Resolver"/>
+                                <TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Path=UriResolver}"/>
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Title Resolver"/>
+                                <TextBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Path=TitleResolver}"/>
+                                <Button Grid.Row="5" Grid.Column="2" Content="Remove" Width="80" HorizontalAlignment="Right">
                                     <Button.Command>
                                         <Binding RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}" Path="DataContext.RemoveConfigurationCommand"/>
                                     </Button.Command>

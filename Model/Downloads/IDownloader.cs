@@ -9,6 +9,6 @@ namespace Overmind.ImageManager.Model.Downloads
 	public interface IDownloader
 	{
 		Task<byte[]> Download(Uri uri, ProgressHandler progressHandler, CancellationToken cancellationToken);
-		Task<Uri> ResolveUri(Uri uri, string expression, CancellationToken cancellationToken);
+		Task<DownloadSource> ResolveSource(Uri uri, DownloadSourceConfiguration sourceConfiguration, CancellationToken cancellationToken);
 	}
 }

@@ -66,6 +66,7 @@
     <Compile Include="CollectionProvider.cs" />
     <Compile Include="Downloads\Downloader.cs" />
     <Compile Include="Downloads\DownloaderSettings.cs" />
+    <Compile Include="Downloads\DownloadSource.cs" />
     <Compile Include="Downloads\DownloadSourceConfiguration.cs" />
     <Compile Include="Downloads\IDownloader.cs" />
     <Compile Include="FileNameFormatter.cs" />

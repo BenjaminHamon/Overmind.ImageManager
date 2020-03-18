@@ -90,16 +90,46 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 			}
 		}
 
-		public string Expression
+		public string RootResolver
 		{
-			get { return Model.Expression; }
+			get { return Model.RootResolver; }
 			set
 			{
-				if (Model.Expression == value)
+				if (Model.RootResolver == value)
 					return;
 
-				Model.Expression = value;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Expression)));
+				Model.RootResolver = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RootResolver)));
+
+				UpdateValidation();
+			}
+		}
+
+		public string UriResolver
+		{
+			get { return Model.UriResolver; }
+			set
+			{
+				if (Model.UriResolver == value)
+					return;
+
+				Model.UriResolver = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UriResolver)));
+
+				UpdateValidation();
+			}
+		}
+
+		public string TitleResolver
+		{
+			get { return Model.TitleResolver; }
+			set
+			{
+				if (Model.TitleResolver == value)
+					return;
+
+				Model.TitleResolver = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TitleResolver)));
 
 				UpdateValidation();
 			}

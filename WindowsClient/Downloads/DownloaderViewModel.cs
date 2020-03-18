@@ -131,7 +131,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 					.SourceConfigurationCollection.FirstOrDefault(configuration => configuration.DomainName == uri.Host);
 
 				if (sourceConfiguration != null)
-					return await downloader.ResolveUri(uri, sourceConfiguration.Expression, cancellationToken);
+					return (await downloader.ResolveSource(uri, sourceConfiguration, cancellationToken)).Uri;
 			}
 
 			return uri;

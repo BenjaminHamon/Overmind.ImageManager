@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 
 namespace Overmind.ImageManager.WallpaperService
@@ -29,7 +30,7 @@ namespace Overmind.ImageManager.WallpaperService
 			ApplyConfigurationCommand = new DelegateCommand<object>(_ => ApplyConfiguration());
 			ReloadSettingsCommand = new DelegateCommand<object>(_ => ReloadSettings());
 			NextWallpaperCommand = new DelegateCommand<object>(_ => wallpaperService.CycleNow(), _ => wallpaperService != null);
-			CopyWallpaperHashCommand = new DelegateCommand<object>(_ => Clipboard.SetText(wallpaperService.CurrentWallpaper.Hash), _ => wallpaperService != null);
+			CopyWallpaperHashCommand = new DelegateCommand<object>(_ => CopyWallpaperHash(), _ => wallpaperService != null);
 		}
 
 		private readonly SettingsProvider settingsProvider;
@@ -152,6 +153,23 @@ namespace Overmind.ImageManager.WallpaperService
 			string savePath = Path.Combine(wallpaperStorage, "Wallpaper.jpg");
 			WindowsWallpaper.Save(imagePath, savePath, ImageFormat.Jpeg, 100);
 			WindowsWallpaper.Set(savePath);
+		}
+
+		private void CopyWallpaperHash()
+		{
+			ImageModel wallpaper = wallpaperService.GetCurrentWallpaper();
+
+			if (wallpaper == null)
+				return;
+
+			try
+			{
+				Clipboard.SetText(wallpaper.Hash);
+			}
+			catch (COMException exception)
+			{
+				Logger.Error(exception, "Failed to copy wallpaper hash to clipboard");
+			}
 		}
 	}
 }

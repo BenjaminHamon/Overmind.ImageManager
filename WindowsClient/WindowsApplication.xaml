@@ -35,8 +35,9 @@
         <SolidColorBrush x:Key="DefaultBorderBrush" Color="#555555"/>
         <SolidColorBrush x:Key="DisabledButtonBrush" Color="#EEEEEE"/>
         <SolidColorBrush x:Key="DisabledBorderBrush" Color="#CCCCCC"/>
-        <SolidColorBrush x:Key="HighlightBrush" Color="#7FDBFF" Opacity="0.5"/>
-        <SolidColorBrush x:Key="PressBrush" Color="#4CCFFF" Opacity="0.5"/>
+        <SolidColorBrush x:Key="SelectionHighlightBrush" Color="#7FDBFF" Opacity="0.5"/>
+        <SolidColorBrush x:Key="HighlightBrush" Color="#7FDBFF" Opacity="0.3"/>
+        <SolidColorBrush x:Key="PressBrush" Color="#4CCFFF" Opacity="0.3"/>
 
         <!-- Menus -->
         <Style TargetType="Menu">

@@ -10,13 +10,26 @@
                  Padding="2" PreviewKeyDown="HandleInput" TextChanged="HandleTextChanged"/>
         <Popup x:Name="popup" x:FieldModifier="private">
             <!-- The TextBox needs to keep the focus, so the ListBox is not focusable and its input and selection are handled manually -->
-            <ListBox x:Name="listBox" x:FieldModifier="private" MaxHeight="190" MinWidth="300">
+            <ListBox x:Name="listBox" x:FieldModifier="private" MaxHeight="200" MinWidth="300">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
-                        <Setter Property="Margin" Value="0"/>
-                        <Setter Property="Padding" Value="0"/>
-                        <Setter Property="BorderThickness" Value="0"/>
-                        <Setter Property="Focusable" Value="False"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <Border Name="Border">
+                                        <ContentPresenter />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="true">
+                                            <Setter TargetName="Border" Property="Background" Value="{StaticResource HighlightBrush}"/>
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="true">
+                                            <Setter TargetName="Border" Property="Background" Value="{StaticResource SelectionHighlightBrush}"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
                         <EventSetter Event="PreviewMouseDown" Handler="SelectValue"/>
                         <EventSetter Event="MouseUp" Handler="SetTextValue"/>
                     </Style>

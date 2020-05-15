@@ -104,10 +104,11 @@ namespace Overmind.ImageManager.WallpaperService
 		{
 			wallpaperSettings = TryLoadSettings();
 
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConfigurationCollection)));
+
 			ActiveConfiguration = wallpaperSettings.ConfigurationCollection
 				.SingleOrDefault(configuration => configuration.Name == wallpaperSettings.ActiveConfiguration);
 
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConfigurationCollection)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActiveConfiguration)));
 		}
 

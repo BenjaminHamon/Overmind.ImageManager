@@ -7,7 +7,7 @@ import sys
 
 def load_configuration(environment):
 	configuration = {
-		"project": "Overmind.ImageManager",
+		"project_identifier": "Overmind.ImageManager",
 		"project_name": "Overmind Image Manager",
 		"project_version": load_project_version(environment["git_executable"], "3.0"),
 	}

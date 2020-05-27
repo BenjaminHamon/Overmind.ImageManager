@@ -80,7 +80,7 @@ def load_artifacts(artifact_directory):
 
 		# Compilation output
 		"binaries": {
-			"file_name": "{project}.{assembly}_{version}_Binaries_{configuration}",
+			"file_name": "{project}.{assembly}_{version}+{revision}_Binaries_{configuration}",
 			"installation_directory": os.path.join(artifact_directory, "{assembly}", "Binaries", "{configuration}"),
 			"path_in_repository": "Binaries",
 			"filesets": [
@@ -90,7 +90,7 @@ def load_artifacts(artifact_directory):
 
 		# Development package
 		"package": {
-			"file_name": "{project}_{version}_Package_{configuration}",
+			"file_name": "{project}_{version}+{revision}_Package_{configuration}",
 			"path_in_repository": "Packages",
 			"filesets": [
 				{ "identifier": "binaries", "path_in_archive": ".", "parameters": { "assembly": "WallpaperService" } },
@@ -101,7 +101,7 @@ def load_artifacts(artifact_directory):
 
 		# Release package
 		"package_final": {
-			"file_name": "{project}_{version}_PackageFinal",
+			"file_name": "{project}_{version}+{revision}_PackageFinal",
 			"path_in_repository": "Packages",
 			"filesets": [
 				{ "identifier": "binaries_stripped", "path_in_archive": ".", "parameters": { "assembly": "WallpaperService", "configuration": "Release" } },

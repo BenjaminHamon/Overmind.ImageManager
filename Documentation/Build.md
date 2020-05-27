@@ -7,7 +7,7 @@ This page describes how to build the project from its sources.
 
 # Development
 
-The solution `Overmind.ImageManager.sln` can be opened and built with Visual Studio. The paths to the required executables are defined in `Environment.props` and can be overriden locally by creating a similar file `Environment.props.user`.
+The solution `Overmind.ImageManager.sln` can be opened and built with Visual Studio. The paths to the required executables are defined in `Directory.Build.props` and can be overriden locally by creating a similar file `Directory.Build.props.user`.
 
 Additionally, the project include commands to automate development related tasks. They are exposed by the `development/main.py` script. Check the script help, using the `--help` option, for information about commands. You can also run commands with the `--simulate` option to check their behavior before actually running them.
 

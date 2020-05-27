@@ -12,9 +12,6 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "/>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "/>
 
-  <Import Project="$(SolutionDir)/Environment.props"/>
-  <Import Project="$(SolutionDir)/Environment.props.user" Condition="Exists('$(SolutionDir)/Environment.props.user')"/>
-
   <ItemGroup>
     <None Include="ProductInformation.template.cs" />
   </ItemGroup>
@@ -24,7 +21,7 @@
   <Target Name="Rebuild" DependsOnTargets="Clean;Build"/>
 
   <Target Name="Metadata" BeforeTargets="PrepareForBuild" Condition="$(BuildingInsideVisualStudio) == 'true'">
-    <Exec Command="$(PythonExecutable) $(SolutionDir)/development/main.py --verbosity warning metadata"/>
+    <Exec Command="$(PythonExecutable) $(SolutionDir)\development\main.py --verbosity warning metadata"/>
   </Target>
 
 </Project>

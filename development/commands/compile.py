@@ -8,7 +8,7 @@ logger = logging.getLogger("Main")
 
 def configure_argument_parser(environment, configuration, subparsers): # pylint: disable = unused-argument
 	parser = subparsers.add_parser("compile", help = "compile the project")
-	parser.add_argument("--configuration", required = True, choices = configuration["compilation_configurations"],
+	parser.add_argument("--configuration", required = True, choices = configuration["dotnet_compilation_configurations"],
 		type = lambda s: s.lower(), help = "set the solution configuration")
 	return parser
 
@@ -22,8 +22,7 @@ def run(environment, configuration, arguments): # pylint: disable = unused-argum
 	if msbuild_executable is None or not shutil.which(msbuild_executable):
 		raise RuntimeError("MSBuild is required (Path: '%s')" % msbuild_executable)
 
-	solution = configuration["project"] + ".sln"
-	compile(nuget_executable, msbuild_executable, solution, arguments.configuration, arguments.verbosity == "debug", arguments.simulate)
+	compile(nuget_executable, msbuild_executable, configuration["dotnet_solution"], arguments.configuration, arguments.verbosity == "debug", arguments.simulate)
 
 
 def compile( # pylint: disable = redefined-builtin, too-many-arguments

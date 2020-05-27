@@ -9,7 +9,7 @@ logger = logging.getLogger("Main")
 
 def configure_argument_parser(environment, configuration, subparsers): # pylint: disable = unused-argument
 	parser = subparsers.add_parser("test", help = "run the test suite")
-	parser.add_argument("--configuration", required = True, choices = configuration["compilation_configurations"],
+	parser.add_argument("--configuration", required = True, choices = configuration["dotnet_compilation_configurations"],
 		type = lambda s: s.lower(), help = "set the solution configuration")
 	parser.add_argument("--filter", metavar = "<expression>", help = "specify an expression to select tests to run")
 	return parser
@@ -20,7 +20,8 @@ def run(environment, configuration, arguments): # pylint: disable = unused-argum
 	if vstest_executable is None or not shutil.which(vstest_executable):
 		raise RuntimeError("VSTest is required (Path: '%s')" % vstest_executable)
 
-	test_container = os.path.join(configuration["artifact_directory"], "Test", "Binaries", arguments.configuration, configuration["project"] + ".Test.dll")
+	test_container = configuration["dotnet_solution"][:-4] + ".Test.dll"
+	test_container = os.path.join(configuration["artifact_directory"], "Test", "Binaries", arguments.configuration, test_container)
 	test(vstest_executable, test_container, arguments.configuration, arguments.filter, simulate = arguments.simulate)
 
 

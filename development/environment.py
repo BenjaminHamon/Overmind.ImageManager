@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import platform
 import sys
 
 
@@ -64,25 +65,35 @@ def configure_log_file(environment_instance, file_path):
 	logging.root.addHandler(file_handler)
 
 
-def find_msbuild(version):
-	possible_paths = [
-		"C:/Program Files (x86)/Microsoft Visual Studio/%s/Community/MSBuild/Current/Bin/MSBuild.exe" % version,
-	]
+def find_msbuild(visual_studio_version):
+	if platform.system() == "Windows":
+		visual_studio_directory = os.path.join(os.environ["ProgramFiles(x86)"], "Microsoft Visual Studio", visual_studio_version)
 
-	for file_path in possible_paths:
-		if os.path.exists(file_path):
-			return file_path
+		possible_paths = [
+			os.path.join(visual_studio_directory, "Community", "MSBuild", "Current", "Bin", "MSBuild.exe"),
+		]
 
-	return "msbuild"
+		for file_path in possible_paths:
+			if os.path.exists(file_path):
+				return file_path
+
+		return "msbuild" + "_" + visual_studio_version
+
+	raise ValueError("Unsupported platform: '%s'" % platform.system())
 
 
-def find_vstest(version):
-	possible_paths = [
-		"C:/Program Files (x86)/Microsoft Visual Studio/%s/Community/Common7/IDE/CommonExtensions/Microsoft/TestWindow/VSTest.Console.exe" % version,
-	]
+def find_vstest(visual_studio_version):
+	if platform.system() == "Windows":
+		visual_studio_directory = os.path.join(os.environ["ProgramFiles(x86)"], "Microsoft Visual Studio", visual_studio_version)
 
-	for file_path in possible_paths:
-		if os.path.exists(file_path):
-			return file_path
+		possible_paths = [
+			os.path.join(visual_studio_directory, "Community", "Common7", "IDE", "CommonExtensions", "Microsoft", "TestWindow", "VSTest.Console.exe"),
+		]
 
-	return "vstest"
+		for file_path in possible_paths:
+			if os.path.exists(file_path):
+				return file_path
+
+		return "vstest" + "_" + visual_studio_version
+
+	raise ValueError("Unsupported platform: '%s'" % platform.system())

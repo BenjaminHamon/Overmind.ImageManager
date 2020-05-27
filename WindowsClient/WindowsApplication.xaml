@@ -253,6 +253,7 @@
                     <Setter Property="Padding" Value="4"/>
                     <Setter Property="MinHeight" Value="32"/>
                     <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    <Setter Property="TextWrapping" Value="Wrap"/>
                     <Setter Property="ToolTipService.ShowDuration" Value="30000"/>
                     <Style.Triggers>
                         <Trigger Property="IsReadOnly" Value="True">
@@ -276,9 +277,11 @@
                             <Setter Property="Padding" Value="1"/>
                             <Setter Property="MinHeight" Value="20"/>
                             <Setter Property="MinWidth" Value="20"/>
+                            <Setter Property="TextWrapping" Value="Wrap"/>
                         </Style>
                         <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                             <Setter Property="Margin" Value="0"/>
+                            <Setter Property="VerticalAlignment" Value="Top"/>
                         </Style>
                     </Style.Resources>
                 </Style>

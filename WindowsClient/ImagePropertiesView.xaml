@@ -91,7 +91,7 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="Uri"/>
-                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=Source}" TextWrapping="Wrap"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=Source}"/>
                     <TextBlock Grid.Row="1" Grid.Column="0" Text="Added on"/>
                     <TextBox Grid.Row="1" Grid.Column="1" IsReadOnly="True">
                         <Binding Path="AdditionDate" Mode="OneWay" StringFormat="g"

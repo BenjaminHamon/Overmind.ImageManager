@@ -1,5 +1,6 @@
 import datetime
 import importlib
+import os
 import subprocess
 import sys
 
@@ -8,19 +9,8 @@ def load_configuration(environment):
 	configuration = {
 		"project": "Overmind.ImageManager",
 		"project_name": "Overmind Image Manager",
-		"project_version": { "identifier": "3.0" },
+		"project_version": load_project_version(environment["git_executable"], "3.0"),
 	}
-
-	branch = subprocess.check_output([ environment["git_executable"], "rev-parse", "--abbrev-ref", "HEAD" ]).decode("utf-8").strip()
-	revision = subprocess.check_output([ environment["git_executable"], "rev-parse", "--short=10", "HEAD" ]).decode("utf-8").strip()
-	revision_date = int(subprocess.check_output([ environment["git_executable"], "show", "--no-patch", "--format=%ct", revision ]).decode("utf-8").strip())
-	revision_date = datetime.datetime.utcfromtimestamp(revision_date).replace(microsecond = 0).isoformat() + "Z"
-
-	configuration["project_version"]["branch"] = branch
-	configuration["project_version"]["revision"] = revision
-	configuration["project_version"]["date"] = revision_date
-	configuration["project_version"]["numeric"] = "{identifier}".format(**configuration["project_version"])
-	configuration["project_version"]["full"] = "{identifier}-{revision}".format(**configuration["project_version"])
 
 	configuration["author"] = "Benjamin Hamon"
 	configuration["author_email"] = "hamon.benjamin@gmail.com"
@@ -38,17 +28,40 @@ def load_configuration(environment):
 
 	configuration["artifact_directory"] = "Artifacts"
 
-	configuration["filesets"] = {
+	configuration["filesets"] = load_filesets(configuration["artifact_directory"])
+	configuration["artifacts"] = load_artifacts(configuration["artifact_directory"])
+
+	return configuration
+
+
+def load_project_version(git_executable, identifier):
+	branch = subprocess.check_output([ git_executable, "rev-parse", "--abbrev-ref", "HEAD" ], universal_newlines = True).strip()
+	revision = subprocess.check_output([ git_executable, "rev-parse", "--short=10", "HEAD" ], universal_newlines = True).strip()
+	revision_date = int(subprocess.check_output([ git_executable, "show", "--no-patch", "--format=%ct", revision ], universal_newlines = True).strip())
+	revision_date = datetime.datetime.utcfromtimestamp(revision_date).replace(microsecond = 0).isoformat() + "Z"
+
+	return {
+		"identifier": identifier,
+		"numeric": identifier,
+		"full": identifier + "+" + revision,
+		"branch": branch,
+		"revision": revision,
+		"date": revision_date,
+	}
+
+
+def load_filesets(artifact_directory):
+	return {
 
 		# Program binaries for development (executables, libraries, symbols and documentation)
 		"binaries": {
-			"path_in_workspace": "Artifacts/{assembly}/Binaries/{configuration}",
+			"path_in_workspace": os.path.join(artifact_directory, "{assembly}", "Binaries", "{configuration}"),
 			"file_patterns": [ "{project}.{assembly}.exe", "{project}.{assembly}.exe.config", "*.dll", "*.pdb", "*.xml" ],
 		},
 
 		# Program binaries for release (executables and libraries)
 		"binaries_stripped": {
-			"path_in_workspace": "Artifacts/{assembly}/Binaries/{configuration}",
+			"path_in_workspace": os.path.join(artifact_directory, "{assembly}", "Binaries", "{configuration}"),
 			"file_patterns": [ "{project}.{assembly}.exe", "{project}.{assembly}.exe.config", "*.dll" ],
 		},
 
@@ -57,14 +70,17 @@ def load_configuration(environment):
 			"path_in_workspace": ".",
 			"file_patterns": [ "About.md", "License.txt" ],
 		},
+
 	}
 
-	configuration["artifacts"] = {
+
+def load_artifacts(artifact_directory):
+	return {
 
 		# Compilation output
 		"binaries": {
 			"file_name": "{project}.{assembly}_{version}_Binaries_{configuration}",
-			"installation_directory": "Artifacts/{assembly}/Binaries/{configuration}",
+			"installation_directory": os.path.join(artifact_directory, "{assembly}", "Binaries", "{configuration}"),
 			"path_in_repository": "Binaries",
 			"filesets": [
 				{ "identifier": "binaries", "path_in_archive": "." },
@@ -92,9 +108,8 @@ def load_configuration(environment):
 				{ "identifier": "resources", "path_in_archive": "." },
 			],
 		},
-	}
 
-	return configuration
+	}
 
 
 def load_commands():

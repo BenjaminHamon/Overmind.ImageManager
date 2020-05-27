@@ -10,7 +10,7 @@ def configure_argument_parser(environment, configuration, subparsers): # pylint:
 
 
 def run(environment, configuration, arguments): # pylint: disable = unused-argument
-	write_product_information(configuration, arguments.simulate)
+	write_product_information(configuration, simulate = arguments.simulate)
 
 
 def write_product_information(configuration, simulate):

@@ -22,7 +22,7 @@ def run(environment, configuration, arguments): # pylint: disable = unused-argum
 	if msbuild_executable is None or not shutil.which(msbuild_executable):
 		raise RuntimeError("MSBuild is required (Path: '%s')" % msbuild_executable)
 
-	compile(nuget_executable, msbuild_executable, configuration["dotnet_solution"], arguments.configuration, arguments.verbosity == "debug", arguments.simulate)
+	compile(nuget_executable, msbuild_executable, configuration["dotnet_solution"], arguments.configuration, arguments.verbosity == "debug", simulate = arguments.simulate)
 
 
 def compile( # pylint: disable = redefined-builtin, too-many-arguments

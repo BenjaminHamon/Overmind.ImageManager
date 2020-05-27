@@ -18,8 +18,8 @@
     <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
-    <IntermediateOutputPath>$(SolutionDir)/.build/Test/Intermediate/$(Configuration)</IntermediateOutputPath>
-    <OutputPath>$(SolutionDir)/.build/Test/Binaries/$(Configuration)</OutputPath>
+    <IntermediateOutputPath>$(SolutionDir)/Artifacts/Test/Intermediate/$(Configuration)</IntermediateOutputPath>
+    <OutputPath>$(SolutionDir)/Artifacts/Test/Binaries/$(Configuration)</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -49,7 +49,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\.build\Metadata\ProductInformation.cs">
+    <Compile Include="..\Artifacts\Metadata\ProductInformation.cs">
       <Link>Properties\ProductInformation.cs</Link>
     </Compile>
     <Compile Include="CollectionModelTest.cs" />

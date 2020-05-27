@@ -36,17 +36,19 @@ def load_configuration(environment):
 
 	configuration["project_identifier_for_artifact_server"] = "ImageManager"
 
+	configuration["artifact_directory"] = "Artifacts"
+
 	configuration["filesets"] = {
 
 		# Program binaries for development (executables, libraries, symbols and documentation)
 		"binaries": {
-			"path_in_workspace": ".build/{assembly}/Binaries/{configuration}",
+			"path_in_workspace": "Artifacts/{assembly}/Binaries/{configuration}",
 			"file_patterns": [ "{project}.{assembly}.exe", "{project}.{assembly}.exe.config", "*.dll", "*.pdb", "*.xml" ],
 		},
 
 		# Program binaries for release (executables and libraries)
 		"binaries_stripped": {
-			"path_in_workspace": ".build/{assembly}/Binaries/{configuration}",
+			"path_in_workspace": "Artifacts/{assembly}/Binaries/{configuration}",
 			"file_patterns": [ "{project}.{assembly}.exe", "{project}.{assembly}.exe.config", "*.dll" ],
 		},
 
@@ -62,7 +64,7 @@ def load_configuration(environment):
 		# Compilation output
 		"binaries": {
 			"file_name": "{project}.{assembly}_{version}_Binaries_{configuration}",
-			"installation_directory": ".build/{assembly}/Binaries/{configuration}",
+			"installation_directory": "Artifacts/{assembly}/Binaries/{configuration}",
 			"path_in_repository": "Binaries",
 			"filesets": [
 				{ "identifier": "binaries", "path_in_archive": "." },

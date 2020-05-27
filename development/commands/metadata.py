@@ -23,7 +23,7 @@ def write_product_information(configuration, simulate):
 		"assembly_informational_version": configuration["project_version"]["full"],
 	}
 
-	output_directory = os.path.join(".build", "Metadata")
+	output_directory = os.path.join(configuration["artifact_directory"], "Metadata")
 	if not simulate and not os.path.isdir(output_directory):
 		os.makedirs(output_directory)
 

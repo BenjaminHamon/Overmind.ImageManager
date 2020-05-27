@@ -1,4 +1,5 @@
 import logging
+import os
 import shutil
 import subprocess
 
@@ -19,8 +20,7 @@ def run(environment, configuration, arguments): # pylint: disable = unused-argum
 	if vstest_executable is None or not shutil.which(vstest_executable):
 		raise RuntimeError("VSTest is required (Path: '%s')" % vstest_executable)
 
-	test_container = ".build/{assembly}/Binaries/{configuration}/{project}.{assembly}.dll"
-	test_container = test_container.format(project = configuration["project"], assembly = "Test", configuration = arguments.configuration)
+	test_container = os.path.join(configuration["artifact_directory"], "Test", "Binaries", arguments.configuration, configuration["project"] + ".Test.dll")
 	test(vstest_executable, test_container, arguments.configuration, arguments.filter, simulate = arguments.simulate)
 
 

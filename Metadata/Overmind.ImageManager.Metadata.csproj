@@ -5,8 +5,8 @@
     <ProjectGuid>{02518BED-C771-4097-8553-8505E7E60F59}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <IntermediateOutputPath>$(SolutionDir)/.build/Metadata/Intermediate/$(Configuration)</IntermediateOutputPath>
-    <OutputPath>$(SolutionDir)/.build/Metadata/Binaries/$(Configuration)</OutputPath>
+    <IntermediateOutputPath>$(SolutionDir)/Artifacts/Metadata/Intermediate/$(Configuration)</IntermediateOutputPath>
+    <OutputPath>$(SolutionDir)/Artifacts/Metadata/Binaries/$(Configuration)</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "/>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "/>

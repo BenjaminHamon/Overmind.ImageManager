@@ -26,11 +26,11 @@ python ./development/main.py metadata
 python ./development/main.py compile --configuration Debug
 ```
 
-The built executables can then be found in the `.build` directory, at the workspace root.
+The built executables can then be found in the `Artifacts` directory, at the workspace root.
 
 ```
-.build/WindowsClient/Binaries/Debug/Overmind.ImageManager.WindowsClient.exe
-.build/WallpaperService/Binaries/Debug/Overmind.ImageManager.WallpaperService.exe
+Artifacts/WindowsClient/Binaries/Debug/Overmind.ImageManager.WindowsClient.exe
+Artifacts/WallpaperService/Binaries/Debug/Overmind.ImageManager.WallpaperService.exe
 ```
 
 # Release
@@ -41,8 +41,8 @@ When building the project for a new release, ensure your workspace has no local 
 python ./development/main.py release
 ```
 
-The release can then be found as a zip archive in the `.artifacts` directory, at the workspace root.
+The release can then be found as a zip archive in the `Artifacts` directory, at the workspace root.
 
 ```
-.artifacts/packages/Overmind.ImageManager_$version-$revision_PackageFinal.zip
+Artifacts/Repository/Packages/Overmind.ImageManager_$version-$revision_PackageFinal.zip
 ```

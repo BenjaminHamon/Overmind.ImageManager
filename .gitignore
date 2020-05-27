@@ -1,12 +1,5 @@
-# Backup files
-*.bak
-*.bak.meta
-
-# Build
-.build/
-
-# Build artifacts
-.artifacts/
+# Artifacts
+/Artifacts/
 
 # Environment
 environment.json

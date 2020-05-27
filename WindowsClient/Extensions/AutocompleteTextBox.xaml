@@ -7,7 +7,7 @@
              x:Name="userControl" x:FieldModifier="private" LostFocus="ClosePopup">
     <Grid>
         <TextBox x:Name="textBox" x:FieldModifier="private" Text="{Binding ElementName=userControl, Path=Text}"
-                 Padding="2" PreviewKeyDown="HandleInput" TextChanged="HandleTextChanged"/>
+                 PreviewKeyDown="HandleInput" TextChanged="HandleTextChanged"/>
         <Popup x:Name="popup" x:FieldModifier="private">
             <!-- The TextBox needs to keep the focus, so the ListBox is not focusable and its input and selection are handled manually -->
             <ListBox x:Name="listBox" x:FieldModifier="private" MaxHeight="200" MinWidth="300">

@@ -118,6 +118,7 @@ def load_commands():
 		"development.commands.clean",
 		"development.commands.compile",
 		"development.commands.develop",
+		"development.commands.info",
 		"development.commands.metadata",
 		"development.commands.release",
 		"development.commands.test",

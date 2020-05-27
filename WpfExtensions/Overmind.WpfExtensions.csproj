@@ -34,7 +34,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Artifacts\Metadata\ProductInformation.cs">
+    <Compile Include="$(ArtifactDirectory)\Metadata\ProductInformation.cs">
       <Link>Properties\ProductInformation.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

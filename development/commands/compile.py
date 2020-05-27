@@ -8,8 +8,7 @@ logger = logging.getLogger("Main")
 
 def configure_argument_parser(environment, configuration, subparsers): # pylint: disable = unused-argument
 	parser = subparsers.add_parser("compile", help = "compile the project")
-	parser.add_argument("--configuration", required = True, choices = configuration["dotnet_compilation_configurations"],
-		type = lambda s: s.lower(), help = "set the solution configuration")
+	parser.add_argument("--configuration", required = True, metavar = "<configuration>", help = "set the solution configuration")
 	return parser
 
 

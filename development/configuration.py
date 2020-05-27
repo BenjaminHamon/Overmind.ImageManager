@@ -23,7 +23,6 @@ def load_configuration(environment):
 	configuration["development_dependencies"] = [ "pylint" ]
 
 	configuration["dotnet_solution"] = "Overmind.ImageManager.sln"
-	configuration["dotnet_compilation_configurations"] = [ "debug", "release" ]
 
 	configuration["project_identifier_for_artifact_server"] = "ImageManager"
 

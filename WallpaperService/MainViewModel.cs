@@ -155,11 +155,11 @@ namespace Overmind.ImageManager.WallpaperService
 		{
 			WallpaperConfiguration configuration = ActiveConfiguration;
 			WallpaperBuilder builder = new WallpaperBuilder(ImageFormat.Jpeg, 100);
-			Rectangle screenArea = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
 			string sourcePath = collectionProvider.GetImagePath(configuration.CollectionPath, image);
 			string savePath = Path.Combine(wallpaperStorage, "Wallpaper.jpg");
+			Rectangle screenArea = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
 
-			builder.Create(sourcePath, savePath, screenArea.Width, screenArea.Height);
+			builder.CreateForSingleScreen(sourcePath, savePath, screenArea.Width, screenArea.Height);
 
 			WindowsWallpaper.Set(savePath);
 		}

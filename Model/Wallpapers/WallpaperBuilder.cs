@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace Overmind.ImageManager.Model.Wallpapers
 {
+	/// <summary>A builder for creating image files suitable for wallpaper display.</summary>
 	public class WallpaperBuilder
 	{
 		public WallpaperBuilder(ImageFormat imageFormat, int imageQuality)
@@ -16,46 +17,58 @@ namespace Overmind.ImageManager.Model.Wallpapers
 		private readonly ImageFormat imageFormat;
 		private readonly int imageQuality;
 
-		public void Create(string sourcePath, string destinationPath, int screenWidth, int screenHeight)
+		/// <summary>Create a wallpaper image which will use the system settings.</summary>
+		public void Create(string sourcePath, string destinationPath)
 		{
 			using (Image sourceImage = Image.FromFile(sourcePath))
+			using (Bitmap finalImage = new Bitmap(sourceImage.Width, sourceImage.Height))
 			{
-				Rectangle drawArea = GetDrawArea(sourceImage.Width, sourceImage.Height, screenWidth, screenHeight);
+				Rectangle drawArea = new Rectangle(0, 0, sourceImage.Width, sourceImage.Height);
 
-				using (Bitmap finalImage = new Bitmap(screenWidth, screenHeight))
-				{
-					DrawResized(sourceImage, finalImage, drawArea);
-					Save(finalImage, destinationPath);
-				}
+				Draw(sourceImage, finalImage, drawArea);
+				Save(finalImage, destinationPath);
 			}
 		}
 
-		private Rectangle GetDrawArea(int sourceImageWidth, int sourceImageHeight, int screenWidth, int screenHeight)
+		/// <summary>Create a wallpaper image which will fit a single screen.</summary>
+		public void CreateForSingleScreen(string sourcePath, string destinationPath, int displayWidth, int displayHeight)
 		{
-			Rectangle drawArea = new Rectangle(0, 0, screenWidth, screenHeight);
+			using (Image sourceImage = Image.FromFile(sourcePath))
+			using (Bitmap finalImage = new Bitmap(displayWidth, displayHeight))
+			{
+				Rectangle drawArea = GetDrawArea(sourceImage.Width, sourceImage.Height, displayWidth, displayHeight);
+
+				Draw(sourceImage, finalImage, drawArea);
+				Save(finalImage, destinationPath);
+			}
+		}
+
+		private Rectangle GetDrawArea(int sourceImageWidth, int sourceImageHeight, int displayWidth, int displayHeight)
+		{
+			Rectangle drawArea = new Rectangle(0, 0, displayWidth, displayHeight);
 
 			float sourceRatio = (float) sourceImageWidth / sourceImageHeight;
-			float screenRatio = (float) screenWidth / screenHeight;
+			float screenRatio = (float) displayWidth / displayHeight;
 
 			if (sourceRatio > screenRatio)
 			{
-				drawArea.Width = screenWidth;
-				drawArea.Height = (int) ((float) screenWidth * sourceImageHeight / sourceImageWidth);
-				drawArea.Y = (screenHeight - drawArea.Height) / 2;
+				drawArea.Width = displayWidth;
+				drawArea.Height = (int) ((float) displayWidth * sourceImageHeight / sourceImageWidth);
+				drawArea.Y = (displayHeight - drawArea.Height) / 2;
 			}
 
 			if (sourceRatio < screenRatio)
 			{
-				drawArea.Width = (int) ((float) screenHeight * sourceImageWidth / sourceImageHeight);
-				drawArea.Height = screenHeight;
-				drawArea.X = (screenWidth - drawArea.Width) / 2;
+				drawArea.Width = (int) ((float) displayHeight * sourceImageWidth / sourceImageHeight);
+				drawArea.Height = displayHeight;
+				drawArea.X = (displayWidth - drawArea.Width) / 2;
 			}
 
 			return drawArea;
 		}
 
 		// See https://stackoverflow.com/questions/1922040/how-to-resize-an-image-c-sharp/24199315#24199315
-		private void DrawResized(Image source, Bitmap destination, Rectangle drawArea)
+		private void Draw(Image source, Bitmap destination, Rectangle drawArea)
 		{
 			destination.SetResolution(source.HorizontalResolution, source.VerticalResolution);
 

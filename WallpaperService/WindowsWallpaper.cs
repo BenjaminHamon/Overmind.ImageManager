@@ -71,7 +71,7 @@ namespace Overmind.ImageManager.WallpaperService
 			BitConverter.GetBytes((int)value).CopyTo(propertyValue, 0); // Numerator
 			BitConverter.GetBytes(1).CopyTo(propertyValue, 4); // Denominator
 
-			// Horrible, but it seems to be the only way to create a new property item
+			// HACK: It seems to be the only way to create a new property item
 			PropertyItem newProperty = image.PropertyItems.First();
 
 			newProperty.Id = id;

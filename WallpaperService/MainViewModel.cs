@@ -6,6 +6,7 @@ using Overmind.WpfExtensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -151,8 +152,12 @@ namespace Overmind.ImageManager.WallpaperService
 
 		private void SetWallpaper(string imagePath)
 		{
+			WallpaperBuilder builder = new WallpaperBuilder(ImageFormat.Jpeg, 100);
+			Rectangle screenArea = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
 			string savePath = Path.Combine(wallpaperStorage, "Wallpaper.jpg");
-			WindowsWallpaper.Save(imagePath, savePath, ImageFormat.Jpeg, 100);
+
+			builder.Create(imagePath, savePath, screenArea.Width, screenArea.Height);
+
 			WindowsWallpaper.Set(savePath);
 		}
 

@@ -3,7 +3,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Linq;
 
-namespace Overmind.ImageManager.WallpaperService
+namespace Overmind.ImageManager.Model.Wallpapers
 {
 	public class WallpaperBuilder
 	{

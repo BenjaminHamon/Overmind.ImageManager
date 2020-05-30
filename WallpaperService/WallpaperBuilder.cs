@@ -22,7 +22,7 @@ namespace Overmind.ImageManager.WallpaperService
 			{
 				Rectangle drawArea = GetDrawArea(sourceImage.Width, sourceImage.Height, screenWidth, screenHeight);
 
-				using (Bitmap finalImage = new Bitmap(drawArea.Width, drawArea.Height))
+				using (Bitmap finalImage = new Bitmap(screenWidth, screenHeight))
 				{
 					DrawResized(sourceImage, finalImage, drawArea);
 					Save(finalImage, destinationPath);
@@ -32,25 +32,26 @@ namespace Overmind.ImageManager.WallpaperService
 
 		private Rectangle GetDrawArea(int sourceImageWidth, int sourceImageHeight, int screenWidth, int screenHeight)
 		{
-			int destinationWidth = screenWidth;
-			int destinationHeight = screenHeight;
+			Rectangle drawArea = new Rectangle(0, 0, screenWidth, screenHeight);
 
 			float sourceRatio = (float) sourceImageWidth / sourceImageHeight;
 			float screenRatio = (float) screenWidth / screenHeight;
 
 			if (sourceRatio > screenRatio)
 			{
-				destinationWidth = screenWidth;
-				destinationHeight = (int) ((float) screenWidth * sourceImageHeight / sourceImageWidth);
+				drawArea.Width = screenWidth;
+				drawArea.Height = (int) ((float) screenWidth * sourceImageHeight / sourceImageWidth);
+				drawArea.Y = (screenHeight - drawArea.Height) / 2;
 			}
 
 			if (sourceRatio < screenRatio)
 			{
-				destinationWidth = (int) ((float) screenHeight * sourceImageWidth / sourceImageHeight);
-				destinationHeight = screenHeight;
+				drawArea.Width = (int) ((float) screenHeight * sourceImageWidth / sourceImageHeight);
+				drawArea.Height = screenHeight;
+				drawArea.X = (screenWidth - drawArea.Width) / 2;
 			}
 
-			return new Rectangle(0, 0, destinationWidth, destinationHeight);
+			return drawArea;
 		}
 
 		// See https://stackoverflow.com/questions/1922040/how-to-resize-an-image-c-sharp/24199315#24199315

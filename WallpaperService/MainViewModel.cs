@@ -73,7 +73,8 @@ namespace Overmind.ImageManager.WallpaperService
 			{
 				try
 				{
-					wallpaperService = WallpaperServiceInstance.CreateInstance(ActiveConfiguration, collectionProvider, queryEngine, SetWallpaper, randomFactory());
+					wallpaperService = WallpaperServiceInstance.CreateInstance(
+						ActiveConfiguration, collectionProvider, queryEngine, SetWallpaper, randomFactory());
 				}
 				catch (Exception exception)
 				{
@@ -150,13 +151,15 @@ namespace Overmind.ImageManager.WallpaperService
 			return wallpaperSettings;
 		}
 
-		private void SetWallpaper(string imagePath)
+		private void SetWallpaper(ImageModel image)
 		{
+			WallpaperConfiguration configuration = ActiveConfiguration;
 			WallpaperBuilder builder = new WallpaperBuilder(ImageFormat.Jpeg, 100);
 			Rectangle screenArea = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
+			string sourcePath = collectionProvider.GetImagePath(configuration.CollectionPath, image);
 			string savePath = Path.Combine(wallpaperStorage, "Wallpaper.jpg");
 
-			builder.Create(imagePath, savePath, screenArea.Width, screenArea.Height);
+			builder.Create(sourcePath, savePath, screenArea.Width, screenArea.Height);
 
 			WindowsWallpaper.Set(savePath);
 		}

@@ -18,9 +18,9 @@ namespace Overmind.ImageManager.WallpaperService
 		private const int SPIF_SENDWININICHANGE = 0x02;
 
 		// See https://msdn.microsoft.com/en-us/library/ms534413.aspx
-		private static short PropertyTagTypeRational = 5;
-		private static int PropertyTagXResolution = 0x011A;
-		private static int PropertyTagYResolution = 0x011B;
+		private const short PropertyTagTypeRational = 5;
+		private const int PropertyTagXResolution = 0x011A;
+		private const int PropertyTagYResolution = 0x011B;
 
 		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		private static extern int SystemParametersInfo(int uiAction, int uiParam, string pvParam, int fWinIni);

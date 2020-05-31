@@ -157,9 +157,18 @@ namespace Overmind.ImageManager.WallpaperService
 			WallpaperBuilder builder = new WallpaperBuilder(ImageFormat.Jpeg, 100);
 			string sourcePath = collectionProvider.GetImagePath(configuration.CollectionPath, image);
 			string savePath = Path.Combine(wallpaperStorage, "Wallpaper.jpg");
-			Rectangle screenArea = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
 
-			builder.CreateForSingleScreen(sourcePath, savePath, screenArea.Width, screenArea.Height);
+			if (image.TagCollection.Contains("SingleScreen"))
+			{
+				// Force the image to fit for the primary screen
+				Rectangle screenArea = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
+				builder.CreateForSingleScreen(sourcePath, savePath, screenArea.Width, screenArea.Height);
+			}
+			else
+			{
+				// Let the system handle display
+				builder.Create(sourcePath, savePath);
+			}
 
 			WindowsWallpaper.Set(savePath);
 		}

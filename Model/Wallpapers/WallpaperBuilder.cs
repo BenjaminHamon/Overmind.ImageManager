@@ -29,7 +29,7 @@ namespace Overmind.ImageManager.Model.Wallpapers
 		public void Create(string sourcePath, string destinationPath)
 		{
 			using (Image sourceImage = Image.FromFile(sourcePath))
-			using (Bitmap finalImage = new Bitmap(sourceImage.Width, sourceImage.Height))
+			using (Bitmap finalImage = new Bitmap(sourceImage.Width, sourceImage.Height, PixelFormat.Format32bppArgb))
 			{
 				Rectangle drawArea = new Rectangle(0, 0, sourceImage.Width, sourceImage.Height);
 
@@ -42,7 +42,7 @@ namespace Overmind.ImageManager.Model.Wallpapers
 		public void CreateForSingleScreen(string sourcePath, string destinationPath, int displayWidth, int displayHeight)
 		{
 			using (Image sourceImage = Image.FromFile(sourcePath))
-			using (Bitmap finalImage = new Bitmap(displayWidth, displayHeight))
+			using (Bitmap finalImage = new Bitmap(displayWidth, displayHeight, PixelFormat.Format32bppArgb))
 			{
 				Rectangle drawArea = GetDrawArea(sourceImage.Width, sourceImage.Height, displayWidth, displayHeight);
 
@@ -87,7 +87,8 @@ namespace Overmind.ImageManager.Model.Wallpapers
 
 			using (Graphics graphics = Graphics.FromImage(destination))
 			{
-				graphics.CompositingMode = CompositingMode.SourceCopy;
+				graphics.Clear(SystemColors.Desktop);
+
 				graphics.CompositingQuality = CompositingQuality.HighQuality;
 				graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
 				graphics.SmoothingMode = SmoothingMode.HighQuality;

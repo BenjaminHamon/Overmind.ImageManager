@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows.Threading;
 
@@ -40,7 +41,7 @@ namespace Overmind.ImageManager.WindowsClient
 		private readonly Dispatcher dispatcher;
 		private readonly object modelLock = new object();
 
-		public string Name { get { return model.StoragePath; } }
+		public string Name { get { return Path.GetFileName(model.StoragePath); } }
 		public string StoragePath { get { return model.StoragePath; } }
 		public QueryViewModel Query { get; }
 		public List<ImageViewModel> FilteredImages { get; private set; }

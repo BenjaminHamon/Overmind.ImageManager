@@ -102,9 +102,6 @@ namespace Overmind.ImageManager.WindowsClient
 			mainView = new MainView() { DataContext = mainViewModel };
 			MainWindow = new Window() { Content = mainView };
 
-			Binding titleBinding = new Binding() { Source = mainViewModel, Path = new PropertyPath(nameof(MainViewModel.WindowTitle)) };
-			BindingOperations.SetBinding(MainWindow, Window.TitleProperty, titleBinding);
-
 			MainWindow.Closing += MainWindow_Closing;
 			MainWindow.Show();
 
@@ -139,7 +136,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 				downloaderWindow = new Window()
 				{
-					Title = "Downloads - " + ApplicationTitle,
+					Title = "Download" +  " - " + ApplicationTitle,
 					Content = downloaderView,
 					Height = 400,
 					Width = 600,
@@ -165,7 +162,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 				settingsWindow = new Window()
 				{
-					Title = "Settings - " + ApplicationTitle,
+					Title = "Settings" + " - " + ApplicationTitle,
 					Content = settingsView,
 					Height = 800,
 					Width = 800,
@@ -188,7 +185,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 			Window aboutWindow = new Window()
 			{
-				Title = "About " + ApplicationTitle,
+				Title = "About" + " " + ApplicationTitle,
 				Content = aboutView,
 				Owner = MainWindow,
 				WindowStartupLocation = WindowStartupLocation.CenterOwner,

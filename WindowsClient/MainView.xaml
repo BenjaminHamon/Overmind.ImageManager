@@ -37,7 +37,14 @@
                 <Image Source="/Resources/Logo.png" Style="{StaticResource TitleBar_IconStyle}"/>
             </controls:TitleBar.Icon>
             <controls:TitleBar.Title>
-                <TextBlock Text="{Binding Path=WindowTitle}" Style="{StaticResource TitleBar_TitleStyle}"/>
+                <TextBlock Style="{StaticResource TitleBar_TitleStyle}">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} - {1}" FallbackValue="{x:Static main:WindowsApplication.ApplicationTitle}">
+                            <Binding Path="ActiveCollection.Name"/>
+                            <Binding Source="{x:Static main:WindowsApplication.ApplicationTitle}"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
             </controls:TitleBar.Title>
             <controls:TitleBar.Menu>
                 <Menu>

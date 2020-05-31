@@ -53,16 +53,6 @@ namespace Overmind.ImageManager.WindowsClient
 		private readonly IDownloader downloader;
 		private readonly Func<Random> randomFactory;
 
-		public string WindowTitle
-		{
-			get
-			{
-				if (ActiveCollection == null)
-					return WindowsApplication.ApplicationTitle;
-				return ActiveCollection.Name + " - " + WindowsApplication.ApplicationTitle;
-			}
-		}
-
 		private CollectionViewModel activeCollectionField;
 		public CollectionViewModel ActiveCollection
 		{
@@ -73,7 +63,6 @@ namespace Overmind.ImageManager.WindowsClient
 					return;
 				activeCollectionField = value;
 
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(WindowTitle)));
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActiveCollection)));
 
 				SaveCollectionCommand.RaiseCanExecuteChanged();

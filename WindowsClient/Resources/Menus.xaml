@@ -15,14 +15,20 @@
         </Setter>
     </Style>
 
+    <DataTemplate x:Key="MenuTopLevelHeaderTemplate">
+        <Grid Margin="2">
+            <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+        </Grid>
+    </DataTemplate>
+
     <Style TargetType="ContextMenu">
         <Setter Property="Grid.IsSharedSizeScope" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ContextMenu">
                     <Border BorderBrush="{StaticResource GrayBrush}" BorderThickness="1"
-                                Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}"
-                                SnapsToDevicePixels="True">
+                            Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}"
+                            SnapsToDevicePixels="True">
                         <Grid>
                             <Rectangle Fill="{StaticResource GrayBrush}" HorizontalAlignment="Left" Margin="30,2,0,2" Width="1"/>
                             <ItemsPresenter Grid.IsSharedSizeScope="True" KeyboardNavigation.DirectionalNavigation="Cycle" KeyboardNavigation.TabNavigation="Cycle"/>
@@ -36,11 +42,12 @@
     <ControlTemplate x:Key="{x:Static MenuItem.TopLevelHeaderTemplateKey}" TargetType="MenuItem">
         <Border x:Name="templateRoot">
             <Grid>
-                <ContentPresenter x:Name="ContentPresenter" Content="{TemplateBinding Header}" Margin="5,2" RecognizesAccessKey="True"/>
+                <ContentPresenter x:Name="ContentPresenter" Margin="5,2" RecognizesAccessKey="True"
+                                  Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}"/>
                 <Popup IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}">
                     <Border BorderBrush="{StaticResource GrayBrush}" BorderThickness="1"
-                                Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}"
-                                SnapsToDevicePixels="True">
+                            Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}"
+                            SnapsToDevicePixels="True">
                         <Grid>
                             <Rectangle Fill="{StaticResource GrayBrush}" HorizontalAlignment="Left" Margin="30,2,0,2" Width="1"/>
                             <ItemsPresenter Grid.IsSharedSizeScope="True" KeyboardNavigation.DirectionalNavigation="Cycle" KeyboardNavigation.TabNavigation="Cycle"/>

@@ -27,4 +27,6 @@
     <SolidColorBrush x:Key="HighlightBrush" Color="#7FDBFF" Opacity="0.3"/>
     <SolidColorBrush x:Key="PressBrush" Color="#4CCFFF" Opacity="0.3"/>
 
+    <SolidColorBrush x:Key="TitleBarBackground" Color="#EEEEEE"/>
+
 </ResourceDictionary>

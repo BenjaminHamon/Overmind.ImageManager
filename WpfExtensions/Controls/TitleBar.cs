@@ -29,5 +29,36 @@ namespace Overmind.WpfExtensions.Controls
 			get { return (FrameworkElement)GetValue(TitleProperty); }
 			set { SetValue(TitleProperty, value); }
 		}
+
+		public override void OnApplyTemplate()
+		{
+			base.OnApplyTemplate();
+
+			((Button)Template.FindName("MinimizeButton", this)).Click += Minimize;
+			((Button)Template.FindName("MaximizeRestoreButton", this)).Click += MaximizeOrRestore;
+			((Button)Template.FindName("CloseButton", this)).Click += Close;
+		}
+
+		private void Minimize(object sender, RoutedEventArgs eventArguments)
+		{
+			Window.GetWindow(this).WindowState = WindowState.Minimized;
+		}
+
+		private void MaximizeOrRestore(object sender, RoutedEventArgs eventArguments)
+		{
+			Window window = Window.GetWindow(this);
+
+			switch (window.WindowState)
+			{
+				case WindowState.Normal: window.WindowState = WindowState.Maximized; break;
+				case WindowState.Maximized: window.WindowState = WindowState.Normal; break;
+				default: break;
+			}
+		}
+
+		private void Close(object sender, RoutedEventArgs eventArguments)
+		{
+			Window.GetWindow(this).Close();
+		}
 	}
 }

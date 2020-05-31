@@ -4,17 +4,13 @@
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:controls="clr-namespace:Overmind.WpfExtensions.Controls;assembly=Overmind.WpfExtensions">
 
-    <Style x:Key="WindowButtonGroupStyle" TargetType="FrameworkElement">
-        <Style.Resources>
-            <Style TargetType="fa:ImageAwesome">
-                <Setter Property="Margin" Value="4"/>
-                <Setter Property="Height" Value="16"/>
-                <Setter Property="Width" Value="16"/>
-            </Style>
-        </Style.Resources>
+    <Style x:Key="TitleBar_WindowButtonIconStyle" TargetType="fa:ImageAwesome">
+        <Setter Property="Margin" Value="4"/>
+        <Setter Property="Height" Value="16"/>
+        <Setter Property="Width" Value="16"/>
     </Style>
 
-    <Style x:Key="WindowButtonStyle" TargetType="Button">
+    <Style x:Key="TitleBar_WindowButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Width" Value="40"/>
@@ -37,7 +33,51 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="WindowCloseButtonStyle" BasedOn="{StaticResource WindowButtonStyle}" TargetType="Button">
+    <Style x:Key="TitleBar_MinimizeButtonStyle" BasedOn="{StaticResource TitleBar_WindowButtonStyle}" TargetType="Button">
+        <Setter Property="ToolTip" Value="Minimize"/>
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <fa:ImageAwesome Style="{StaticResource TitleBar_WindowButtonIconStyle}" Icon="WindowMinimize"/>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="TitleBar_MaximizeRestoreButtonStyle" BasedOn="{StaticResource TitleBar_WindowButtonStyle}" TargetType="Button">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=WindowState}" Value="Normal">
+                <Setter Property="ToolTip" Value="Maximize"/>
+                <Setter Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <fa:ImageAwesome Style="{StaticResource TitleBar_WindowButtonIconStyle}" Icon="WindowMaximize"/>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=WindowState}" Value="Maximized">
+                <Setter Property="ToolTip" Value="Restore"/>
+                <Setter Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <fa:ImageAwesome Style="{StaticResource TitleBar_WindowButtonIconStyle}" Icon="WindowRestore"/>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="TitleBar_CloseButtonStyle" BasedOn="{StaticResource TitleBar_WindowButtonStyle}" TargetType="Button">
+        <Setter Property="ToolTip" Value="Close"/>
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <fa:ImageAwesome Style="{StaticResource TitleBar_WindowButtonIconStyle}" Icon="WindowClose"/>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background">
@@ -80,16 +120,10 @@
                         <ContentPresenter Grid.Column="0" Content="{TemplateBinding Property=Icon}"/>
                         <ContentPresenter Grid.Column="1" Content="{TemplateBinding Property=Menu}"/>
                         <ContentPresenter Grid.Column="2" Content="{TemplateBinding Property=Title}"/>
-                        <StackPanel Grid.Column="3" Style="{StaticResource WindowButtonGroupStyle}" Orientation="Horizontal">
-                            <Button Style="{StaticResource WindowButtonStyle}">
-                                <fa:ImageAwesome Icon="WindowMinimize"/>
-                            </Button>
-                            <Button Style="{StaticResource WindowButtonStyle}">
-                                <fa:ImageAwesome Icon="WindowMaximize"/>
-                            </Button>
-                            <Button Style="{StaticResource WindowCloseButtonStyle}">
-                                <fa:ImageAwesome Icon="WindowClose"/>
-                            </Button>
+                        <StackPanel Grid.Column="3" Orientation="Horizontal">
+                            <Button x:Name="MinimizeButton" Style="{StaticResource TitleBar_MinimizeButtonStyle}"/>
+                            <Button x:Name="MaximizeRestoreButton" Style="{StaticResource TitleBar_MaximizeRestoreButtonStyle}"/>
+                            <Button x:Name="CloseButton" Style="{StaticResource TitleBar_CloseButtonStyle}"/>
                         </StackPanel>
                     </Grid>
                 </ControlTemplate>

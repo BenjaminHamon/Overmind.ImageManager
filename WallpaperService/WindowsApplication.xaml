@@ -65,9 +65,15 @@
         <SolidColorBrush x:Key="GrayBrush" Color="#AAAAAA"/>
         <SolidColorBrush x:Key="SilverBrush" Color="#DDDDDD"/>
 
-        <!-- Global styles and templates -->
-        <SolidColorBrush x:Key="HighlightBrush" Color="#7FDBFF" Opacity="0.5"/>
+        <SolidColorBrush x:Key="DefaultButtonBrush" Color="#EEEEEE"/>
+        <SolidColorBrush x:Key="DefaultBorderBrush" Color="#555555"/>
+        <SolidColorBrush x:Key="DisabledButtonBrush" Color="#EEEEEE"/>
+        <SolidColorBrush x:Key="DisabledBorderBrush" Color="#CCCCCC"/>
+        <SolidColorBrush x:Key="SelectionHighlightBrush" Color="#7FDBFF" Opacity="0.5"/>
+        <SolidColorBrush x:Key="HighlightBrush" Color="#7FDBFF" Opacity="0.3"/>
+        <SolidColorBrush x:Key="PressBrush" Color="#4CCFFF" Opacity="0.3"/>
 
+        <!-- Menus -->
         <Style TargetType="Menu">
             <Setter Property="Template">
                 <Setter.Value>
@@ -164,5 +170,56 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource DefaultButtonBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource DefaultBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" SnapsToDevicePixels="True" Padding="{TemplateBinding Padding}"
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}" CornerRadius="2">
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" RecognizesAccessKey="True"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource HighlightBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource PressBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource DisabledButtonBrush}"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource DisabledBorderBrush}"/>
+                                <Setter TargetName="contentPresenter" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="main:MainView">
+            <Setter Property="Margin" Value="4"/>
+            <Style.Resources>
+                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                    <Setter Property="Margin" Value="4"/>
+                    <Setter Property="Padding" Value="4"/>
+                    <Setter Property="MinWidth" Value="50"/>
+                </Style>
+                <Style TargetType="ComboBox">
+                    <Setter Property="Margin" Value="4"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+
     </Application.Resources>
 </Application>

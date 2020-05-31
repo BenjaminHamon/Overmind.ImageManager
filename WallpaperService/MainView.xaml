@@ -7,16 +7,7 @@
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:MainViewModel}"
              d:DesignHeight="100" d:DesignWidth="300">
 
-    <UserControl.Resources>
-        <Style TargetType="Button">
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-        <Style TargetType="ComboBox">
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-    </UserControl.Resources>
-
-    <Grid Margin="5">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>

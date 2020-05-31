@@ -5,7 +5,15 @@ using System.Linq;
 
 namespace Overmind.ImageManager.Model.Wallpapers
 {
-	/// <summary>A builder for creating image files suitable for wallpaper display.</summary>
+	// By default, the system should handle any image (jpeg, png, bmp) but in some cases it fails or produces bad display.
+	// This class recreates the wallpaper image with various options to avoid these issues.
+
+	// Known system issues on Windows:
+	// - The system setter can fail if the original image is missing some metadata.
+	// - Images which are slightly wider than the screen bounds span multiple screens, resulting in a split image and a lot of empty space.
+	// - Images with transparent background can have their background be a broken mess instead of the expected background color.
+
+	/// <summary>The WallpaperBuilder provides methods to create an image file that is suitable for wallpaper display.</summary>
 	public class WallpaperBuilder
 	{
 		public WallpaperBuilder(ImageFormat imageFormat, int imageQuality)
@@ -43,13 +51,16 @@ namespace Overmind.ImageManager.Model.Wallpapers
 			}
 		}
 
+		/// <summary>Compute the area where to draw the image in the given screen bounds.</summary>
 		private Rectangle GetDrawArea(int sourceImageWidth, int sourceImageHeight, int displayWidth, int displayHeight)
 		{
+			// By default, use the whole display area
 			Rectangle drawArea = new Rectangle(0, 0, displayWidth, displayHeight);
 
 			float sourceRatio = (float) sourceImageWidth / sourceImageHeight;
 			float screenRatio = (float) displayWidth / displayHeight;
 
+			// The image is wider than the display, scale it based on the display width and center it.
 			if (sourceRatio > screenRatio)
 			{
 				drawArea.Width = displayWidth;
@@ -57,6 +68,7 @@ namespace Overmind.ImageManager.Model.Wallpapers
 				drawArea.Y = (displayHeight - drawArea.Height) / 2;
 			}
 
+			// The image is taller than the display, scale it based on the display height and center it.
 			if (sourceRatio < screenRatio)
 			{
 				drawArea.Width = (int) ((float) displayHeight * sourceImageWidth / sourceImageHeight);
@@ -67,6 +79,7 @@ namespace Overmind.ImageManager.Model.Wallpapers
 			return drawArea;
 		}
 
+		/// <summary>Draw the source image on the requested area in the destination image, with high quality resize.</summary
 		// See https://stackoverflow.com/questions/1922040/how-to-resize-an-image-c-sharp/24199315#24199315
 		private void Draw(Image source, Bitmap destination, Rectangle drawArea)
 		{
@@ -88,6 +101,7 @@ namespace Overmind.ImageManager.Model.Wallpapers
 			}
 		}
 
+		/// <summary>Save the image using the class encoder settings.</summary>
 		private void Save(Image image, string outputPath)
 		{
 			ImageCodecInfo encoder = ImageCodecInfo.GetImageEncoders().First(e => e.FormatID == imageFormat.Guid);

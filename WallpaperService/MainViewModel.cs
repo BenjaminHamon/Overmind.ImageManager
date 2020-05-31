@@ -6,6 +6,7 @@ using Overmind.WpfExtensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -72,7 +73,8 @@ namespace Overmind.ImageManager.WallpaperService
 			{
 				try
 				{
-					wallpaperService = WallpaperServiceInstance.CreateInstance(ActiveConfiguration, collectionProvider, queryEngine, SetWallpaper, randomFactory());
+					wallpaperService = WallpaperServiceInstance.CreateInstance(
+						ActiveConfiguration, collectionProvider, queryEngine, SetWallpaper, randomFactory());
 				}
 				catch (Exception exception)
 				{
@@ -149,10 +151,25 @@ namespace Overmind.ImageManager.WallpaperService
 			return wallpaperSettings;
 		}
 
-		private void SetWallpaper(string imagePath)
+		private void SetWallpaper(ImageModel image)
 		{
+			WallpaperConfiguration configuration = ActiveConfiguration;
+			WallpaperBuilder builder = new WallpaperBuilder(ImageFormat.Jpeg, 100);
+			string sourcePath = collectionProvider.GetImagePath(configuration.CollectionPath, image);
 			string savePath = Path.Combine(wallpaperStorage, "Wallpaper.jpg");
-			WindowsWallpaper.Save(imagePath, savePath, ImageFormat.Jpeg, 100);
+
+			if (image.TagCollection.Contains("SingleScreen"))
+			{
+				// Force the image to fit for the primary screen
+				Rectangle screenArea = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
+				builder.CreateForSingleScreen(sourcePath, savePath, screenArea.Width, screenArea.Height);
+			}
+			else
+			{
+				// Let the system handle display
+				builder.Create(sourcePath, savePath);
+			}
+
 			WindowsWallpaper.Set(savePath);
 		}
 

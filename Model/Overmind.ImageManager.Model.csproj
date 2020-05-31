@@ -79,6 +79,7 @@
     <Compile Include="Serialization\ISerializer.cs" />
     <Compile Include="Serialization\JsonSerializer.cs" />
     <Compile Include="SettingsProvider.cs" />
+    <Compile Include="Wallpapers\WallpaperBuilder.cs" />
     <Compile Include="Wallpapers\WallpaperConfiguration.cs" />
     <Compile Include="Wallpapers\WallpaperServiceInstance.cs" />
     <Compile Include="Wallpapers\WallpaperSettings.cs" />

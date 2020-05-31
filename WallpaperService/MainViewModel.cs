@@ -158,7 +158,7 @@ namespace Overmind.ImageManager.WallpaperService
 			string sourcePath = collectionProvider.GetImagePath(configuration.CollectionPath, image);
 			string savePath = Path.Combine(wallpaperStorage, "Wallpaper.jpg");
 
-			if (image.TagCollection.Contains("SingleScreen"))
+			if (ShouldUseSingleScreen(image, sourcePath))
 			{
 				// Force the image to fit for the primary screen
 				Rectangle screenArea = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
@@ -171,6 +171,25 @@ namespace Overmind.ImageManager.WallpaperService
 			}
 
 			WindowsWallpaper.Set(savePath);
+		}
+
+		private bool ShouldUseSingleScreen(ImageModel image, string imagePath)
+		{
+			if (image.TagCollection.Contains("SingleScreen"))
+				return true;
+			if (image.TagCollection.Contains("MultiScreen"))
+				return false;
+
+			Rectangle screenArea = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
+
+			using (Image sourceImage = Image.FromFile(imagePath))
+			{
+				float sourceRatio = (float) sourceImage.Width / sourceImage.Height;
+				float screenRatio = (float) screenArea.Width / screenArea.Height;
+
+				// If wider by a value between 0% and 50%, to avoid multi screen wallpaper with a lot of empty space
+				return (sourceRatio > screenRatio) && (sourceRatio < screenRatio * 1.8);
+			}
 		}
 
 		private void CopyWallpaperHash()

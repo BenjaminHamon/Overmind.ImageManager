@@ -11,9 +11,10 @@
     </Style>
 
     <Style x:Key="TitleBar_WindowButtonStyle" TargetType="Button">
+        <Setter Property="Width" Value="40"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Width" Value="40"/>
+        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">

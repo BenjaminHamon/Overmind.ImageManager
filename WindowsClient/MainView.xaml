@@ -48,7 +48,7 @@
             </controls:TitleBar.Title>
             <controls:TitleBar.Menu>
                 <Menu>
-                    <MenuItem Header="File" HeaderTemplate="{StaticResource MenuTopLevelHeaderTemplate}">
+                    <MenuItem Header="File" Style="{StaticResource MenuItemTopLevelStyle}">
                         <MenuItem Header="New collection" Command="New" InputGestureText="Ctrl+N"/>
                         <MenuItem Header="Open collection" Command="Open" InputGestureText="Ctrl+O"/>
                         <MenuItem Header="Save collection" Command="Save" InputGestureText="Ctrl+S"/>
@@ -60,14 +60,14 @@
                         <Separator/>
                         <MenuItem Header="Exit" Command="main:MainView.ExitCommand" InputGestureText="Alt+F4"/>
                     </MenuItem>
-                    <MenuItem Header="View" HeaderTemplate="{StaticResource MenuTopLevelHeaderTemplate}">
+                    <MenuItem Header="View" Style="{StaticResource MenuItemTopLevelStyle}">
                         <MenuItem x:Name="gridDisplayMenuItem" x:FieldModifier="private" Header="Grid display" IsCheckable="True"/>
                         <MenuItem x:Name="listDisplayMenuItem" x:FieldModifier="private" Header="List display" IsCheckable="True"/>
                         <Separator/>
                         <MenuItem Header="Play slide show" Command="{Binding Path=SpawnSlideShowCommand}"/>
                         <MenuItem Header="Play slide show (shuffle)" Command="{Binding Path=SpawnShuffledSlideShowCommand}"/>
                     </MenuItem>
-                    <MenuItem Header="Help" HeaderTemplate="{StaticResource MenuTopLevelHeaderTemplate}">
+                    <MenuItem Header="Help" Style="{StaticResource MenuItemTopLevelStyle}">
                         <MenuItem Header="Help" Command="Help" InputGestureText="F1"/>
                         <MenuItem Header="About" Command="{Binding Path=ShowAboutCommand}"/>
                     </MenuItem>

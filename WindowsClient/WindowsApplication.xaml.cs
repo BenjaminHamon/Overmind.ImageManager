@@ -100,7 +100,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 			mainViewModel = new MainViewModel(this, settingsProvider, collectionProvider, imageOperations, queryEngine, downloader, randomFactory);
 			mainView = new MainView() { DataContext = mainViewModel };
-			MainWindow = new Window() { Content = mainView };
+			MainWindow = new CustomWindow() { Content = mainView };
 
 			MainWindow.Closing += MainWindow_Closing;
 			MainWindow.Show();

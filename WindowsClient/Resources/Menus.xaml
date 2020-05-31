@@ -15,11 +15,18 @@
         </Setter>
     </Style>
 
-    <DataTemplate x:Key="MenuTopLevelHeaderTemplate">
-        <Grid Margin="2">
-            <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
-        </Grid>
-    </DataTemplate>
+    <Style x:Key="MenuItemTopLevelStyle" TargetType="MenuItem">
+        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+        <Setter Property="HeaderTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Grid Margin="2">
+                        <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+                    </Grid>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style TargetType="ContextMenu">
         <Setter Property="Grid.IsSharedSizeScope" Value="True" />

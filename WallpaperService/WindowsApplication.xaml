@@ -9,217 +9,69 @@
              Startup="Application_Startup" Exit="Application_Exit" ShutdownMode="OnExplicitShutdown">
 
     <Application.Resources>
-        <taskbar:TaskbarIcon x:Key="NotificationIcon" d:DataContext="{d:DesignInstance Type=main:MainViewModel}"
-                             IconSource="/Resources/Logo.ico" ToolTipText="{x:Static main:WindowsApplication.ApplicationTitle}" TrayMouseDoubleClick="ShowMainWindow">
-            <taskbar:TaskbarIcon.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Click="ShowMainWindow">
-                        <MenuItem.Icon>
-                            <Image Source="/Resources/Logo.png" RenderOptions.BitmapScalingMode="HighQuality"/>
-                        </MenuItem.Icon>
-                        <MenuItem.Header>
-                            <TextBlock Text="{x:Static main:WindowsApplication.ApplicationTitle}" FontWeight="Bold"/>
-                        </MenuItem.Header>
-                    </MenuItem>
-                    <Separator/>
-                    <MenuItem Command="{Binding Path=NextWallpaperCommand}">
-                        <MenuItem.Header>
-                            <TextBlock Text="Next wallpaper"/>
-                        </MenuItem.Header>
-                    </MenuItem>
-                    <MenuItem Command="{Binding Path=CopyWallpaperHashCommand}">
-                        <MenuItem.Header>
-                            <TextBlock Text="Copy wallpaper hash"/>
-                        </MenuItem.Header>
-                    </MenuItem>
-                    <MenuItem Command="{Binding Path=ReloadSettingsCommand}">
-                        <MenuItem.Header>
-                            <TextBlock Text="Reload settings"/>
-                        </MenuItem.Header>
-                    </MenuItem>
-                    <Separator/>
-                    <MenuItem Click="ExitApplication">
-                        <MenuItem.Header>
-                            <TextBlock Text="Exit"/>
-                        </MenuItem.Header>
-                    </MenuItem>
-                </ContextMenu>
-            </taskbar:TaskbarIcon.ContextMenu>
-        </taskbar:TaskbarIcon>
 
-        <!-- Colors (https://clrs.cc/) -->
-        <SolidColorBrush x:Key="NavyBrush" Color="#001f3f"/>
-        <SolidColorBrush x:Key="BlueBrush" Color="#0074D9"/>
-        <SolidColorBrush x:Key="AquaBrush" Color="#7FDBFF"/>
-        <SolidColorBrush x:Key="TealBrush" Color="#39CCCC"/>
-        <SolidColorBrush x:Key="OliveBrush" Color="#3D9970"/>
-        <SolidColorBrush x:Key="GreenBrush" Color="#2ECC40"/>
-        <SolidColorBrush x:Key="LimeBrush" Color="#01FF70"/>
-        <SolidColorBrush x:Key="YellowBrush" Color="#FFDC00"/>
-        <SolidColorBrush x:Key="OrangeBrush" Color="#FF851B"/>
-        <SolidColorBrush x:Key="RedBrush" Color="#FF4136"/>
-        <SolidColorBrush x:Key="MaroonBrush" Color="#85144b"/>
-        <SolidColorBrush x:Key="FuchsiaBrush" Color="#F012BE"/>
-        <SolidColorBrush x:Key="PurpleBrush" Color="#B10DC9"/>
-        <SolidColorBrush x:Key="BlackBrush" Color="#111111"/>
-        <SolidColorBrush x:Key="GrayBrush" Color="#AAAAAA"/>
-        <SolidColorBrush x:Key="SilverBrush" Color="#DDDDDD"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/Colors.xaml"/>
+                <ResourceDictionary Source="/Resources/Generic.xaml"/>
+                <ResourceDictionary Source="/Resources/Menus.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
 
-        <SolidColorBrush x:Key="DefaultButtonBrush" Color="#EEEEEE"/>
-        <SolidColorBrush x:Key="DefaultBorderBrush" Color="#555555"/>
-        <SolidColorBrush x:Key="DisabledButtonBrush" Color="#EEEEEE"/>
-        <SolidColorBrush x:Key="DisabledBorderBrush" Color="#CCCCCC"/>
-        <SolidColorBrush x:Key="SelectionHighlightBrush" Color="#7FDBFF" Opacity="0.5"/>
-        <SolidColorBrush x:Key="HighlightBrush" Color="#7FDBFF" Opacity="0.3"/>
-        <SolidColorBrush x:Key="PressBrush" Color="#4CCFFF" Opacity="0.3"/>
+            <Style TargetType="main:MainView">
+                <Setter Property="Margin" Value="4"/>
+                <Style.Resources>
+                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                        <Setter Property="Margin" Value="4"/>
+                        <Setter Property="Padding" Value="4"/>
+                        <Setter Property="MinWidth" Value="50"/>
+                    </Style>
+                    <Style TargetType="ComboBox">
+                        <Setter Property="Margin" Value="4"/>
+                    </Style>
+                </Style.Resources>
+            </Style>
 
-        <!-- Menus -->
-        <Style TargetType="Menu">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Menu">
-                        <Border Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}">
-                            <ItemsPresenter/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+            <taskbar:TaskbarIcon
+                    x:Key="NotificationIcon" d:DataContext="{d:DesignInstance Type=main:MainViewModel}"
+                    IconSource="/Resources/Logo.ico" ToolTipText="{x:Static main:WindowsApplication.ApplicationTitle}"
+                    TrayMouseDoubleClick="ShowMainWindow">
+                <taskbar:TaskbarIcon.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Click="ShowMainWindow">
+                            <MenuItem.Icon>
+                                <Image Source="/Resources/Logo.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+                            </MenuItem.Icon>
+                            <MenuItem.Header>
+                                <TextBlock Text="{x:Static main:WindowsApplication.ApplicationTitle}" FontWeight="Bold"/>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <Separator/>
+                        <MenuItem Command="{Binding Path=NextWallpaperCommand}">
+                            <MenuItem.Header>
+                                <TextBlock Text="Next wallpaper"/>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem Command="{Binding Path=CopyWallpaperHashCommand}">
+                            <MenuItem.Header>
+                                <TextBlock Text="Copy wallpaper hash"/>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem Command="{Binding Path=ReloadSettingsCommand}">
+                            <MenuItem.Header>
+                                <TextBlock Text="Reload settings"/>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <Separator/>
+                        <MenuItem Click="ExitApplication">
+                            <MenuItem.Header>
+                                <TextBlock Text="Exit"/>
+                            </MenuItem.Header>
+                        </MenuItem>
+                    </ContextMenu>
+                </taskbar:TaskbarIcon.ContextMenu>
+            </taskbar:TaskbarIcon>
 
-        <Style TargetType="ContextMenu">
-            <Setter Property="Grid.IsSharedSizeScope" Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ContextMenu">
-                        <Border BorderBrush="{StaticResource GrayBrush}" BorderThickness="1"
-                                Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}"
-                                SnapsToDevicePixels="True">
-                            <Grid>
-                                <Rectangle Fill="{StaticResource GrayBrush}" HorizontalAlignment="Left" Margin="30,2,0,2" Width="1"/>
-                                <ItemsPresenter Grid.IsSharedSizeScope="True" KeyboardNavigation.DirectionalNavigation="Cycle" KeyboardNavigation.TabNavigation="Cycle"/>
-                            </Grid>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <ControlTemplate x:Key="{x:Static MenuItem.TopLevelHeaderTemplateKey}" TargetType="MenuItem">
-            <Border x:Name="templateRoot">
-                <Grid>
-                    <ContentPresenter x:Name="ContentPresenter" Content="{TemplateBinding Header}" Margin="5,2" RecognizesAccessKey="True"/>
-                    <Popup IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}">
-                        <Border BorderBrush="{StaticResource GrayBrush}" BorderThickness="1"
-                                Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}"
-                                SnapsToDevicePixels="True">
-                            <Grid>
-                                <Rectangle Fill="{StaticResource GrayBrush}" HorizontalAlignment="Left" Margin="30,2,0,2" Width="1"/>
-                                <ItemsPresenter Grid.IsSharedSizeScope="True" KeyboardNavigation.DirectionalNavigation="Cycle" KeyboardNavigation.TabNavigation="Cycle"/>
-                            </Grid>
-                        </Border>
-                    </Popup>
-                </Grid>
-            </Border>
-            <ControlTemplate.Triggers>
-                <Trigger Property="IsHighlighted" Value="True">
-                    <Setter TargetName="templateRoot" Property="Background" Value="{StaticResource HighlightBrush}"/>
-                    <Setter TargetName="templateRoot" Property="BorderBrush" Value="{StaticResource HighlightBrush}"/>
-                </Trigger>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter TargetName="templateRoot" Property="TextElement.Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
-                </Trigger>
-            </ControlTemplate.Triggers>
-        </ControlTemplate>
-
-        <ControlTemplate x:Key="{x:Static MenuItem.SubmenuItemTemplateKey}" TargetType="MenuItem">
-            <Border x:Name="templateRoot">
-                <Grid Background="Transparent">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="30"/>
-                        <ColumnDefinition Width="1"/>
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="HeaderTextGroup" MinWidth="50" MaxWidth="300"/>
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="GestureTextGroup"/>
-                        <ColumnDefinition Width="10"/>
-                    </Grid.ColumnDefinitions>
-                    <ContentPresenter Grid.Column="0" Content="{TemplateBinding Icon}" Height="16" Width="16" Margin="4" VerticalAlignment="Center"/>
-                    <!-- <fa:ImageAwesome x:Name="check" Icon="Check" Height="8" Width="8" Margin="8" VerticalAlignment="Center" Visibility="Collapsed"/> -->
-                    <ContentPresenter Grid.Column="2" Content="{TemplateBinding Header}" Margin="5,2" VerticalAlignment="Center" RecognizesAccessKey="True"/>
-                    <TextBlock Grid.Column="3" Text="{TemplateBinding InputGestureText}" Margin="5,2" VerticalAlignment="Center"/>
-                </Grid>
-            </Border>
-            <ControlTemplate.Triggers>
-                <!-- <Trigger Property="IsChecked" Value="True">
-                    <Setter TargetName="check" Property="Visibility" Value="Visible"/>
-                </Trigger> -->
-                <Trigger Property="IsHighlighted" Value="True">
-                    <Setter TargetName="templateRoot" Property="Background" Value="{StaticResource HighlightBrush}"/>
-                    <Setter TargetName="templateRoot" Property="BorderBrush" Value="{StaticResource HighlightBrush}"/>
-                </Trigger>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter TargetName="templateRoot" Property="TextElement.Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
-                </Trigger>
-            </ControlTemplate.Triggers>
-        </ControlTemplate>
-
-        <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="Separator">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Separator">
-                        <Rectangle Margin="33,2,2,2" Height="1" Fill="{StaticResource GrayBrush}"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style TargetType="Button">
-            <Setter Property="Background" Value="{StaticResource DefaultButtonBrush}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource DefaultBorderBrush}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="2"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" SnapsToDevicePixels="True" Padding="{TemplateBinding Padding}"
-                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
-                                Background="{TemplateBinding Background}" CornerRadius="2">
-                            <ContentPresenter x:Name="contentPresenter" Focusable="False" RecognizesAccessKey="True"
-                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource HighlightBrush}"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource PressBrush}"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="false">
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource DisabledButtonBrush}"/>
-                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource DisabledBorderBrush}"/>
-                                <Setter TargetName="contentPresenter" Property="Opacity" Value="0.5"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style TargetType="main:MainView">
-            <Setter Property="Margin" Value="4"/>
-            <Style.Resources>
-                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                    <Setter Property="Margin" Value="4"/>
-                    <Setter Property="Padding" Value="4"/>
-                    <Setter Property="MinWidth" Value="50"/>
-                </Style>
-                <Style TargetType="ComboBox">
-                    <Setter Property="Margin" Value="4"/>
-                </Style>
-            </Style.Resources>
-        </Style>
+        </ResourceDictionary>
 
     </Application.Resources>
 </Application>

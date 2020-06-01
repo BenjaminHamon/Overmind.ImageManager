@@ -5,7 +5,7 @@
         x:Name="window" x:FieldModifier="private" WindowStyle="None">
 
     <WindowChrome.WindowChrome>
-        <WindowChrome/>
+        <WindowChrome CaptionHeight="30"/>
     </WindowChrome.WindowChrome>
 
     <Grid>
@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
         <controls:TitleBar x:Name="TitleBar" Grid.Row="0">
             <controls:TitleBar.Icon>
-                <Image Source="/Resources/Logo.png" Style="{StaticResource TitleBar_IconStyle}"/>
+                <Image Style="{StaticResource TitleBar_IconStyle}" Source="/Resources/Logo.png"/>
             </controls:TitleBar.Icon>
             <controls:TitleBar.Title>
                 <TextBlock Style="{StaticResource TitleBar_TitleStyle}" Text="{Binding ElementName=window, Path=Title}"/>

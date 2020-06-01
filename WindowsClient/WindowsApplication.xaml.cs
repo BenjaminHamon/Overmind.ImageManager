@@ -89,8 +89,8 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private MainViewModel mainViewModel;
 
-		private Window downloaderWindow;
-		private Window settingsWindow;
+		private CustomWindow downloaderWindow;
+		private CustomWindow settingsWindow;
 
 		private void Application_Startup(object sender, StartupEventArgs eventArguments)
 		{
@@ -141,13 +141,14 @@ namespace Overmind.ImageManager.WindowsClient
 				Binding dataContextBinding = new Binding() { Source = mainViewModel, Path = new PropertyPath(nameof(MainViewModel.Downloader)) };
 				BindingOperations.SetBinding(downloaderView, FrameworkElement.DataContextProperty, dataContextBinding);
 
-				downloaderWindow = new Window()
+				downloaderWindow = new CustomWindow()
 				{
 					Title = "Download" +  " - " + ApplicationTitle,
-					Content = downloaderView,
 					Height = 400,
 					Width = 600,
 				};
+
+				downloaderWindow.MainContent.Content = downloaderView;
 
 				downloaderWindow.Closed += (s, e) => downloaderWindow = null;
 				downloaderWindow.Show();
@@ -167,13 +168,14 @@ namespace Overmind.ImageManager.WindowsClient
 				SettingsViewModel settingsViewModel = new SettingsViewModel(settingsProvider, queryEngine);
 				SettingsView settingsView = new SettingsView() { DataContext = settingsViewModel };
 
-				settingsWindow = new Window()
+				settingsWindow = new CustomWindow()
 				{
 					Title = "Settings" + " - " + ApplicationTitle,
-					Content = settingsView,
 					Height = 800,
 					Width = 800,
 				};
+
+				settingsWindow.MainContent.Content = settingsView;
 
 				settingsWindow.Closed += (s, e) => settingsWindow = null;
 				settingsWindow.Show();

@@ -9,7 +9,6 @@ using Overmind.ImageManager.WindowsClient.Extensions;
 using Overmind.WpfExtensions;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -89,7 +88,6 @@ namespace Overmind.ImageManager.WindowsClient
 		private readonly Func<Random> randomFactory;
 
 		private MainViewModel mainViewModel;
-		private MainView mainView;
 
 		private Window downloaderWindow;
 		private Window settingsWindow;
@@ -99,13 +97,29 @@ namespace Overmind.ImageManager.WindowsClient
 			Logger.Info("Starting {0}", ApplicationName);
 
 			mainViewModel = new MainViewModel(this, settingsProvider, collectionProvider, imageOperations, queryEngine, downloader, randomFactory);
-			mainView = new MainView() { DataContext = mainViewModel };
-			MainWindow = new CustomWindow() { Content = mainView };
 
-			MainWindow.Closing += MainWindow_Closing;
+			MainMenuView mainMenuView = new MainMenuView() { DataContext = mainViewModel };
+			MainView mainView = new MainView() { DataContext = mainViewModel };
+
+			MainWindow = new CustomWindow();
+			((CustomWindow)MainWindow).Menu.Content = mainMenuView;
+			((CustomWindow)MainWindow).MainContent.Content = mainView;
+
+			Binding titleBinding = new Binding()
+			{
+				Source = mainViewModel,
+				Path = new PropertyPath("ActiveCollection.Name"),
+				StringFormat = "{0}" + " - " + ApplicationTitle,
+				FallbackValue = ApplicationTitle,
+			};
+
+			BindingOperations.SetBinding(MainWindow, Window.TitleProperty, titleBinding);
+
+			mainMenuView.RegisterCommands(MainWindow);
+
+			MainWindow.Deactivated += (s, e) => Dispatcher.BeginInvoke(new Action(() => ForceUpdateOnFocusedElement(mainView)));
+			MainWindow.Closing += mainMenuView.ExitApplication;
 			MainWindow.Show();
-
-			mainView.Focus();
 		}
 
 		private void Application_Exit(object sender, ExitEventArgs eventArguments)
@@ -117,13 +131,6 @@ namespace Overmind.ImageManager.WindowsClient
 
 			hashAlgorithm.Dispose();
 			httpClient.Dispose();
-		}
-
-		private void MainWindow_Closing(object sender, CancelEventArgs eventArguments)
-		{
-			mainView.ExitApplication(sender, eventArguments);
-			if (eventArguments.Cancel == false)
-				MainWindow.Closing -= MainWindow_Closing;
 		}
 
 		public void ShowDownloader()
@@ -257,6 +264,28 @@ namespace Overmind.ImageManager.WindowsClient
 			Uri uri = new Uri(DocumentationHome, page);
 
 			using (Process process = Process.Start(uri.ToString())) { }
+		}
+
+		public static void ForceUpdateOnFocusedElement(FrameworkElement element)
+		{
+			// Some controls trigger the data binding update source when they lose the focus, but this does not happen when switching focus scope.
+			// The issue occurs when using a menu command, changing window or closing the window (directly or from the system task bar).
+
+			// See also https://stackoverflow.com/questions/57493/wpf-databind-before-saving
+			// - Disabling the menu focus scope is only a partial fix since it does not catch the issue when the main window is closed,
+			//   plus it introduces a bug where the main window close button may require two clicks, from the focus being stuck on the menu somehow
+			//   (the behavior is similar to having a menu open, the first click would dismiss the menu and does not trigger on the button)
+			// - Updating the active element directly relies on Keyboard.FocusedElement, which is null when closing the window from the system task bar,
+			//   and requires supporting any control type (TokenListView does not expose its internal update logic).
+
+			Window mainWindow = Window.GetWindow(element);
+			IInputElement focusedElement = FocusManager.GetFocusedElement(mainWindow);
+
+			if (focusedElement != null)
+			{
+				FocusManager.SetFocusedElement(mainWindow, element);
+				FocusManager.SetFocusedElement(mainWindow, focusedElement);
+			}
 		}
 	}
 }

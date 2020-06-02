@@ -20,13 +20,20 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			InitializeComponent();
 
-			// SelectListDisplayStyle(collectionView.ListDisplayStyle);
-
 			gridDisplayMenuItem.Click += (s, e) => SelectListDisplayStyle("Grid");
 			listDisplayMenuItem.Click += (s, e) => SelectListDisplayStyle("List");
 		}
 
 		private MainViewModel ViewModel { get { return (MainViewModel)DataContext; } }
+
+		public static readonly DependencyProperty CollectionViewProperty
+			 = DependencyProperty.Register(nameof(CollectionView), typeof(CollectionView), typeof(MainMenuView));
+
+		public CollectionView CollectionView
+		{
+			get { return (CollectionView)GetValue(CollectionViewProperty); }
+			set { SetValue(CollectionViewProperty, value); }
+		}
 
 		// Register commands on the main element so that they are available everywhere regardless of focus
 		public void RegisterCommands(FrameworkElement mainElement)
@@ -181,25 +188,11 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private void SelectListDisplayStyle(string style)
 		{
-			gridDisplayMenuItem.IsChecked = false;
-			listDisplayMenuItem.IsChecked = false;
-
-			switch (style)
+			if (style != CollectionView.ListDisplayStyle)
 			{
-				case "Grid": gridDisplayMenuItem.IsChecked = true; break;
-				case "List": listDisplayMenuItem.IsChecked = true; break;
-				default: break;
+				WindowsApplication.ForceUpdateOnFocusedElement(this);
+				CollectionView.ListDisplayStyle = style;
 			}
-
-			//if (style != collectionView.ListDisplayStyle)
-			//{
-			//	collectionView.ListDisplayStyle = style;
-
-			//	WindowsApplication.ForceUpdateOnFocusedElement(this);
-
-			//	if (ViewModel.ActiveCollection != null)
-			//		ViewModel.ActiveCollection.ResetDisplay();
-			//}
 		}
 
 		private void ShowApplicationHelp(object sender, RoutedEventArgs eventArguments)

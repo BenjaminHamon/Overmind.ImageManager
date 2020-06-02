@@ -22,7 +22,7 @@
             <ColumnDefinition Width="400"/>
         </Grid.ColumnDefinitions>
 
-        <main:CollectionView x:Name="collectionView" x:FieldModifier="private" Grid.Column="0" DataContext="{Binding Path=ActiveCollection}"/>
+        <main:CollectionView x:Name="CollectionView" Grid.Column="0" DataContext="{Binding Path=ActiveCollection}"/>
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>

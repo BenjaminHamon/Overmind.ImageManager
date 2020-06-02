@@ -100,6 +100,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 			MainMenuView mainMenuView = new MainMenuView() { DataContext = mainViewModel };
 			MainView mainView = new MainView() { DataContext = mainViewModel };
+			mainMenuView.CollectionView = mainView.CollectionView;
 
 			MainWindow = new CustomWindow();
 			((CustomWindow)MainWindow).Menu.Content = mainMenuView;

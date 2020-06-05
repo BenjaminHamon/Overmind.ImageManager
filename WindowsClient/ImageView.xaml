@@ -1,21 +1,45 @@
 ﻿<Window x:Class="Overmind.ImageManager.WindowsClient.ImageView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:Overmind.WpfExtensions.Controls;assembly=Overmind.WpfExtensions"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:ImageViewModel}"
-        Title="{Binding Path=Name}" KeyUp="HandleKeyUp" Loaded="ResizeWindow">
-    <!-- The presenter is useful to get the actual window content size,
+        WindowStyle="None" KeyUp="HandleKeyUp" Loaded="ResizeWindow">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="30"/>
+    </WindowChrome.WindowChrome>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <controls:TitleBar x:Name="TitleBar" Grid.Row="0">
+            <controls:TitleBar.Icon>
+                <Image Style="{StaticResource TitleBar_IconStyle}" Source="/Resources/Logo.png"/>
+            </controls:TitleBar.Icon>
+            <controls:TitleBar.Title>
+                <TextBlock Style="{StaticResource TitleBar_TitleStyle}" Text="{Binding Path=Name}" HorizontalAlignment="Left"/>
+            </controls:TitleBar.Title>
+        </controls:TitleBar>
+
+        <!-- The presenter is useful to get the actual window content size,
          so that the window borders can be excluded when resizing -->
-    <ContentPresenter x:Name="imagePresenter" x:FieldModifier="private">
-        <ContentPresenter.Content>
-            <!-- The image max size is set with the source image pixel size,
-                 to avoid WPF reliance on DPI which can cause the image to appear at a very different size than expected -->
-            <Image x:Name="image" x:FieldModifier="private" RenderOptions.BitmapScalingMode="HighQuality"
-                   Source="{Binding Path=FilePath, Converter={StaticResource DefaultImageConverter}}"
-                   MaxHeight="{Binding Path=Source.PixelHeight, RelativeSource={RelativeSource Self}}"
-                   MaxWidth="{Binding Path=Source.PixelWidth, RelativeSource={RelativeSource Self}}"/>
-        </ContentPresenter.Content>
-    </ContentPresenter>
+        <ContentPresenter x:Name="imagePresenter" x:FieldModifier="private" Grid.Row="1">
+            <ContentPresenter.Content>
+                <!-- The image max size is set with the source image pixel size,
+                     to avoid WPF reliance on DPI which can cause the image to appear at a very different size than expected -->
+                <Image x:Name="image" x:FieldModifier="private" RenderOptions.BitmapScalingMode="HighQuality"
+                       Source="{Binding Path=FilePath, Converter={StaticResource DefaultImageConverter}}"
+                       MaxHeight="{Binding Path=Source.PixelHeight, RelativeSource={RelativeSource Self}}"
+                       MaxWidth="{Binding Path=Source.PixelWidth, RelativeSource={RelativeSource Self}}"/>
+            </ContentPresenter.Content>
+        </ContentPresenter>
+
+    </Grid>
+
 </Window>

@@ -4,6 +4,23 @@
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:controls="clr-namespace:Overmind.WpfExtensions.Controls;assembly=Overmind.WpfExtensions">
 
+    <Style x:Key="WindowStyle" TargetType="Window">
+        <Setter Property="WindowChrome.WindowChrome">
+            <Setter.Value>
+                <WindowChrome CaptionHeight="30"/>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="WindowState" Value="Maximized">
+                <Setter Property="WindowChrome.WindowChrome">
+                    <Setter.Value>
+                        <WindowChrome CaptionHeight="38"/>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <Style x:Key="WindowContentStyle" TargetType="FrameworkElement">
         <Style.Triggers>
             <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=WindowState}" Value="Maximized">

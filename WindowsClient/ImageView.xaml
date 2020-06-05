@@ -6,11 +6,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:ImageViewModel}"
-        KeyUp="HandleKeyUp" Loaded="ResizeWindow">
-
-    <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="30"/>
-    </WindowChrome.WindowChrome>
+        Style="{StaticResource WindowStyle}" KeyUp="HandleKeyUp" Loaded="ResizeWindow">
 
     <Grid Style="{StaticResource WindowContentStyle}">
         <Grid.RowDefinitions>

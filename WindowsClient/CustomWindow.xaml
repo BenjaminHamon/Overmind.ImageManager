@@ -21,10 +21,10 @@
                 <TextBlock Style="{StaticResource TitleBar_TitleStyle}" Text="{Binding ElementName=window, Path=Title}"/>
             </controls:TitleBar.Title>
             <controls:TitleBar.Menu>
-                <ContentControl x:Name="Menu"/>
+                <ContentPresenter x:Name="Menu"/>
             </controls:TitleBar.Menu>
         </controls:TitleBar>
-        <ContentControl x:Name="MainContent" Grid.Row="1"/>
+        <ContentPresenter x:Name="MainContent" Grid.Row="1"/>
     </Grid>
 
 </Window>

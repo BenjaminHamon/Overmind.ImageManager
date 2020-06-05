@@ -210,7 +210,17 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public void ViewImage(ImageViewModel image)
 		{
-			Window imageWindow = new ImageView() { DataContext = image };
+			ImageView imageView = new ImageView() { DataContext = image };
+
+			CustomWindow imageWindow = new CustomWindow();
+			imageWindow.TitleTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
+			imageWindow.MainContent.Content = imageView;
+
+			Binding titleBinding = new Binding() { Source = image, Path = new PropertyPath("Name") };
+			BindingOperations.SetBinding(imageWindow, Window.TitleProperty, titleBinding);
+
+			imageWindow.Loaded += (s, e) => imageView.ResizeWindow();
+			imageWindow.KeyUp += (s, e) => { if (e.Key == Key.Escape) imageWindow.Close(); };
 
 			// Use BeginInvoke so that the call finishes before the window is shown
 			// to ensure the window is correctly activated and in the foreground
@@ -224,11 +234,11 @@ namespace Overmind.ImageManager.WindowsClient
 			SlideShowViewModel slideShowViewModel = new SlideShowViewModel(source);
 			SlideShowView slideShowView = new SlideShowView() { DataContext = slideShowViewModel };
 
-			CustomWindow window = new CustomWindow() { Title = "Slide Show" };
-			window.TitleTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
-			window.MainContent.Content = slideShowView;
+			CustomWindow slideShowWindow = new CustomWindow() { Title = "Slide Show" };
+			slideShowWindow.TitleTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
+			slideShowWindow.MainContent.Content = slideShowView;
 
-			window.Show();
+			slideShowWindow.Show();
 
 			slideShowView.Focus();
 		}

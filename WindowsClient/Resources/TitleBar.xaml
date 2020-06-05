@@ -4,6 +4,14 @@
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:controls="clr-namespace:Overmind.WpfExtensions.Controls;assembly=Overmind.WpfExtensions">
 
+    <Style x:Key="WindowContentStyle" TargetType="FrameworkElement">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=WindowState}" Value="Maximized">
+                <Setter Property="Margin" Value="8"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
     <Style x:Key="TitleBar_WindowButtonIconStyle" TargetType="fa:ImageAwesome">
         <Setter Property="Margin" Value="4"/>
         <Setter Property="Height" Value="16"/>

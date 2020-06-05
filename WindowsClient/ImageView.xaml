@@ -6,13 +6,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:ImageViewModel}"
-        WindowStyle="None" KeyUp="HandleKeyUp" Loaded="ResizeWindow">
+        KeyUp="HandleKeyUp" Loaded="ResizeWindow">
 
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="30"/>
     </WindowChrome.WindowChrome>
 
-    <Grid>
+    <Grid Style="{StaticResource WindowContentStyle}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>

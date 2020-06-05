@@ -224,7 +224,10 @@ namespace Overmind.ImageManager.WindowsClient
 			SlideShowViewModel slideShowViewModel = new SlideShowViewModel(source);
 			SlideShowView slideShowView = new SlideShowView() { DataContext = slideShowViewModel };
 
-			Window window = new Window() { Title = "Slide Show", Content = slideShowView };
+			CustomWindow window = new CustomWindow() { Title = "Slide Show" };
+			window.TitleTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
+			window.MainContent.Content = slideShowView;
+
 			window.Show();
 
 			slideShowView.Focus();

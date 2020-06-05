@@ -18,7 +18,7 @@
                 <Image Style="{StaticResource TitleBar_IconStyle}" Source="/Resources/Logo.png"/>
             </controls:TitleBar.Icon>
             <controls:TitleBar.Title>
-                <TextBlock Style="{StaticResource TitleBar_TitleStyle}" Text="{Binding ElementName=window, Path=Title}"/>
+                <TextBlock x:Name="TitleTextBlock" Style="{StaticResource TitleBar_TitleStyle}" Text="{Binding ElementName=window, Path=Title}"/>
             </controls:TitleBar.Title>
             <controls:TitleBar.Menu>
                 <ContentPresenter x:Name="Menu"/>

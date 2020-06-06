@@ -37,6 +37,7 @@
     <Compile Include="$(ArtifactDirectory)\Metadata\ProductInformation.cs">
       <Link>Properties\ProductInformation.cs</Link>
     </Compile>
+    <Compile Include="Controls\TitleBar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

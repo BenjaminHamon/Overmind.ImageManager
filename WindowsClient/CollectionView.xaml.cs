@@ -10,14 +10,6 @@ namespace Overmind.ImageManager.WindowsClient
 {
 	public partial class CollectionView : UserControl
 	{
-		static CollectionView()
-		{
-			ListDisplayStyleProperty = DependencyProperty.Register(nameof(ListDisplayStyle), typeof(string), typeof(CollectionView),
-				new UIPropertyMetadata("Grid"));
-		}
-
-		public static readonly DependencyProperty ListDisplayStyleProperty;
-
 		public CollectionView()
 		{
 			InitializeComponent();
@@ -35,10 +27,22 @@ namespace Overmind.ImageManager.WindowsClient
 		private readonly ScrollViewer scrollViewer;
 		private bool isTryDisplayMoreScheduled;
 
+		public static readonly DependencyProperty ListDisplayStyleProperty
+			 = DependencyProperty.Register(nameof(ListDisplayStyle), typeof(string), typeof(CollectionView),
+				 new PropertyMetadata("Grid", OnListDisplayStylePropertyChanged));
+
 		public string ListDisplayStyle
 		{
 			get { return (string)GetValue(ListDisplayStyleProperty); }
 			set { SetValue(ListDisplayStyleProperty, value); }
+		}
+
+		private static void OnListDisplayStylePropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs eventArguments)
+		{
+			CollectionView view = (CollectionView) source;
+			CollectionViewModel viewModel = (CollectionViewModel) view.DataContext;
+
+			viewModel?.ResetDisplay();
 		}
 
 		private void HandleDataContextChanged(object sender, DependencyPropertyChangedEventArgs eventArguments)

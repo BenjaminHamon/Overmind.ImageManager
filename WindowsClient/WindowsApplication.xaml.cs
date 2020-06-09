@@ -144,7 +144,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 				downloaderWindow = new CustomWindow()
 				{
-					Title = "Download" +  " - " + ApplicationTitle,
+					Title = "Downloads" +  " - " + ApplicationTitle,
 					Height = 400,
 					Width = 600,
 				};

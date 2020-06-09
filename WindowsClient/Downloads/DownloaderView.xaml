@@ -24,22 +24,22 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="0" Style="{StaticResource FormStyle}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" x:Name="newImageUri" x:FieldModifier="private" Margin="5" VerticalAlignment="Center"
+            <TextBox Grid.Column="0" x:Name="newImageUri" x:FieldModifier="private"
                      PreviewDragEnter="CheckDragData" PreviewDragOver="CheckDragData" PreviewDrop="DropUri_FromTextBox">
                 <TextBox.InputBindings>
                     <KeyBinding Key="Enter" Command="{Binding Path=AddDownloadCommand}" CommandParameter="{Binding ElementName=newImageUri, Path=Text}"/>
                 </TextBox.InputBindings>
             </TextBox>
-            <Button Grid.Column="1" Content="Add" Margin="5" Padding="5" MinWidth="50"
+            <Button Grid.Column="1" Content="Add" MinWidth="50"
                     Command="{Binding Path=AddDownloadCommand}" CommandParameter="{Binding ElementName=newImageUri, Path=Text}"/>
         </Grid>
 
-        <ListView x:Name="listView" x:FieldModifier="private" Grid.Row="1" Margin="5" ItemsSource="{Binding Path=DownloadCollection}"
+        <ListView x:Name="listView" x:FieldModifier="private" Grid.Row="1" Margin="4" ItemsSource="{Binding Path=DownloadCollection}"
                   AllowDrop="True" PreviewDragEnter="CheckDragData" PreviewDragOver="CheckDragData" PreviewDrop="DropUri_FromListView">
             <ListView.Resources>
                 <Style TargetType="ListViewItem">

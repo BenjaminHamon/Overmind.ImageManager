@@ -28,6 +28,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBox Grid.Column="0" x:Name="newImageUri" x:FieldModifier="private"
                      PreviewDragEnter="CheckDragData" PreviewDragOver="CheckDragData" PreviewDrop="DropUri_FromTextBox">
@@ -37,6 +38,7 @@
             </TextBox>
             <Button Grid.Column="1" Content="Add" MinWidth="50"
                     Command="{Binding Path=AddDownloadCommand}" CommandParameter="{Binding ElementName=newImageUri, Path=Text}"/>
+            <Button Grid.Column="2" Content="Clear" MinWidth="50" Command="{Binding Path=ClearCommand}"/>
         </Grid>
 
         <ListView x:Name="listView" x:FieldModifier="private" Grid.Row="1" Margin="4" ItemsSource="{Binding Path=DownloadCollection}"

@@ -28,6 +28,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 			this.dispatcher = dispatcher;
 
 			AddDownloadCommand = new DelegateCommand<string>(AddDownload);
+			ClearCommand = new DelegateCommand<object>(_ => Clear());
 			SelectImageCommand = new DelegateCommand<ObservableDownload>(SelectImage, CanSelectImage);
 		}
 
@@ -41,6 +42,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		private Dictionary<ObservableDownload, string> downloadHashCache = new Dictionary<ObservableDownload, string>();
 
 		public DelegateCommand<string> AddDownloadCommand { get; }
+		public DelegateCommand<object> ClearCommand { get; }
 		public DelegateCommand<ObservableDownload> SelectImageCommand { get; }
 
 		public void Dispose()
@@ -157,6 +159,14 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		private bool CanSelectImage(ObservableDownload download)
 		{
 			return downloadHashCache.ContainsKey(download);
+		}
+
+		private void Clear()
+		{
+			List<ObservableDownload> downloadsToRemove = DownloadCollection.Where(d => d.IsCompleted).ToList();
+
+			foreach (var download in downloadsToRemove)
+				DownloadCollection.Remove(download);
 		}
 
 		private void SelectImage(ObservableDownload download)

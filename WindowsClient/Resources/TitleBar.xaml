@@ -121,6 +121,7 @@
     <Style TargetType="controls:TitleBar">
         <Style.Resources>
             <Style TargetType="Menu">
+                <Setter Property="Background" Value="{StaticResource TitleBarBackground}"/>
                 <Setter Property="ItemsPanel">
                     <Setter.Value>
                         <ItemsPanelTemplate>

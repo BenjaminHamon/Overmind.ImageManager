@@ -64,8 +64,9 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Style="{StaticResource FormStyle}" Margin="10,0">
+        <Grid Grid.Row="0" Style="{StaticResource FormStyle}">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="10"/>
@@ -78,35 +79,35 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <TextBox Grid.ColumnSpan="5" Grid.Row="0" x:Name="searchTextBox" x:FieldModifier="private"
+            <TextBox Grid.ColumnSpan="6" Grid.Row="0" x:Name="searchTextBox" x:FieldModifier="private"
                      Text="{Binding Path=Query.SearchExpression, UpdateSourceTrigger=PropertyChanged}">
                 <TextBox.InputBindings>
                     <KeyBinding Key="Enter" Command="{Binding Path=ExecuteQueryCommand}"/>
                 </TextBox.InputBindings>
             </TextBox>
-            <Button Grid.Column="5" Grid.Row="0" Command="{Binding Path=ExecuteQueryCommand}">
+            <Button Grid.Column="6" Grid.Row="0" Command="{Binding Path=ExecuteQueryCommand}">
                 <fa:ImageAwesome Icon="Search" Margin="4" Height="16" Width="16"/>
             </Button>
-            <TextBlock Grid.Column="0" Grid.Row="1" Text="Group by"/>
-            <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Path=Query.GroupByExpression, UpdateSourceTrigger=PropertyChanged}">
+            <TextBlock Grid.Column="1" Grid.Row="1" Text="Group by"/>
+            <TextBox Grid.Column="2" Grid.Row="1" Text="{Binding Path=Query.GroupByExpression, UpdateSourceTrigger=PropertyChanged}">
                 <TextBox.InputBindings>
                     <KeyBinding Key="Enter" Command="{Binding Path=ExecuteQueryCommand}"/>
                 </TextBox.InputBindings>
             </TextBox>
-            <TextBlock Grid.Column="3" Grid.Row="1" Text="Order by"/>
-            <TextBox Grid.Column="4" Grid.Row="1" Text="{Binding Path=Query.OrderByExpression, UpdateSourceTrigger=PropertyChanged}">
+            <TextBlock Grid.Column="4" Grid.Row="1" Text="Order by"/>
+            <TextBox Grid.Column="5" Grid.Row="1" Text="{Binding Path=Query.OrderByExpression, UpdateSourceTrigger=PropertyChanged}">
                 <TextBox.InputBindings>
                     <KeyBinding Key="Enter" Command="{Binding Path=ExecuteQueryCommand}"/>
                 </TextBox.InputBindings>
             </TextBox>
-            <Button Grid.Column="5" Grid.Row="1" Click="ShowQuerySyntaxHelp">
+            <Button Grid.Column="6" Grid.Row="1" Click="ShowQuerySyntaxHelp">
                 <fa:ImageAwesome Icon="Question" Margin="4" Height="16" Width="16"/>
             </Button>
         </Grid>
 
         <ListBox Grid.Row="2" x:Name="listBox" x:FieldModifier="private"
                  ItemsSource="{Binding Source={StaticResource DisplayedImagesProxy}}" SelectedItem="{Binding Path=SelectedImage}"
-                 Margin="5" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                 BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListBox.InputBindings>
                 <KeyBinding Key="Enter" Command="{Binding Path=ViewImageCommand}" CommandParameter="{Binding Path=SelectedImage}"/>
             </ListBox.InputBindings>

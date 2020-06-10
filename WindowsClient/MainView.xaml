@@ -32,7 +32,7 @@
             </Grid.RowDefinitions>
 
             <Image Grid.Row="0" Source="{Binding Path=ActiveCollection.SelectedImage.FilePath, Converter={StaticResource DefaultImageConverter}}"
-                    Margin="5" MaxHeight="200" RenderOptions.BitmapScalingMode="HighQuality">
+                   Margin="5" MaxHeight="200" RenderOptions.BitmapScalingMode="HighQuality">
                 <Image.InputBindings>
                     <MouseBinding Gesture="LeftDoubleClick"
                             Command="{Binding Path=ViewImageCommand}"
@@ -40,7 +40,7 @@
                 </Image.InputBindings>
             </Image>
 
-            <main:ImagePropertiesView Grid.Row="1" DataContext="{Binding Path=ActiveCollection.SelectedImageProperties}" Margin="5">
+            <main:ImagePropertiesView Grid.Row="1" DataContext="{Binding Path=ActiveCollection.SelectedImageProperties}">
                 <main:ImagePropertiesView.Style>
                     <Style TargetType="main:ImagePropertiesView">
                         <Style.Triggers>

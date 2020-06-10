@@ -27,16 +27,11 @@
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0" Orientation="Horizontal">
-                <Button Command="{Binding Path=ShowDownloaderCommand}" Content="Add Images" Margin="5" Padding="5"/>
-            </StackPanel>
-
-            <Image Grid.Row="1" Source="{Binding Path=ActiveCollection.SelectedImage.FilePath, Converter={StaticResource DefaultImageConverter}}"
+            <Image Grid.Row="0" Source="{Binding Path=ActiveCollection.SelectedImage.FilePath, Converter={StaticResource DefaultImageConverter}}"
                     Margin="5" MaxHeight="200" RenderOptions.BitmapScalingMode="HighQuality">
                 <Image.InputBindings>
                     <MouseBinding Gesture="LeftDoubleClick"
@@ -45,7 +40,7 @@
                 </Image.InputBindings>
             </Image>
 
-            <main:ImagePropertiesView Grid.Row="2" DataContext="{Binding Path=ActiveCollection.SelectedImageProperties}" Margin="5">
+            <main:ImagePropertiesView Grid.Row="1" DataContext="{Binding Path=ActiveCollection.SelectedImageProperties}" Margin="5">
                 <main:ImagePropertiesView.Style>
                     <Style TargetType="main:ImagePropertiesView">
                         <Style.Triggers>
@@ -57,7 +52,7 @@
                 </main:ImagePropertiesView.Style>
             </main:ImagePropertiesView>
 
-            <Grid Grid.Row="3">
+            <Grid Grid.Row="2">
                 <Grid.Resources>
                     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                         <Setter Property="Margin" Value="5"/>

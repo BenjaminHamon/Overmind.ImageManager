@@ -25,7 +25,7 @@ namespace Overmind.ImageManager.WindowsClient
 			this.downloader = downloader;
 			this.randomFactory = randomFactory;
 
-			ShowDownloaderCommand = new DelegateCommand<object>(_ => application.ShowDownloader());
+			ShowDownloaderCommand = new DelegateCommand<object>(_ => application.ShowDownloader(), _ => ActiveCollection != null);
 			ShowSettingsCommand = new DelegateCommand<object>(_ => application.ShowSettings());
 			ShowAboutCommand = new DelegateCommand<object>(_ => application.ShowAbout());
 			ExitApplicationCommand = new DelegateCommand<object>(_ => application.Shutdown());
@@ -65,6 +65,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActiveCollection)));
 
+				ShowDownloaderCommand.RaiseCanExecuteChanged();
 				SaveCollectionCommand.RaiseCanExecuteChanged();
 				ExportCollectionCommand.RaiseCanExecuteChanged();
 				CloseCollectionCommand.RaiseCanExecuteChanged();

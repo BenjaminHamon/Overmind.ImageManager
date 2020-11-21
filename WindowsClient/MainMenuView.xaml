@@ -20,6 +20,9 @@
             <Separator/>
             <MenuItem Header="Exit" Command="main:MainMenuView.ExitCommand" InputGestureText="Alt+F4"/>
         </MenuItem>
+        <MenuItem Header="Edit" Style="{StaticResource MenuItemTopLevelStyle}">
+            <MenuItem Header="Add images" Command="{Binding Path=ShowDownloaderCommand}"/>
+        </MenuItem>
         <MenuItem Header="View" Style="{StaticResource MenuItemTopLevelStyle}">
             <MenuItem x:Name="gridDisplayMenuItem" x:FieldModifier="private" Header="Grid display"
                       DataContext="{Binding ElementName=userControl, Path=CollectionView}">

@@ -79,7 +79,7 @@ namespace Overmind.ImageManager.Model.Wallpapers
 			return drawArea;
 		}
 
-		/// <summary>Draw the source image on the requested area in the destination image, with high quality resize.</summary
+		/// <summary>Draw the source image on the requested area in the destination image, with high quality resize.</summary>
 		// See https://stackoverflow.com/questions/1922040/how-to-resize-an-image-c-sharp/24199315#24199315
 		private void Draw(Image source, Bitmap destination, Rectangle drawArea)
 		{

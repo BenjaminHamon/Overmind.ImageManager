@@ -6,5 +6,10 @@ The product is free and open source software. See [About](About.md) for more inf
 Public releases are available on the [Releases page](https://github.com/BenjaminHamon/Overmind.ImageManager/releases).  
 Technical documentation and user documentation can be found in the [Wiki](https://github.com/BenjaminHamon/Overmind.ImageManager/wiki).
 
+![](Documentation/Resources/Screenshot.png)
+
+
+## Development
+
 The solution `Overmind.ImageManager.sln` can be opened and built with Visual Studio 2017.  
 For more information on how to build the project, see the [Build](Documentation/Build.md) documentation page.

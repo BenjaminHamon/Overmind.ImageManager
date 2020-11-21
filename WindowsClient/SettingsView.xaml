@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
+             xmlns:downloads="clr-namespace:Overmind.ImageManager.WindowsClient.Downloads"
              xmlns:wallpapers="clr-namespace:Overmind.ImageManager.WindowsClient.Wallpapers"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:SettingsViewModel}"
              d:DesignHeight="450" d:DesignWidth="800">
@@ -30,6 +31,17 @@
     </UserControl.Resources>
 
     <TabControl>
+        <TabItem>
+            <TabItem.Header>
+                <Grid Style="{StaticResource TabHeaderStyle}">
+                    <StackPanel>
+                        <fa:ImageAwesome Icon="Download"/>
+                        <TextBlock Text="Downloader"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem.Header>
+            <downloads:DownloaderSettingsView DataContext="{Binding Path=DownloaderSettings}"/>
+        </TabItem>
         <TabItem>
             <TabItem.Header>
                 <Grid Style="{StaticResource TabHeaderStyle}">

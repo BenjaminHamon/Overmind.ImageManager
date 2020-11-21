@@ -11,17 +11,16 @@ def configure_argument_parser(environment, configuration, subparsers): # pylint:
 
 
 def run(environment, configuration, arguments): # pylint: disable = unused-argument
-	clean(arguments.simulate)
+	clean(configuration["artifact_directory"], simulate = arguments.simulate)
 
 
-def clean(simulate):
+def clean(artifact_directory, simulate):
 	logger.info("Cleaning the workspace")
 	print("")
 
 	directories_to_clean = [
+		{ "display_name": "Artifacts", "path": artifact_directory },
 		{ "display_name": "NuGet packages", "path": "packages" },
-		{ "display_name": "Build", "path": ".build" },
-		{ "display_name": "Build artifacts", "path": ".artifacts" },
 		{ "display_name": "Test Results", "path": "TestResults" },
 	]
 

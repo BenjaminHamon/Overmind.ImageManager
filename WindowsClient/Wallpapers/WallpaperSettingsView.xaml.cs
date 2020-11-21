@@ -1,22 +1,29 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using NLog;
 using Overmind.WpfExtensions;
 using System;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 
 namespace Overmind.ImageManager.WindowsClient.Wallpapers
 {
 	public partial class WallpaperSettingsView : UserControl
 	{
+		private static readonly Logger Logger = LogManager.GetLogger(nameof(WallpaperSettingsView));
+
 		public WallpaperSettingsView()
 		{
 			InitializeComponent();
 
 			DataContextChanged += HandleDataContextChanged;
+
+			Loaded += RunPostLoad;
 		}
+
+		private WallpaperSettingsViewModel ViewModel { get { return (WallpaperSettingsViewModel) DataContext; } }
 
 		private void HandleDataContextChanged(object sender, DependencyPropertyChangedEventArgs eventArguments)
 		{
@@ -30,6 +37,41 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 			{
 				WallpaperSettingsViewModel newDataContext = (WallpaperSettingsViewModel)eventArguments.NewValue;
 				newDataContext.ConfigurationCollection.CollectionChanged += ShowNewConfiguration_Dispatch;
+			}
+		}
+
+		private void RunPostLoad(object sender, EventArgs eventArguments)
+		{
+			ViewModel.ConfigurationCollection.CollectionChanged -= ShowNewConfiguration_Dispatch;
+
+			try
+			{
+				ViewModel.ReloadSettings();
+			}
+			catch (Exception exception)
+			{
+				Logger.Error(exception, "Failed to reload settings");
+				WindowsApplication.ShowError("Settings", "Failed to reload wallpaper settings.", exception);
+			}
+
+			ViewModel.ConfigurationCollection.CollectionChanged += ShowNewConfiguration_Dispatch;
+		}
+
+		private void CanSaveSettings(object sender, CanExecuteRoutedEventArgs eventArguments)
+		{
+			eventArguments.CanExecute = ViewModel?.SaveSettingsCommand.CanExecute(null) ?? false;
+		}
+
+		private void SaveSettings(object sender, EventArgs eventArguments)
+		{
+			try
+			{
+				ViewModel.SaveSettingsCommand.Execute(null);
+			}
+			catch (Exception exception)
+			{
+				Logger.Error(exception, "Failed to save settings");
+				WindowsApplication.ShowError("Settings", "Failed to save wallpaper settings.", exception);
 			}
 		}
 
@@ -47,7 +89,7 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 		private void ShowNewConfiguration(object item, bool focus)
 		{
 			FrameworkElement itemElement = (FrameworkElement)itemsControl.ItemContainerGenerator.ContainerFromItem(item);
-			VisualTreeExtensions.GetDescendant<ToggleButton>(itemElement).IsChecked = true;
+			VisualTreeExtensions.GetDescendant<Expander>(itemElement).IsExpanded = true;
 
 			if (focus)
 			{

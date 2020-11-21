@@ -1,63 +1,93 @@
-﻿using Newtonsoft.Json;
-using NLog;
-using Overmind.ImageManager.Model.Wallpapers;
+﻿using NLog;
+using Overmind.ImageManager.Model.Serialization;
+using System;
 using System.IO;
 
 namespace Overmind.ImageManager.Model
 {
+	public delegate void SettingsUpdatedHandler(SettingsProvider sender);
+
 	public class SettingsProvider
 	{
 		private static readonly Logger Logger = LogManager.GetLogger(nameof(SettingsProvider));
 
-		private const string WallpaperSettingsFile = "WallpaperService.json";
-		private const string ActiveWallpaperConfigurationFile = "WallpaperService.active.txt";
+		private const string ApplicationSettingsFileName = "ApplicationSettings.json";
 
-		public SettingsProvider(JsonSerializer serializer, string settingsDirectory)
+		public SettingsProvider(ISerializer serializer, string settingsDirectory)
 		{
 			this.serializer = serializer;
 			this.settingsDirectory = settingsDirectory;
 		}
 
-		private readonly JsonSerializer serializer;
+		private readonly ISerializer serializer;
 		private readonly string settingsDirectory;
+		private FileSystemWatcher fileSystemWatcher;
 
-		public WallpaperSettings LoadWallpaperSettings()
+		public event SettingsUpdatedHandler ApplicationSettingsUpdated;
+
+		public void InitializeWatchers()
 		{
-			Logger.Info("Loading wallpaper settings");
+			fileSystemWatcher = new FileSystemWatcher(settingsDirectory, "*.json");
 
-			string path = Path.Combine(settingsDirectory, WallpaperSettingsFile);
+			fileSystemWatcher.Created += RaiseSettingsChanged;
+			fileSystemWatcher.Renamed += RaiseSettingsChanged;
+			fileSystemWatcher.Changed += RaiseSettingsChanged;
+			fileSystemWatcher.Error += HandleWatcherError;
+
+			fileSystemWatcher.EnableRaisingEvents = true;
+		}
+
+		public void DisposeWatchers()
+		{
+			fileSystemWatcher.EnableRaisingEvents = false;
+
+			fileSystemWatcher.Created -= RaiseSettingsChanged;
+			fileSystemWatcher.Renamed -= RaiseSettingsChanged;
+			fileSystemWatcher.Changed -= RaiseSettingsChanged;
+			fileSystemWatcher.Error -= HandleWatcherError;
+
+			fileSystemWatcher.Dispose();
+			fileSystemWatcher = null;
+		}
+
+		private void RaiseSettingsChanged(object sender, FileSystemEventArgs eventArguments)
+		{
+			if (eventArguments.Name == ApplicationSettingsFileName)
+				ApplicationSettingsUpdated?.Invoke(this);
+		}
+
+		private void HandleWatcherError(object sender, ErrorEventArgs eventArguments)
+		{
+			Logger.Warn(eventArguments.GetException(), "File watcher error (Path: {0})", ((FileSystemWatcher)sender).Path);
+		}
+
+		public ApplicationSettings LoadApplicationSettings()
+		{
+			Logger.Info("Loading application settings");
+
+			string path = Path.Combine(settingsDirectory, ApplicationSettingsFileName);
 
 			if (File.Exists(path) == false)
-				return new WallpaperSettings();
+				return new ApplicationSettings();
 
-			using (StreamReader streamReader = new StreamReader(path))
-			using (JsonReader jsonReader = new JsonTextReader(streamReader))
-				return serializer.Deserialize<WallpaperSettings>(jsonReader);
+			return serializer.DeserializeFromFile<ApplicationSettings>(path);
 		}
 
-		public void SaveWallpaperSettings(WallpaperSettings settings)
+		public void SaveApplicationSettings(ApplicationSettings settings)
 		{
-			Logger.Info("Saving wallpaper settings");
+			Logger.Info("Saving application settings");
 
-			string path = Path.Combine(settingsDirectory, WallpaperSettingsFile);
-
-			using (StreamWriter streamWriter = new StreamWriter(path))
-			using (JsonWriter jsonWriter = new JsonTextWriter(streamWriter))
-				serializer.Serialize(jsonWriter, settings);
+			string path = Path.Combine(settingsDirectory, ApplicationSettingsFileName);
+			serializer.SerializeToFile(path, settings);
 		}
 
-		public string LoadActiveWallpaperConfiguration()
+		public void UpdateApplicationSettings(Action<ApplicationSettings> updater)
 		{
-			string path = Path.Combine(settingsDirectory, ActiveWallpaperConfigurationFile);
-			if (File.Exists(path) == false)
-				return null;
-			return File.ReadAllText(path).Trim();
-		}
+			ApplicationSettings settings = LoadApplicationSettings() ?? new ApplicationSettings();
 
-		public void SaveActiveWallpaperConfiguration(string configurationName)
-		{
-			string path = Path.Combine(settingsDirectory, ActiveWallpaperConfigurationFile);
-			File.WriteAllText(path, configurationName);
+			updater(settings);
+
+			SaveApplicationSettings(settings);
 		}
 	}
 }

@@ -2,20 +2,26 @@
 using NLog;
 using NLog.Common;
 using Overmind.ImageManager.Model;
+using Overmind.ImageManager.Model.Downloads;
 using Overmind.ImageManager.Model.Queries;
 using Overmind.ImageManager.WindowsClient.Downloads;
 using Overmind.ImageManager.WindowsClient.Extensions;
 using Overmind.WpfExtensions;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
+using System.Net.Http;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
+
+using JsonSerializerProxy = Overmind.ImageManager.Model.Serialization.JsonSerializer;
 
 namespace Overmind.ImageManager.WindowsClient
 {
@@ -25,6 +31,8 @@ namespace Overmind.ImageManager.WindowsClient
 		public static void Main(string[] arguments)
 		{
 			AppDomain.CurrentDomain.UnhandledException += ReportFatalError;
+			TaskScheduler.UnobservedTaskException += (sender, eventArguments)
+				=> { Logger.Error(eventArguments.Exception, "Unhandled exception in task"); };
 
 			string applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
 			Model.Application.InitializeLogging(ApplicationFullName, ApplicationName, applicationDataDirectory);
@@ -52,41 +60,67 @@ namespace Overmind.ImageManager.WindowsClient
 		public WindowsApplication()
 		{
 			string applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
-			JsonSerializer serializer = new JsonSerializer() { Formatting = Formatting.Indented };
+			JsonSerializer serializerImplementation = new JsonSerializer() { Formatting = Formatting.Indented };
+			JsonSerializerProxy serializer = new JsonSerializerProxy(serializerImplementation);
 			FileNameFormatter fileNameFormatter = new FileNameFormatter();
 
+			CookieContainer cookieContainer = new CookieContainer();
+			httpClient = new HttpClient(new HttpClientHandler() { CookieContainer = cookieContainer });
+			httpClient.DefaultRequestHeaders.Add("User-Agent", ApplicationFullName + "/" + ApplicationFullVersion);
+
+			hashAlgorithm = MD5.Create();
+			imageOperations = new ImageOperations(hashAlgorithm);
+
 			settingsProvider = new SettingsProvider(serializer, applicationDataDirectory);
-			collectionProvider = new CollectionProvider(serializer, fileNameFormatter);
+			collectionProvider = new CollectionProvider(serializer, imageOperations, fileNameFormatter);
 			queryEngine = new LuceneQueryEngine();
+			downloader = new Downloader(httpClient);
 			randomFactory = () => new Random();
 		}
 
+		private readonly HttpClient httpClient;
+		private readonly HashAlgorithm hashAlgorithm;
 		private readonly SettingsProvider settingsProvider;
 		private readonly ICollectionProvider collectionProvider;
+		private readonly IImageOperations imageOperations;
 		private readonly IQueryEngine<ImageModel> queryEngine;
+		private readonly IDownloader downloader;
 		private readonly Func<Random> randomFactory;
 
 		private MainViewModel mainViewModel;
-		private MainView mainView;
 
-		private Window downloaderWindow;
-		private Window settingsWindow;
+		private CustomWindow downloaderWindow;
+		private CustomWindow settingsWindow;
 
 		private void Application_Startup(object sender, StartupEventArgs eventArguments)
 		{
 			Logger.Info("Starting {0}", ApplicationName);
 
-			mainViewModel = new MainViewModel(this, collectionProvider, queryEngine, randomFactory);
-			mainView = new MainView() { DataContext = mainViewModel };
-			MainWindow = new Window() { Content = mainView };
+			mainViewModel = new MainViewModel(this, settingsProvider, collectionProvider, imageOperations, queryEngine, downloader, randomFactory);
 
-			Binding titleBinding = new Binding() { Source = mainViewModel, Path = new PropertyPath(nameof(MainViewModel.WindowTitle)) };
+			MainMenuView mainMenuView = new MainMenuView() { DataContext = mainViewModel };
+			MainView mainView = new MainView() { DataContext = mainViewModel };
+			mainMenuView.CollectionView = mainView.CollectionView;
+
+			MainWindow = new CustomWindow();
+			((CustomWindow)MainWindow).Menu.Content = mainMenuView;
+			((CustomWindow)MainWindow).MainContent.Content = mainView;
+
+			Binding titleBinding = new Binding()
+			{
+				Source = mainViewModel,
+				Path = new PropertyPath("ActiveCollection.Name"),
+				StringFormat = "{0}" + " - " + ApplicationTitle,
+				FallbackValue = ApplicationTitle,
+			};
+
 			BindingOperations.SetBinding(MainWindow, Window.TitleProperty, titleBinding);
 
-			MainWindow.Closing += MainWindow_Closing;
-			MainWindow.Show();
+			mainMenuView.RegisterCommands(MainWindow);
 
-			mainView.Focus();
+			MainWindow.Deactivated += (s, e) => Dispatcher.BeginInvoke(new Action(() => ForceUpdateOnFocusedElement(mainView)));
+			MainWindow.Closing += mainMenuView.ExitApplication;
+			MainWindow.Show();
 		}
 
 		private void Application_Exit(object sender, ExitEventArgs eventArguments)
@@ -95,13 +129,9 @@ namespace Overmind.ImageManager.WindowsClient
 
 			if (mainViewModel != null)
 				mainViewModel.Dispose();
-		}
 
-		private void MainWindow_Closing(object sender, CancelEventArgs eventArguments)
-		{
-			mainView.ExitApplication(sender, eventArguments);
-			if (eventArguments.Cancel == false)
-				MainWindow.Closing -= MainWindow_Closing;
+			hashAlgorithm.Dispose();
+			httpClient.Dispose();
 		}
 
 		public void ShowDownloader()
@@ -112,13 +142,14 @@ namespace Overmind.ImageManager.WindowsClient
 				Binding dataContextBinding = new Binding() { Source = mainViewModel, Path = new PropertyPath(nameof(MainViewModel.Downloader)) };
 				BindingOperations.SetBinding(downloaderView, FrameworkElement.DataContextProperty, dataContextBinding);
 
-				downloaderWindow = new Window()
+				downloaderWindow = new CustomWindow()
 				{
-					Title = "Downloads - " + ApplicationTitle,
-					Content = downloaderView,
+					Title = "Downloads" +  " - " + ApplicationTitle,
 					Height = 400,
 					Width = 600,
 				};
+
+				downloaderWindow.MainContent.Content = downloaderView;
 
 				downloaderWindow.Closed += (s, e) => downloaderWindow = null;
 				downloaderWindow.Show();
@@ -138,13 +169,14 @@ namespace Overmind.ImageManager.WindowsClient
 				SettingsViewModel settingsViewModel = new SettingsViewModel(settingsProvider, queryEngine);
 				SettingsView settingsView = new SettingsView() { DataContext = settingsViewModel };
 
-				settingsWindow = new Window()
+				settingsWindow = new CustomWindow()
 				{
-					Title = "Settings - " + ApplicationTitle,
-					Content = settingsView,
+					Title = "Settings" + " - " + ApplicationTitle,
 					Height = 800,
 					Width = 800,
 				};
+
+				settingsWindow.MainContent.Content = settingsView;
 
 				settingsWindow.Closed += (s, e) => settingsWindow = null;
 				settingsWindow.Show();
@@ -163,7 +195,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 			Window aboutWindow = new Window()
 			{
-				Title = "About " + ApplicationTitle,
+				Title = "About" + " " + ApplicationTitle,
 				Content = aboutView,
 				Owner = MainWindow,
 				WindowStartupLocation = WindowStartupLocation.CenterOwner,
@@ -178,7 +210,17 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public void ViewImage(ImageViewModel image)
 		{
-			Window imageWindow = new ImageView() { DataContext = image };
+			ImageView imageView = new ImageView() { DataContext = image };
+
+			CustomWindow imageWindow = new CustomWindow();
+			imageWindow.TitleTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
+			imageWindow.MainContent.Content = imageView;
+
+			Binding titleBinding = new Binding() { Source = image, Path = new PropertyPath("Name") };
+			BindingOperations.SetBinding(imageWindow, Window.TitleProperty, titleBinding);
+
+			imageWindow.Loaded += (s, e) => imageView.ResizeWindow();
+			imageWindow.KeyUp += (s, e) => { if (e.Key == Key.Escape) imageWindow.Close(); };
 
 			// Use BeginInvoke so that the call finishes before the window is shown
 			// to ensure the window is correctly activated and in the foreground
@@ -192,8 +234,11 @@ namespace Overmind.ImageManager.WindowsClient
 			SlideShowViewModel slideShowViewModel = new SlideShowViewModel(source);
 			SlideShowView slideShowView = new SlideShowView() { DataContext = slideShowViewModel };
 
-			Window window = new Window() { Title = "Slide Show", Content = slideShowView };
-			window.Show();
+			CustomWindow slideShowWindow = new CustomWindow() { Title = "Slide Show" };
+			slideShowWindow.TitleTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
+			slideShowWindow.MainContent.Content = slideShowView;
+
+			slideShowWindow.Show();
 
 			slideShowView.Focus();
 		}
@@ -219,7 +264,6 @@ namespace Overmind.ImageManager.WindowsClient
 			InternalLogger.Fatal(exception, "Unhandled exception");
 			Logger.Fatal(exception, "Unhandled exception");
 			ShowError(ApplicationTitle, "A fatal error has occured.", exception);
-
 		}
 
 		public static void ShowError(string context, string message, Exception exception)
@@ -236,6 +280,28 @@ namespace Overmind.ImageManager.WindowsClient
 			Uri uri = new Uri(DocumentationHome, page);
 
 			using (Process process = Process.Start(uri.ToString())) { }
+		}
+
+		public static void ForceUpdateOnFocusedElement(FrameworkElement element)
+		{
+			// Some controls trigger the data binding update source when they lose the focus, but this does not happen when switching focus scope.
+			// The issue occurs when using a menu command, changing window or closing the window (directly or from the system task bar).
+
+			// See also https://stackoverflow.com/questions/57493/wpf-databind-before-saving
+			// - Disabling the menu focus scope is only a partial fix since it does not catch the issue when the main window is closed,
+			//   plus it introduces a bug where the main window close button may require two clicks, from the focus being stuck on the menu somehow
+			//   (the behavior is similar to having a menu open, the first click would dismiss the menu and does not trigger on the button)
+			// - Updating the active element directly relies on Keyboard.FocusedElement, which is null when closing the window from the system task bar,
+			//   and requires supporting any control type (TokenListView does not expose its internal update logic).
+
+			Window mainWindow = Window.GetWindow(element);
+			IInputElement focusedElement = FocusManager.GetFocusedElement(mainWindow);
+
+			if (focusedElement != null)
+			{
+				FocusManager.SetFocusedElement(mainWindow, element);
+				FocusManager.SetFocusedElement(mainWindow, focusedElement);
+			}
 		}
 	}
 }

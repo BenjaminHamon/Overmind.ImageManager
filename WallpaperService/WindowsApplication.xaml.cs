@@ -11,6 +11,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Threading;
+
+using JsonSerializerProxy = Overmind.ImageManager.Model.Serialization.JsonSerializer;
 
 namespace Overmind.ImageManager.WallpaperService
 {
@@ -42,11 +45,12 @@ namespace Overmind.ImageManager.WallpaperService
 
 		public WindowsApplication()
 		{
-			JsonSerializer serializer = new JsonSerializer() { Formatting = Formatting.Indented };
+			JsonSerializer serializerImplementation = new JsonSerializer() { Formatting = Formatting.Indented };
+			JsonSerializerProxy serializer = new JsonSerializerProxy(serializerImplementation);
 
 			applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
 			settingsProvider = new SettingsProvider(serializer, applicationDataDirectory);
-			collectionProvider = new CollectionProvider(serializer, null);
+			collectionProvider = new CollectionProvider(serializer, null, null);
 			queryEngine = new LuceneQueryEngine();
 			randomFactory = () => new Random();
 		}
@@ -63,9 +67,13 @@ namespace Overmind.ImageManager.WallpaperService
 		{
 			Logger.Info("Starting {0}", ApplicationName);
 
+			settingsProvider.InitializeWatchers();
+
 			mainViewModel = new MainViewModel(settingsProvider, collectionProvider, queryEngine, randomFactory, applicationDataDirectory);
 			mainViewModel.ReloadSettings();
 			mainViewModel.ApplyConfiguration();
+
+			settingsProvider.ApplicationSettingsUpdated += ReloadSettings;
 
 			MainView mainView = new MainView() { DataContext = mainViewModel };
 
@@ -90,6 +98,7 @@ namespace Overmind.ImageManager.WallpaperService
 			Logger.Info("Exiting {0}", ApplicationName);
 
 			mainViewModel.Dispose();
+			settingsProvider.DisposeWatchers();
 		}
 
 		private void ShowMainWindow(object sender, RoutedEventArgs eventArguments)
@@ -107,6 +116,11 @@ namespace Overmind.ImageManager.WallpaperService
 		private void ExitApplication(object sender, RoutedEventArgs eventArguments)
 		{
 			Shutdown();
+		}
+
+		public void ReloadSettings(SettingsProvider sender)
+		{
+			Dispatcher.BeginInvoke(new Action(() => mainViewModel.ReloadSettings()), DispatcherPriority.ContextIdle);
 		}
 
 		private static void ReportFatalError(object sender, UnhandledExceptionEventArgs eventArguments)

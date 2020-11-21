@@ -15,21 +15,20 @@ namespace Overmind.ImageManager.Model.Wallpapers
 		private static readonly Logger Logger = LogManager.GetLogger(nameof(WallpaperServiceInstance));
 
 		public static WallpaperServiceInstance CreateInstance(WallpaperConfiguration configuration,
-			ICollectionProvider collectionProvider, IQueryEngine<ImageModel> queryEngine, Action<string> setSystemWallpaperFromPath, Random random)
+			ICollectionProvider collectionProvider, IQueryEngine<ImageModel> queryEngine, Action<ImageModel> wallpaperSetter, Random random)
 		{
 			CollectionData collectionData = collectionProvider.LoadCollection(configuration.CollectionPath);
 			ReadOnlyCollectionModel collectionModel = new ReadOnlyCollectionModel(collectionProvider, collectionData, configuration.CollectionPath);
 			ICollection<ImageModel> imageCollection = queryEngine.Search(collectionModel.AllImages, configuration.ImageQuery);
-			Action<ImageModel> setSystemWallpaperFromImage = image => setSystemWallpaperFromPath(collectionModel.GetImagePath(image));
 
-			return new WallpaperServiceInstance(imageCollection, setSystemWallpaperFromImage, random, configuration.CyclePeriod);
+			return new WallpaperServiceInstance(imageCollection, wallpaperSetter, random, configuration.CyclePeriod);
 		}
 
 		public WallpaperServiceInstance(IEnumerable<ImageModel> imageCollection,
-			Action<ImageModel> setSystemWallpaper, Random random, TimeSpan cyclePeriod)
+			Action<ImageModel> wallpaperSetter, Random random, TimeSpan cyclePeriod)
 		{
 			this.imageCollection = (imageCollection ?? throw new ArgumentNullException(nameof(imageCollection))).ToList();
-			this.setSystemWallpaper = setSystemWallpaper ?? throw new ArgumentNullException(nameof(setSystemWallpaper));
+			this.wallpaperSetter = wallpaperSetter ?? throw new ArgumentNullException(nameof(wallpaperSetter));
 			this.random = random ?? throw new ArgumentNullException(nameof(random));
 			this.cyclePeriod = cyclePeriod;
 
@@ -38,14 +37,22 @@ namespace Overmind.ImageManager.Model.Wallpapers
 		}
 
 		private readonly List<ImageModel> imageCollection;
-		private readonly Action<ImageModel> setSystemWallpaper;
+		private readonly Action<ImageModel> wallpaperSetter;
 		private readonly Random random;
 		private readonly TimeSpan cyclePeriod;
 		private readonly Timer cycleTimer;
 		private readonly object cycleLock = new object();
 
 		private bool isRunning;
-		public ImageModel CurrentWallpaper { get; private set; }
+		private ImageModel currentWallpaper;
+
+		public ImageModel GetCurrentWallpaper()
+		{
+			lock (cycleLock)
+			{
+				return currentWallpaper;
+			}
+		}
 
 		public void Dispose()
 		{
@@ -78,8 +85,8 @@ namespace Overmind.ImageManager.Model.Wallpapers
 							newWallpaper = collectionCopy.Single();
 						else
 						{
-							if (CurrentWallpaper != null)
-								collectionCopy.Remove(CurrentWallpaper);
+							if (currentWallpaper != null)
+								collectionCopy.Remove(currentWallpaper);
 							newWallpaper = collectionCopy[random.Next(collectionCopy.Count)];
 						}
 					}
@@ -88,8 +95,8 @@ namespace Overmind.ImageManager.Model.Wallpapers
 					{
 						Logger.Info("Setting wallpaper to {0}", newWallpaper.FileName);
 
-						setSystemWallpaper(newWallpaper);
-						CurrentWallpaper = newWallpaper;
+						wallpaperSetter(newWallpaper);
+						currentWallpaper = newWallpaper;
 					}
 				}
 				catch (Exception exception)

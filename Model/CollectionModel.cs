@@ -6,15 +6,18 @@ namespace Overmind.ImageManager.Model
 {
 	public class CollectionModel : ReadOnlyCollectionModel
 	{
-		public CollectionModel(ICollectionProvider collectionProvider, CollectionData data, string storagePath)
+		public CollectionModel(ICollectionProvider collectionProvider, IImageOperations imageOperations, CollectionData data, string storagePath)
 			: base(collectionProvider, data, storagePath)
-		{ }
+		{
+			this.imageOperations = imageOperations;
+		}
 
 		private readonly List<ImageModel> removedImages = new List<ImageModel>();
+		private readonly IImageOperations imageOperations;
 
 		public ImageModel CreateImage(Uri source, byte[] imageData)
 		{
-			string hash = ImageModel.CreateHash(imageData);
+			string hash = imageOperations.ComputeHash(imageData);
 			DateTime now = DateTime.UtcNow;
 
 			// Change the datetime resolution to seconds
@@ -32,7 +35,7 @@ namespace Overmind.ImageManager.Model
 
 		public void UpdateImageFile(ImageModel imageToUpdate, byte[] imageData)
 		{
-			string hash = ImageModel.CreateHash(imageData);
+			string hash = imageOperations.ComputeHash(imageData);
 
 			if (data.Images.Contains(imageToUpdate) == false)
 				throw new InvalidOperationException("Image does not exist in the collection");

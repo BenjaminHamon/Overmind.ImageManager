@@ -6,7 +6,7 @@
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:downloads="clr-namespace:Overmind.ImageManager.WindowsClient.Downloads"
              mc:Ignorable="d" d:DesignHeight="400" d:DesignWidth="600"
-             d:DataContext="{d:DesignInstance Type=downloads:Downloader}">
+             d:DataContext="{d:DesignInstance Type=downloads:DownloaderViewModel}">
 
     <UserControl.Style>
         <Style TargetType="UserControl">
@@ -24,22 +24,24 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="0" Style="{StaticResource FormStyle}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" x:Name="newImageUri" x:FieldModifier="private" Margin="5" VerticalAlignment="Center"
+            <TextBox Grid.Column="0" x:Name="newImageUri" x:FieldModifier="private"
                      PreviewDragEnter="CheckDragData" PreviewDragOver="CheckDragData" PreviewDrop="DropUri_FromTextBox">
                 <TextBox.InputBindings>
                     <KeyBinding Key="Enter" Command="{Binding Path=AddDownloadCommand}" CommandParameter="{Binding ElementName=newImageUri, Path=Text}"/>
                 </TextBox.InputBindings>
             </TextBox>
-            <Button Grid.Column="1" Content="Add" Margin="5" Padding="5" MinWidth="50"
+            <Button Grid.Column="1" Content="Add" MinWidth="50"
                     Command="{Binding Path=AddDownloadCommand}" CommandParameter="{Binding ElementName=newImageUri, Path=Text}"/>
+            <Button Grid.Column="2" Content="Clear" MinWidth="50" Command="{Binding Path=ClearCommand}"/>
         </Grid>
 
-        <ListView x:Name="listView" x:FieldModifier="private" Grid.Row="1" Margin="5" ItemsSource="{Binding Path=DownloadCollection}"
+        <ListView x:Name="listView" x:FieldModifier="private" Grid.Row="1" Margin="4" ItemsSource="{Binding Path=DownloadCollection}"
                   AllowDrop="True" PreviewDragEnter="CheckDragData" PreviewDragOver="CheckDragData" PreviewDrop="DropUri_FromListView">
             <ListView.Resources>
                 <Style TargetType="ListViewItem">
@@ -59,6 +61,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ProgressBar Value="{Binding Path=ProgressPercentage, Mode=OneWay}" Width="60" Height="16"
+                                             IsIndeterminate="{Binding Path=IsProgressIndeterminate}"
                                              Visibility="{Binding Path=IsDownloading, Converter={StaticResource VisibilityConverter}}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>

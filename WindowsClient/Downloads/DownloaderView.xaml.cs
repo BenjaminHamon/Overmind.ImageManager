@@ -25,13 +25,13 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		{
 			if (eventArguments.OldValue != null)
 			{
-				Downloader oldDataContext = (Downloader)eventArguments.OldValue;
+				DownloaderViewModel oldDataContext = (DownloaderViewModel)eventArguments.OldValue;
 				oldDataContext.DownloadCollection.CollectionChanged -= ScrollToEnd;
 			}
 
 			if (eventArguments.NewValue != null)
 			{
-				Downloader newDataContext = (Downloader)eventArguments.NewValue;
+				DownloaderViewModel newDataContext = (DownloaderViewModel)eventArguments.NewValue;
 				newDataContext.DownloadCollection.CollectionChanged += ScrollToEnd;
 			}
 		}
@@ -55,7 +55,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 		private void DropUri_FromTextBox(object sender, DragEventArgs eventArguments)
 		{
-			Downloader downloader = (Downloader)DataContext;
+			DownloaderViewModel downloader = (DownloaderViewModel)DataContext;
 			TextBox textBox = (TextBox)sender;
 
 			if (eventArguments.Data.GetDataPresent(DataFormats.FileDrop))
@@ -68,7 +68,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 		private void DropUri_FromListView(object sender, DragEventArgs eventArguments)
 		{
-			Downloader downloader = (Downloader)DataContext;
+			DownloaderViewModel downloader = (DownloaderViewModel)DataContext;
 			IEnumerable<string> imageUriCollection = new List<string>();
 
 			if (eventArguments.Data.GetDataPresent(DataFormats.FileDrop))

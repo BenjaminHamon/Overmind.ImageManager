@@ -6,6 +6,33 @@ namespace Overmind.WpfExtensions
 {
 	public static class FormatExtensions
 	{
+		// See https://en.wikipedia.org/wiki/Metric_prefix
+		private static readonly List<string> prefixCollection = new List<string>() { "", "k", "M", "G", "T", "P", "E", "Z", "Y" };
+
+		/// <summary>Format a numeric value to a human-friendly representation, using prefixes from the International System of Units.</summary>
+		/// <param name="value">The value to format.</param>
+		/// <param name="unit">The symbol of the unit of measurement for the provided value.</param>
+		/// <param name="format">A numeric format string, passed to String.Format.</param>
+		/// <param name="formatProvider">An object that supplies culture-specific formatting information, passed to String.Format.</param>
+		/// <returns>The human-friendly representation of the value.</returns>
+		public static string FormatUnit(double value, string unit, string format, IFormatProvider formatProvider = null)
+		{
+			double multiplier = 1000;
+
+			if ((unit == "B") || (unit == "B/s"))
+				multiplier = 1024;
+
+			int prefixIndex = 0;
+
+			while ((Math.Abs(value) > multiplier) && (prefixIndex < (prefixCollection.Count - 1)))
+			{
+				value /= multiplier;
+				prefixIndex += 1;
+			}
+
+			return value.ToString(format, formatProvider) + " " + prefixCollection[prefixIndex] + unit;
+		}
+
 		/// <summary>Format a summary from an exception hierarchy by using the first line of each exception.</summary>
 		public static string FormatExceptionSummary(Exception exception)
 		{

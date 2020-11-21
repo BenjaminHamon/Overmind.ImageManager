@@ -2,17 +2,35 @@
 using Overmind.ImageManager.Model;
 using System;
 using System.IO;
+using System.Security.Cryptography;
 
 namespace Overmind.ImageManager.Test
 {
 	[TestClass]
 	public class CollectionModelTest
 	{
+		private HashAlgorithm hashAlgorithm;
+		private IImageOperations imageOperations;
+		private ICollectionProvider collectionProvider;
+
+		[TestInitialize]
+		public void Initialize()
+		{
+			hashAlgorithm = MD5.Create();
+			imageOperations = new ImageOperations(hashAlgorithm);
+			collectionProvider = new FakeCollectionProvider();
+		}
+
+		[TestCleanup]
+		public void Cleanup()
+		{
+			hashAlgorithm.Dispose();
+		}
+
 		[TestMethod]
 		public void CollectionModel_CreateImage_Success()
 		{
-			ICollectionProvider collectionProvider = new FakeCollectionProvider();
-			CollectionModel collection = new CollectionModel(collectionProvider, new CollectionData(), null);
+			CollectionModel collection = new CollectionModel(collectionProvider, imageOperations, new CollectionData(), null);
 			byte[] imageData = File.ReadAllBytes("Resources/Red.png");
 
 			Assert.AreEqual(0, collection.AllImages.Count);
@@ -26,8 +44,7 @@ namespace Overmind.ImageManager.Test
 		[TestMethod]
 		public void CollectionModel_CreateImage_AlreadyExists()
 		{
-			ICollectionProvider collectionProvider = new FakeCollectionProvider();
-			CollectionModel collection = new CollectionModel(collectionProvider, new CollectionData(), null);
+			CollectionModel collection = new CollectionModel(collectionProvider, imageOperations, new CollectionData(), null);
 			byte[] imageData = File.ReadAllBytes("Resources/Red.png");
 			collection.CreateImage(null, imageData);
 
@@ -39,11 +56,10 @@ namespace Overmind.ImageManager.Test
 		[TestMethod]
 		public void CollectionModel_CreateImage_ProviderException()
 		{
-			FakeCollectionProvider collectionProvider = new FakeCollectionProvider();
-			CollectionModel collection = new CollectionModel(collectionProvider, new CollectionData(), null);
+			CollectionModel collection = new CollectionModel(collectionProvider, imageOperations, new CollectionData(), null);
 			byte[] imageData = File.ReadAllBytes("Resources/Red.png");
 
-			collectionProvider.WriteImageFile_ThrowException = true;
+			((FakeCollectionProvider)collectionProvider).WriteImageFile_ThrowException = true;
 
 			Assert.AreEqual(0, collection.AllImages.Count);
 			Assert.ThrowsException<InvalidOperationException>(() => collection.CreateImage(null, imageData));
@@ -53,8 +69,7 @@ namespace Overmind.ImageManager.Test
 		[TestMethod]
 		public void CollectionModel_UpdateImageFile_Success()
 		{
-			ICollectionProvider collectionProvider = new FakeCollectionProvider();
-			CollectionModel collection = new CollectionModel(collectionProvider, new CollectionData(), null);
+			CollectionModel collection = new CollectionModel(collectionProvider, imageOperations, new CollectionData(), null);
 			byte[] initialImageData = File.ReadAllBytes("Resources/Red.png");
 			byte[] updatedImageData = File.ReadAllBytes("Resources/Green.png");
 
@@ -65,8 +80,7 @@ namespace Overmind.ImageManager.Test
 		[TestMethod]
 		public void CollectionModel_UpdateImageFile_AlreadyExists()
 		{
-			ICollectionProvider collectionProvider = new FakeCollectionProvider();
-			CollectionModel collection = new CollectionModel(collectionProvider, new CollectionData(), null);
+			CollectionModel collection = new CollectionModel(collectionProvider, imageOperations, new CollectionData(), null);
 			byte[] firstImageData = File.ReadAllBytes("Resources/Red.png");
 			byte[] secondImageData = File.ReadAllBytes("Resources/Green.png");
 
@@ -81,8 +95,7 @@ namespace Overmind.ImageManager.Test
 		[TestMethod]
 		public void CollectionModel_UpdateImageFile_SameImageData()
 		{
-			ICollectionProvider collectionProvider = new FakeCollectionProvider();
-			CollectionModel collection = new CollectionModel(collectionProvider, new CollectionData(), null);
+			CollectionModel collection = new CollectionModel(collectionProvider, imageOperations, new CollectionData(), null);
 			byte[] imageData = File.ReadAllBytes("Resources/Red.png");
 
 			ImageModel image = collection.CreateImage(null, imageData);
@@ -92,15 +105,14 @@ namespace Overmind.ImageManager.Test
 		[TestMethod]
 		public void CollectionModel_UpdateImageFile_ProviderException()
 		{
-			FakeCollectionProvider collectionProvider = new FakeCollectionProvider();
-			CollectionModel collection = new CollectionModel(collectionProvider, new CollectionData(), null);
+			CollectionModel collection = new CollectionModel(collectionProvider, imageOperations, new CollectionData(), null);
 			byte[] initialImageData = File.ReadAllBytes("Resources/Red.png");
 			byte[] updatedImageData = File.ReadAllBytes("Resources/Green.png");
 
 			ImageModel image = collection.CreateImage(null, initialImageData);
 			string imageHash = image.Hash;
 
-			collectionProvider.WriteImageFile_ThrowException = true;
+			((FakeCollectionProvider)collectionProvider).WriteImageFile_ThrowException = true;
 
 			Assert.AreEqual(imageHash, image.Hash);
 			Assert.ThrowsException<InvalidOperationException>(() => collection.UpdateImageFile(image, updatedImageData));

@@ -17,17 +17,10 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 			this.settingsProvider = settingsProvider;
 			this.queryEngine = queryEngine;
 
-			settings = settingsProvider.LoadWallpaperSettings();
+			settings = new WallpaperSettings();
 			ConfigurationCollection = new ObservableCollection<WallpaperConfigurationViewModel>();
 
-			foreach (WallpaperConfiguration configuration in settings.ConfigurationCollection)
-			{
-				WallpaperConfigurationViewModel configurationViewModel = new WallpaperConfigurationViewModel(configuration, queryEngine);
-				configurationViewModel.PropertyChanged += HandleConfigurationChanged;
-				ConfigurationCollection.Add(configurationViewModel);
-			}
-
-			WarningCollection = settings.Validate();
+			WarningCollection = new Dictionary<string, List<Exception>>();
 
 			SaveSettingsCommand = new DelegateCommand<object>(_ => SaveSettings(), _ => CanSaveSettings());
 			AddConfigurationCommand = new DelegateCommand<object>(_ => AddConfiguration());
@@ -54,7 +47,7 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 			SaveSettingsCommand.RaiseCanExecuteChanged();
 		}
 
-		public ObservableCollection<WallpaperConfigurationViewModel> ConfigurationCollection { get; }
+		public ObservableCollection<WallpaperConfigurationViewModel> ConfigurationCollection { get; private set; }
 
 		private void HandleConfigurationChanged(object sender, PropertyChangedEventArgs eventArguments)
 		{
@@ -65,6 +58,28 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 		public DelegateCommand<object> AddConfigurationCommand { get; }
 		public DelegateCommand<WallpaperConfigurationViewModel> RemoveConfigurationCommand { get; }
 
+		public void ReloadSettings()
+		{
+			settings = settingsProvider.LoadApplicationSettings().WallpaperSettings
+				?? throw new ArgumentNullException(nameof(settings), "Wallpaper settings must not be null");
+
+			foreach (WallpaperConfigurationViewModel configurationViewModel in ConfigurationCollection)
+				configurationViewModel.PropertyChanged -= HandleConfigurationChanged;
+
+			ConfigurationCollection = new ObservableCollection<WallpaperConfigurationViewModel>();
+
+			foreach (WallpaperConfiguration configuration in settings.ConfigurationCollection)
+			{
+				WallpaperConfigurationViewModel configurationViewModel = new WallpaperConfigurationViewModel(configuration, queryEngine);
+				configurationViewModel.PropertyChanged += HandleConfigurationChanged;
+				ConfigurationCollection.Add(configurationViewModel);
+			}
+
+			UpdateValidation();
+
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
+		}
+
 		private bool CanSaveSettings()
 		{
 			return ConfigurationCollection.All(configuration => configuration.HasErrors == false);
@@ -72,7 +87,16 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 
 		private void SaveSettings()
 		{
-			settingsProvider.SaveWallpaperSettings(settings);
+			settingsProvider.UpdateApplicationSettings(
+				applicationSettings =>
+				{
+					if (applicationSettings.WallpaperSettings == null)
+						applicationSettings.WallpaperSettings = new WallpaperSettings();
+
+					this.settings.ActiveConfiguration = applicationSettings.WallpaperSettings.ActiveConfiguration;
+
+					applicationSettings.WallpaperSettings = settings;
+				});
 		}
 
 		private void AddConfiguration()

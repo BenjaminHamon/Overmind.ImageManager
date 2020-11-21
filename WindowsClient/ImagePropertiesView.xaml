@@ -7,76 +7,130 @@
              xmlns:globalization="clr-namespace:System.Globalization;assembly=mscorlib"
              xmlns:main="clr-namespace:Overmind.ImageManager.WindowsClient"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=main:ImagePropertiesViewModel}"
-             d:DesignHeight="400" d:DesignWidth="300">
+             d:DesignHeight="600" d:DesignWidth="300">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Style="{StaticResource FormStyle}">
+        <StackPanel Style="{StaticResource FormStyle}" Orientation="Vertical" Grid.IsSharedSizeScope="True">
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+            <Expander IsExpanded="True">
+                <Expander.Header>
+                    <TextBlock Style="{StaticResource ExpanderHeaderTextStyle}" Text="Properties"/>
+                </Expander.Header>
+                <Grid>
 
-            <TextBlock Grid.Row="0" Grid.Column="0" Text="Title"/>
-            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=Title}"/>
-            <TextBlock Grid.Row="1" Grid.Column="0" Text="Subjects"/>
-            <extensions:TokenListView Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Path=SubjectCollection}">
-                <extensions:TokenListView.TextBoxTemplate>
-                    <DataTemplate>
-                        <extensions:AutocompleteTextBox d:DataContext="{d:DesignInstance Type=extensions:ObservableString}" Text="{Binding Path=Value}">
-                            <extensions:AutocompleteTextBox.AllValues>
-                                <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=extensions:TokenListView}" Path="DataContext.AllSubjects"/>
-                            </extensions:AutocompleteTextBox.AllValues>
-                        </extensions:AutocompleteTextBox>
-                    </DataTemplate>
-                </extensions:TokenListView.TextBoxTemplate>
-            </extensions:TokenListView>
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="Artists"/>
-            <extensions:TokenListView Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Path=ArtistCollection}">
-                <extensions:TokenListView.TextBoxTemplate>
-                    <DataTemplate>
-                        <extensions:AutocompleteTextBox d:DataContext="{d:DesignInstance Type=extensions:ObservableString}" Text="{Binding Path=Value}">
-                            <extensions:AutocompleteTextBox.AllValues>
-                                <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=extensions:TokenListView}" Path="DataContext.AllArtists"/>
-                            </extensions:AutocompleteTextBox.AllValues>
-                        </extensions:AutocompleteTextBox>
-                    </DataTemplate>
-                </extensions:TokenListView.TextBoxTemplate>
-            </extensions:TokenListView>
-            <TextBlock Grid.Row="3" Grid.Column="0" Text="Tags"/>
-            <extensions:TokenListView Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Path=TagCollection}">
-                <extensions:TokenListView.TextBoxTemplate>
-                    <DataTemplate>
-                        <extensions:AutocompleteTextBox d:DataContext="{d:DesignInstance Type=extensions:ObservableString}" Text="{Binding Path=Value}">
-                            <extensions:AutocompleteTextBox.AllValues>
-                                <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=extensions:TokenListView}" Path="DataContext.AllTags"/>
-                            </extensions:AutocompleteTextBox.AllValues>
-                        </extensions:AutocompleteTextBox>
-                    </DataTemplate>
-                </extensions:TokenListView.TextBoxTemplate>
-            </extensions:TokenListView>
-            <TextBlock Grid.Row="4" Grid.Column="0" Text="Score"/>
-            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Path=Score}"/>
-            <TextBlock Grid.Row="5" Grid.Column="0" Text="Added on"/>
-            <TextBox Grid.Row="5" Grid.Column="1" IsReadOnly="True">
-                <Binding Path="AdditionDate" Mode="OneWay" StringFormat="g"
-                         ConverterCulture="{x:Static globalization:CultureInfo.CurrentCulture}"/>
-            </TextBox>
-            <TextBlock Grid.Row="6" Grid.Column="0" Text="Source"/>
-            <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Path=Source}" TextWrapping="Wrap"/>
-            <TextBlock Grid.Row="7" Grid.Column="0" Text="Hash"/>
-            <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding Path=Hash, Mode=OneWay}" IsReadOnly="True"/>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="LabelGroup"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-        </Grid>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Title"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=Title}"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Subjects"/>
+                    <extensions:TokenListView Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Path=SubjectCollection}">
+                        <extensions:TokenListView.TextBoxTemplate>
+                            <DataTemplate>
+                                <extensions:AutocompleteTextBox d:DataContext="{d:DesignInstance Type=extensions:ObservableString}" Text="{Binding Path=Value}">
+                                    <extensions:AutocompleteTextBox.AllValues>
+                                        <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=extensions:TokenListView}" Path="DataContext.AllSubjects"/>
+                                    </extensions:AutocompleteTextBox.AllValues>
+                                </extensions:AutocompleteTextBox>
+                            </DataTemplate>
+                        </extensions:TokenListView.TextBoxTemplate>
+                    </extensions:TokenListView>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Artists"/>
+                    <extensions:TokenListView Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Path=ArtistCollection}">
+                        <extensions:TokenListView.TextBoxTemplate>
+                            <DataTemplate>
+                                <extensions:AutocompleteTextBox d:DataContext="{d:DesignInstance Type=extensions:ObservableString}" Text="{Binding Path=Value}">
+                                    <extensions:AutocompleteTextBox.AllValues>
+                                        <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=extensions:TokenListView}" Path="DataContext.AllArtists"/>
+                                    </extensions:AutocompleteTextBox.AllValues>
+                                </extensions:AutocompleteTextBox>
+                            </DataTemplate>
+                        </extensions:TokenListView.TextBoxTemplate>
+                    </extensions:TokenListView>
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Tags"/>
+                    <extensions:TokenListView Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Path=TagCollection}">
+                        <extensions:TokenListView.TextBoxTemplate>
+                            <DataTemplate>
+                                <extensions:AutocompleteTextBox d:DataContext="{d:DesignInstance Type=extensions:ObservableString}" Text="{Binding Path=Value}">
+                                    <extensions:AutocompleteTextBox.AllValues>
+                                        <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=extensions:TokenListView}" Path="DataContext.AllTags"/>
+                                    </extensions:AutocompleteTextBox.AllValues>
+                                </extensions:AutocompleteTextBox>
+                            </DataTemplate>
+                        </extensions:TokenListView.TextBoxTemplate>
+                    </extensions:TokenListView>
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Score"/>
+                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Path=Score}"/>
+
+                </Grid>
+            </Expander>
+
+            <Expander IsExpanded="True">
+                <Expander.Header>
+                    <TextBlock Style="{StaticResource ExpanderHeaderTextStyle}" Text="Source"/>
+                </Expander.Header>
+
+                <Grid>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="LabelGroup"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Uri"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=Source}"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Added on"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" IsReadOnly="True">
+                        <Binding Path="AdditionDate" Mode="OneWay" StringFormat="g"
+                                 ConverterCulture="{x:Static globalization:CultureInfo.CurrentCulture}"/>
+                    </TextBox>
+
+                </Grid>
+            </Expander>
+
+            <Expander IsExpanded="True">
+                <Expander.Header>
+                    <TextBlock Style="{StaticResource ExpanderHeaderTextStyle}" Text="File"/>
+                </Expander.Header>
+
+                <Grid>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="LabelGroup"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Hash"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=Hash, Mode=OneWay}" IsReadOnly="True"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Format"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Path=Format, Mode=OneWay}" IsReadOnly="True"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="File size"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Path=FileSizeFormatted, Mode=OneWay}" IsReadOnly="True"/>
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Dimensions"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Path=Dimensions, Mode=OneWay}" IsReadOnly="True"/>
+
+                </Grid>
+            </Expander>
+
+        </StackPanel>
     </ScrollViewer>
 </UserControl>

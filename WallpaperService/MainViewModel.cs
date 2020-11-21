@@ -6,9 +6,11 @@ using Overmind.WpfExtensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 
 namespace Overmind.ImageManager.WallpaperService
@@ -29,7 +31,7 @@ namespace Overmind.ImageManager.WallpaperService
 			ApplyConfigurationCommand = new DelegateCommand<object>(_ => ApplyConfiguration());
 			ReloadSettingsCommand = new DelegateCommand<object>(_ => ReloadSettings());
 			NextWallpaperCommand = new DelegateCommand<object>(_ => wallpaperService.CycleNow(), _ => wallpaperService != null);
-			CopyWallpaperHashCommand = new DelegateCommand<object>(_ => Clipboard.SetText(wallpaperService.CurrentWallpaper.Hash), _ => wallpaperService != null);
+			CopyWallpaperHashCommand = new DelegateCommand<object>(_ => CopyWallpaperHash(), _ => wallpaperService != null);
 		}
 
 		private readonly SettingsProvider settingsProvider;
@@ -71,7 +73,8 @@ namespace Overmind.ImageManager.WallpaperService
 			{
 				try
 				{
-					wallpaperService = WallpaperServiceInstance.CreateInstance(ActiveConfiguration, collectionProvider, queryEngine, SetWallpaper, randomFactory());
+					wallpaperService = WallpaperServiceInstance.CreateInstance(
+						ActiveConfiguration, collectionProvider, queryEngine, SetWallpaper, randomFactory());
 				}
 				catch (Exception exception)
 				{
@@ -80,7 +83,14 @@ namespace Overmind.ImageManager.WallpaperService
 
 				try
 				{
-					settingsProvider.SaveActiveWallpaperConfiguration(ActiveConfiguration.Name);
+					settingsProvider.UpdateApplicationSettings(
+						applicationSettings =>
+						{
+							if (applicationSettings.WallpaperSettings == null)
+								applicationSettings.WallpaperSettings = new WallpaperSettings();
+
+							applicationSettings.WallpaperSettings.ActiveConfiguration = ActiveConfiguration.Name;
+						});
 				}
 				catch (Exception exception)
 				{
@@ -95,9 +105,12 @@ namespace Overmind.ImageManager.WallpaperService
 		public void ReloadSettings()
 		{
 			wallpaperSettings = TryLoadSettings();
+
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConfigurationCollection)));
 
-			ActiveConfiguration = TryLoadActiveConfiguration();
+			ActiveConfiguration = wallpaperSettings.ConfigurationCollection
+				.SingleOrDefault(configuration => configuration.Name == wallpaperSettings.ActiveConfiguration);
+
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActiveConfiguration)));
 		}
 
@@ -107,9 +120,8 @@ namespace Overmind.ImageManager.WallpaperService
 
 			try
 			{
-				wallpaperSettings = settingsProvider.LoadWallpaperSettings();
-				if (wallpaperSettings == null)
-					throw new ArgumentNullException("Value cannot be null", nameof(wallpaperSettings));
+				wallpaperSettings = settingsProvider.LoadApplicationSettings().WallpaperSettings
+					?? throw new ArgumentNullException(nameof(wallpaperSettings), "Wallpaper settings must not be null");
 			}
 			catch (Exception exception)
 			{
@@ -139,26 +151,62 @@ namespace Overmind.ImageManager.WallpaperService
 			return wallpaperSettings;
 		}
 
-		private WallpaperConfiguration TryLoadActiveConfiguration()
+		private void SetWallpaper(ImageModel image)
 		{
-			try
+			WallpaperConfiguration configuration = ActiveConfiguration;
+			WallpaperBuilder builder = new WallpaperBuilder(ImageFormat.Jpeg, 100);
+			string sourcePath = collectionProvider.GetImagePath(configuration.CollectionPath, image);
+			string savePath = Path.Combine(wallpaperStorage, "Wallpaper.jpg");
+
+			if (ShouldUseSingleScreen(image, sourcePath))
 			{
-				string activeConfiguration = settingsProvider.LoadActiveWallpaperConfiguration();
-				return wallpaperSettings.ConfigurationCollection.Single(configuration => configuration.Name == activeConfiguration);
+				// Force the image to fit for the primary screen
+				Rectangle screenArea = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
+				builder.CreateForSingleScreen(sourcePath, savePath, screenArea.Width, screenArea.Height);
 			}
-			catch (Exception exception)
+			else
 			{
-				Logger.Error(exception, "Failed to load active configuration");
+				// Let the system handle display
+				builder.Create(sourcePath, savePath);
 			}
 
-			return null;
+			WindowsWallpaper.Set(savePath);
 		}
 
-		private void SetWallpaper(string imagePath)
+		private bool ShouldUseSingleScreen(ImageModel image, string imagePath)
 		{
-			string savePath = Path.Combine(wallpaperStorage, "Wallpaper.jpg");
-			WindowsWallpaper.Save(imagePath, savePath, ImageFormat.Jpeg, 100);
-			WindowsWallpaper.Set(savePath);
+			if (image.TagCollection.Contains("SingleScreen"))
+				return true;
+			if (image.TagCollection.Contains("MultiScreen"))
+				return false;
+
+			Rectangle screenArea = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
+
+			using (Image sourceImage = Image.FromFile(imagePath))
+			{
+				float sourceRatio = (float) sourceImage.Width / sourceImage.Height;
+				float screenRatio = (float) screenArea.Width / screenArea.Height;
+
+				// If wider by a value between 0% and 50%, to avoid multi screen wallpaper with a lot of empty space
+				return (sourceRatio > screenRatio) && (sourceRatio < screenRatio * 1.8);
+			}
+		}
+
+		private void CopyWallpaperHash()
+		{
+			ImageModel wallpaper = wallpaperService.GetCurrentWallpaper();
+
+			if (wallpaper == null)
+				return;
+
+			try
+			{
+				Clipboard.SetText(wallpaper.Hash);
+			}
+			catch (COMException exception)
+			{
+				Logger.Error(exception, "Failed to copy wallpaper hash to clipboard");
+			}
 		}
 	}
 }

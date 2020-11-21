@@ -1,5 +1,6 @@
 import argparse
 import logging
+import os
 
 import bhamon_development_toolkit.artifacts.filesets as artifact_filesets
 import bhamon_development_toolkit.workspace
@@ -39,21 +40,27 @@ def configure_argument_parser(environment, configuration, subparsers): # pylint:
 		metavar = "<key=value>", help = "set parameters for the artifact")
 	parser.add_argument("--overwrite", action = "store_true",
 		help = "overwrite existing artifact on upload")
+
 	return parser
 
 
 def run(environment, configuration, arguments): # pylint: disable = unused-argument
 	parameters = {
-		"project": configuration["project"],
-		"version": configuration["project_version"]["full"],
+		"project": configuration["project_identifier"],
+		"version": configuration["project_version"]["identifier"],
+		"revision": configuration["project_version"]["revision"],
 	}
 
 	parameters.update(arguments.parameters)
 
 	artifact = configuration["artifacts"][arguments.artifact]
-	artifact_name = artifact["file_name"].format(**parameters)
 
-	artifact_repository = ArtifactRepository(".artifacts", configuration["project_identifier_for_artifact_server"])
+	try:
+		artifact_name = artifact["file_name"].format(**parameters)
+	except KeyError as exception:
+		raise KeyError("Artifact parameter '%s' is required" % exception.args[0]) from exception
+
+	artifact_repository = ArtifactRepository(os.path.join(configuration["artifact_directory"], "Repository"), configuration["project_identifier_for_artifact_server"])
 	if environment.get("artifact_server_url", None) is not None:
 		artifact_server_url = environment["artifact_server_url"]
 		artifact_server_parameters = environment.get("artifact_server_parameters", {})
@@ -72,22 +79,22 @@ def run(environment, configuration, arguments): # pylint: disable = unused-argum
 	if "package" in arguments.artifact_commands:
 		artifact_files = artifact_filesets.map_files(artifact, fileset_getter, parameters)
 		artifact_filesets.check_files([ src for src, dst in artifact_files ])
-		artifact_repository.package(artifact["path_in_repository"], artifact_name, artifact_files, arguments.simulate)
+		artifact_repository.package(artifact["path_in_repository"], artifact_name, artifact_files, simulate = arguments.simulate)
 		print("")
 	if "verify" in arguments.artifact_commands:
-		artifact_repository.verify(artifact["path_in_repository"], artifact_name, arguments.simulate)
+		artifact_repository.verify(artifact["path_in_repository"], artifact_name, simulate = arguments.simulate)
 		print("")
 	if "upload" in arguments.artifact_commands:
-		artifact_repository.upload(artifact["path_in_repository"], artifact_name, arguments.overwrite, arguments.simulate)
-		save_upload_results(artifact_name, arguments.artifact, arguments.results, arguments.simulate)
+		artifact_repository.upload(artifact["path_in_repository"], artifact_name, overwrite = arguments.overwrite, simulate = arguments.simulate)
+		save_upload_results(artifact_name, arguments.artifact, arguments.results, simulate = arguments.simulate)
 		print("")
 
 	if "download" in arguments.artifact_commands:
-		artifact_repository.download(artifact["path_in_repository"], artifact_name, arguments.simulate)
+		artifact_repository.download(artifact["path_in_repository"], artifact_name, simulate = arguments.simulate)
 		print("")
 	if "install" in arguments.artifact_commands:
 		installation_directory = (arguments.installation_directory if arguments.installation_directory else artifact["installation_directory"]).format(**parameters)
-		artifact_repository.install(artifact["path_in_repository"], artifact_name, installation_directory, arguments.simulate)
+		artifact_repository.install(artifact["path_in_repository"], artifact_name, installation_directory, simulate = arguments.simulate)
 		print("")
 
 

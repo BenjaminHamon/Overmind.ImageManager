@@ -9,10 +9,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Overmind.ImageManager.Model</RootNamespace>
     <AssemblyName>Overmind.ImageManager.Model</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <IntermediateOutputPath>$(SolutionDir)/.build/Model/Intermediate/$(Configuration)</IntermediateOutputPath>
-    <OutputPath>$(SolutionDir)/.build/Model/Binaries/$(Configuration)</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,6 +28,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack, Version=1.11.21.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.11.21\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=1.1.0.145, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.1.1.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
@@ -44,29 +45,41 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\.build\Metadata\ProductInformation.cs">
+    <Compile Include="$(ArtifactDirectory)\Metadata\ProductInformation.cs">
       <Link>Properties\ProductInformation.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
+    <Compile Include="ApplicationSettings.cs" />
     <Compile Include="CollectionData.cs" />
     <Compile Include="CollectionMetadata.cs" />
     <Compile Include="CollectionModel.cs" />
     <Compile Include="CollectionProvider.cs" />
+    <Compile Include="Downloads\Downloader.cs" />
+    <Compile Include="Downloads\DownloaderSettings.cs" />
+    <Compile Include="Downloads\DownloadSourceConfiguration.cs" />
+    <Compile Include="Downloads\IDownloader.cs" />
     <Compile Include="FileNameFormatter.cs" />
     <Compile Include="ICollectionProvider.cs" />
+    <Compile Include="IImageOperations.cs" />
     <Compile Include="ImageModel.cs" />
+    <Compile Include="ImageOperations.cs" />
     <Compile Include="Queries\ImageQueryParser.cs" />
     <Compile Include="Queries\IQueryEngine.cs" />
     <Compile Include="Queries\LuceneQueryEngine.cs" />
     <Compile Include="Queries\SimpleQueryEngine.cs" />
     <Compile Include="ReadOnlyCollectionModel.cs" />
+    <Compile Include="Serialization\ISerializer.cs" />
+    <Compile Include="Serialization\JsonSerializer.cs" />
     <Compile Include="SettingsProvider.cs" />
+    <Compile Include="Wallpapers\WallpaperBuilder.cs" />
     <Compile Include="Wallpapers\WallpaperConfiguration.cs" />
     <Compile Include="Wallpapers\WallpaperServiceInstance.cs" />
     <Compile Include="Wallpapers\WallpaperSettings.cs" />

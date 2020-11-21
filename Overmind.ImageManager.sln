@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2010
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Overmind.ImageManager.WindowsClient", "WindowsClient\Overmind.ImageManager.WindowsClient.csproj", "{1A64535F-2D41-46BA-A989-39859C29908B}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		About.md = About.md
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.props.user = Directory.Build.props.user
 		License.txt = License.txt
 		ReadMe.md = ReadMe.md
 	EndProjectSection

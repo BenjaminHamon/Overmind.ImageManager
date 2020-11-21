@@ -4,7 +4,10 @@ using Overmind.ImageManager.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
+
+using JsonSerializerProxy = Overmind.ImageManager.Model.Serialization.JsonSerializer;
 
 namespace Overmind.ImageManager.Test
 {
@@ -13,17 +16,28 @@ namespace Overmind.ImageManager.Test
 	{
 		public TestContext TestContext { get; set; }
 
+		private HashAlgorithm hashAlgorithm;
+		private IImageOperations imageOperations;
 		private CollectionProvider collectionProvider;
 		private string workingDirectory;
 
 		[TestInitialize]
 		public void Initialize()
 		{
-			JsonSerializer serializer = new JsonSerializer();
+			JsonSerializer serializerImplementation = new JsonSerializer() { Formatting = Formatting.Indented };
+			JsonSerializerProxy serializer = new JsonSerializerProxy(serializerImplementation);
 			FileNameFormatter fileNameFormatter = new FileNameFormatter();
 
-			collectionProvider = new CollectionProvider(serializer, fileNameFormatter);
+			hashAlgorithm = MD5.Create();
+			imageOperations = new ImageOperations(hashAlgorithm);
+			collectionProvider = new CollectionProvider(serializer, imageOperations, fileNameFormatter);
 			workingDirectory = Path.Combine(TestContext.TestRunDirectory, "Working", TestContext.TestName);
+		}
+
+		[TestCleanup]
+		public void Cleanup()
+		{
+			hashAlgorithm.Dispose();
 		}
 
 		[TestMethod]
@@ -41,7 +55,7 @@ namespace Overmind.ImageManager.Test
 
 			collectionData.Images.Add(imageModel);
 
-			imageModel.Hash = ImageModel.CreateHash(initialImageData);
+			imageModel.Hash = imageOperations.ComputeHash(initialImageData);
 			collectionProvider.WriteImageFile(workingDirectory, imageModel, initialImageData);
 
 			Assert.IsNotNull(imageModel.FileNameAsTemporary);
@@ -65,7 +79,7 @@ namespace Overmind.ImageManager.Test
 
 			collectionData.Images.Add(imageModel);
 
-			imageModel.Hash = ImageModel.CreateHash(initialImageData);
+			imageModel.Hash = imageOperations.ComputeHash(initialImageData);
 			collectionProvider.WriteImageFile(workingDirectory, imageModel, initialImageData);
 			collectionProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>());
 
@@ -90,13 +104,13 @@ namespace Overmind.ImageManager.Test
 
 			collectionData.Images.Add(imageModel);
 
-			imageModel.Hash = ImageModel.CreateHash(initialImageData);
+			imageModel.Hash = imageOperations.ComputeHash(initialImageData);
 			collectionProvider.WriteImageFile(workingDirectory, imageModel, initialImageData);
 			collectionProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>());
 
 			string initialFileName = imageModel.FileNameAsSaved;
 
-			imageModel.Hash = ImageModel.CreateHash(updatedImageData);
+			imageModel.Hash = imageOperations.ComputeHash(updatedImageData);
 			collectionProvider.WriteImageFile(workingDirectory, imageModel, updatedImageData);
 			collectionProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>());
 
@@ -115,7 +129,7 @@ namespace Overmind.ImageManager.Test
 
 			collectionData.Images.Add(imageModel);
 
-			imageModel.Hash = ImageModel.CreateHash(imageData);
+			imageModel.Hash = imageOperations.ComputeHash(imageData);
 			collectionProvider.WriteImageFile(workingDirectory, imageModel, imageData);
 			collectionProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>());
 			
@@ -136,7 +150,7 @@ namespace Overmind.ImageManager.Test
 
 			collectionData.Images.Add(imageModel);
 
-			imageModel.Hash = ImageModel.CreateHash(imageData);
+			imageModel.Hash = imageOperations.ComputeHash(imageData);
 			collectionProvider.WriteImageFile(workingDirectory, imageModel, imageData);
 
 			Assert.IsTrue(File.Exists(Path.Combine(workingDirectory, "Images-Temporary", imageModel.FileNameAsTemporary)));

@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using NLog;
+﻿using NLog;
+using Overmind.ImageManager.Model.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -14,13 +14,15 @@ namespace Overmind.ImageManager.Model
 
 		private const string FormatVersion = "2.0";
 
-		public CollectionProvider(JsonSerializer serializer, FileNameFormatter fileNameFormatter)
+		public CollectionProvider(ISerializer serializer, IImageOperations imageOperations, FileNameFormatter fileNameFormatter)
 		{
 			this.serializer = serializer;
+			this.imageOperations = imageOperations;
 			this.fileNameFormatter = fileNameFormatter;
 		}
 
-		private readonly JsonSerializer serializer;
+		private readonly ISerializer serializer;
+		private readonly IImageOperations imageOperations;
 		private readonly FileNameFormatter fileNameFormatter;
 
 		public CollectionData CreateCollection(string collectionPath)
@@ -41,11 +43,11 @@ namespace Overmind.ImageManager.Model
 
 			CollectionData collectionData = new CollectionData();
 
-			collectionData.Metadata = LoadData<CollectionMetadata>(Path.Combine(collectionPath, "Data", "Metadata.json"));
+			collectionData.Metadata = serializer.DeserializeFromFile<CollectionMetadata>(Path.Combine(collectionPath, "Data", "Metadata.json"));
 			if (collectionData.Metadata.FormatVersion != FormatVersion)
 				throw new InvalidDataException("The collection format version is not supported.");
 
-			collectionData.Images = LoadData<List<ImageModel>>(Path.Combine(collectionPath, "Data", "Images.json"));
+			collectionData.Images = serializer.DeserializeFromFile<List<ImageModel>>(Path.Combine(collectionPath, "Data", "Images.json"));
 			foreach (ImageModel image in collectionData.Images)
 				image.FileNameAsSaved = image.FileName;
 
@@ -97,8 +99,8 @@ namespace Overmind.ImageManager.Model
 
 			Directory.Delete(Path.Combine(collectionPath, "Images-Temporary"), true);
 
-			SaveData(Path.Combine(collectionPath, "Data-Temporary", "Metadata.json"), collectionData.Metadata);
-			SaveData(Path.Combine(collectionPath, "Data-Temporary", "Images.json"), collectionData.Images);
+			serializer.SerializeToFile(Path.Combine(collectionPath, "Data-Temporary", "Metadata.json"), collectionData.Metadata);
+			serializer.SerializeToFile(Path.Combine(collectionPath, "Data-Temporary", "Images.json"), collectionData.Images);
 
 			if (Directory.Exists(Path.Combine(collectionPath, "Data-ToRemove")))
 				Directory.Delete(Path.Combine(collectionPath, "Data-ToRemove"), true);
@@ -118,8 +120,8 @@ namespace Overmind.ImageManager.Model
 
 			CollectionData savedCollectionData = LoadCollection(collectionPath);
 
-			string activeSerialized = SerializeToString(activeCollectionData);
-			string savedSerialized = SerializeToString(savedCollectionData);
+			string activeSerialized = serializer.SerializeToString(activeCollectionData);
+			string savedSerialized = serializer.SerializeToString(savedCollectionData);
 
 			return activeSerialized == savedSerialized;
 		}
@@ -154,11 +156,7 @@ namespace Overmind.ImageManager.Model
 
 		public void WriteImageFile(string collectionPath, ImageModel image, byte[] imageData)
 		{
-			string fileExtension;
-
-			using (MemoryStream stream = new MemoryStream(imageData))
-			using (Image imageObject = Image.FromStream(stream))
-				fileExtension = new ImageFormatConverter().ConvertToString(imageObject.RawFormat).ToLower();
+			string fileExtension = imageOperations.GetFormat(imageData);
 
 			Directory.CreateDirectory(Path.Combine(collectionPath, "Images-Temporary"));
 
@@ -173,30 +171,6 @@ namespace Overmind.ImageManager.Model
 			string temporaryDirectory = Path.Combine(collectionPath, "Images-Temporary");
 			if (Directory.Exists(temporaryDirectory))
 				Directory.Delete(temporaryDirectory, true);
-		}
-
-		private TData LoadData<TData>(string filePath)
-		{
-			using (StreamReader streamReader = new StreamReader(filePath))
-			using (JsonReader jsonReader = new JsonTextReader(streamReader))
-				return serializer.Deserialize<TData>(jsonReader);
-		}
-
-		private void SaveData<TData>(string filePath, TData data)
-		{
-			using (StreamWriter streamWriter = new StreamWriter(filePath))
-			using (JsonWriter jsonWriter = new JsonTextWriter(streamWriter))
-				serializer.Serialize(jsonWriter, data);
-		}
-
-		private string SerializeToString<TData>(TData data)
-		{
-			using (StringWriter stringWriter = new StringWriter())
-			using (JsonWriter jsonWriter = new JsonTextWriter(stringWriter))
-			{
-				serializer.Serialize(jsonWriter, data);
-				return stringWriter.ToString();
-			}
 		}
 	}
 }

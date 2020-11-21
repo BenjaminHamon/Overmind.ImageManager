@@ -14,6 +14,10 @@
         </DataTemplate>
     </UserControl.Resources>
 
+    <UserControl.CommandBindings>
+        <CommandBinding Command="Save" Executed="SaveSettings" CanExecute="CanSaveSettings"/>
+    </UserControl.CommandBindings>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -25,7 +29,7 @@
             <StackPanel Orientation="Horizontal">
                 <fa:ImageAwesome Icon="InfoCircle" Margin="4" Height="16" Width="16" Foreground="{StaticResource BlueBrush}"/>
                 <TextBlock Text="Settings defined here are wallpaper configurations which can then be selected through the wallpaper service"
-                           Margin="5" VerticalAlignment="Center"/>
+                        Margin="5" VerticalAlignment="Center"/>
             </StackPanel>
         </Border>
 
@@ -37,21 +41,21 @@
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Content="New Configuration" Command="{Binding Path=AddConfigurationCommand}" Margin="5" Width="150" Height="30"/>
-                <Button Content="Save Settings" Command="{Binding Path=SaveSettingsCommand}" Margin="5" Width="150" Height="30"/>
+                <Button Content="Save Settings" Command="Save" Margin="5" Width="150" Height="30"/>
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Content="Expand All" Click="ExpandAll" Margin="5" Width="100" Height="30"/>
                 <Button Content="Collapse All" Click="CollapseAll" Margin="5" Width="100" Height="30"/>
             </StackPanel>
             <fa:ImageAwesome Grid.Column="2" Icon="Warning" Foreground="{StaticResource OrangeBrush}"
-                             ToolTipService.ShowDuration="30000" Margin="4" Height="16" Width="16"
-                             Visibility="{Binding Path=HasWarnings, Converter={StaticResource VisibilityConverter}}">
+                    ToolTipService.ShowDuration="30000" Margin="4" Height="16" Width="16"
+                    Visibility="{Binding Path=HasWarnings, Converter={StaticResource VisibilityConverter}}">
                 <fa:ImageAwesome.ToolTip>
                     <StackPanel Margin="5">
                         <TextBlock Text="The settings have warnings:"/>
                         <!-- Using explicit keys instead of an ItemsControl of ItemsControl to match order with the rest of the view -->
                         <ItemsControl ItemsSource="{Binding Path=WarningCollection[ConfigurationCollection]}"
-                                      ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                ItemTemplate="{StaticResource ExceptionTemplate}"/>
                     </StackPanel>
                 </fa:ImageAwesome.ToolTip>
             </fa:ImageAwesome>
@@ -61,95 +65,87 @@
             <ItemsControl x:Name="itemsControl" x:FieldModifier="private" ItemsSource="{Binding Path=ConfigurationCollection}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="5" BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
-                            <Expander Margin="5">
-                                <Expander.Header>
-                                    <Grid>
-                                        <Grid.HorizontalAlignment>
-                                            <!-- Hack to stretch the header without modifying the expander control template -->
-                                            <Binding RelativeSource="{RelativeSource AncestorType=ContentPresenter}" Path="HorizontalAlignment" Mode="OneWayToSource"/>
-                                        </Grid.HorizontalAlignment>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="{Binding Path=Title}" Margin="5" FontWeight="Bold"/>
-                                        <fa:ImageAwesome Grid.Column="1" Icon="Warning" Foreground="{StaticResource OrangeBrush}"
-                                                         ToolTipService.ShowDuration="30000" Margin="4" Height="16" Width="16"
-                                                         Visibility="{Binding Path=HasWarnings, Converter={StaticResource VisibilityConverter}}">
-                                            <fa:ImageAwesome.ToolTip>
-                                                <StackPanel Margin="5">
-                                                    <TextBlock Text="The configuration has warnings:"/>
-                                                    <!-- Using explicit keys instead of an ItemsControl of ItemsControl to match order with the rest of the view -->
-                                                    <ItemsControl ItemsSource="{Binding Path=WarningCollection[Name]}"
-                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
-                                                    <ItemsControl ItemsSource="{Binding Path=WarningCollection[CollectionPath]}"
-                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
-                                                    <ItemsControl ItemsSource="{Binding Path=WarningCollection[ImageQuery]}"
-                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
-                                                    <ItemsControl ItemsSource="{Binding Path=WarningCollection[CyclePeriod]}"
-                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
-                                                </StackPanel>
-                                            </fa:ImageAwesome.ToolTip>
-                                        </fa:ImageAwesome>
-                                        <fa:ImageAwesome Grid.Column="2" Icon="ExclamationCircle" Foreground="{StaticResource RedBrush}"
-                                                         ToolTipService.ShowDuration="30000" Margin="4" Height="16" Width="16"
-                                                         Visibility="{Binding Path=HasErrors, Converter={StaticResource VisibilityConverter}}">
-                                            <fa:ImageAwesome.ToolTip>
-                                                <StackPanel Margin="5">
-                                                    <TextBlock Text="The configuration has errors:"/>
-                                                    <!-- Using explicit keys instead of an ItemsControl of ItemsControl to match order with the rest of the view -->
-                                                    <ItemsControl ItemsSource="{Binding Path=ErrorCollection[Name]}"
-                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
-                                                    <ItemsControl ItemsSource="{Binding Path=ErrorCollection[CollectionPath]}"
-                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
-                                                    <ItemsControl ItemsSource="{Binding Path=ErrorCollection[ImageQuery]}"
-                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
-                                                    <ItemsControl ItemsSource="{Binding Path=ErrorCollection[CyclePeriod]}"
-                                                                  ItemTemplate="{StaticResource ExceptionTemplate}"/>
-                                                </StackPanel>
-                                            </fa:ImageAwesome.ToolTip>
-                                        </fa:ImageAwesome>
-                                    </Grid>
-                                </Expander.Header>
-
-                                <Grid Style="{StaticResource FormStyle}">
+                        <Expander>
+                            <Expander.Header>
+                                <Grid>
                                     <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-
-                                    <Separator Grid.Row="0" Grid.ColumnSpan="4" Margin="5"/>
-                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Name"/>
-                                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Path=Name}"/>
-                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Collection"/>
-                                    <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Path=CollectionPath}"/>
-                                    <Button Grid.Row="2" Grid.Column="3" Content="..." Click="BrowseForCollectionPath" Width="30"/>
-                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Query"/>
-                                    <TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Path=ImageQuery}"/>
-                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Period"/>
-                                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Path=CyclePeriod}"/>
-                                    <Button Grid.Row="4" Grid.Column="2" Content="Remove" Width="80" HorizontalAlignment="Right">
-                                        <Button.Command>
-                                            <Binding RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}" Path="DataContext.RemoveConfigurationCommand"/>
-                                        </Button.Command>
-                                        <Button.CommandParameter>
-                                            <Binding/>
-                                        </Button.CommandParameter>
-                                    </Button>
+                                    <TextBlock Grid.Column="0" Text="{Binding Path=Title}" Margin="4" FontWeight="Bold"/>
+                                    <fa:ImageAwesome Grid.Column="1" Icon="Warning" Foreground="{StaticResource OrangeBrush}"
+                                            ToolTipService.ShowDuration="30000" Margin="4" Height="16" Width="16"
+                                            Visibility="{Binding Path=HasWarnings, Converter={StaticResource VisibilityConverter}}">
+                                        <fa:ImageAwesome.ToolTip>
+                                            <StackPanel Margin="5">
+                                                <TextBlock Text="The configuration has warnings:"/>
+                                                <!-- Using explicit keys instead of an ItemsControl of ItemsControl to match order with the rest of the view -->
+                                                <ItemsControl ItemsSource="{Binding Path=WarningCollection[Name]}"
+                                                        ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                <ItemsControl ItemsSource="{Binding Path=WarningCollection[CollectionPath]}"
+                                                        ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                <ItemsControl ItemsSource="{Binding Path=WarningCollection[ImageQuery]}"
+                                                        ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                <ItemsControl ItemsSource="{Binding Path=WarningCollection[CyclePeriod]}"
+                                                        ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                            </StackPanel>
+                                        </fa:ImageAwesome.ToolTip>
+                                    </fa:ImageAwesome>
+                                    <fa:ImageAwesome Grid.Column="2" Icon="ExclamationCircle" Foreground="{StaticResource RedBrush}"
+                                            ToolTipService.ShowDuration="30000" Margin="4" Height="16" Width="16"
+                                            Visibility="{Binding Path=HasErrors, Converter={StaticResource VisibilityConverter}}">
+                                        <fa:ImageAwesome.ToolTip>
+                                            <StackPanel Margin="5">
+                                                <TextBlock Text="The configuration has errors:"/>
+                                                <!-- Using explicit keys instead of an ItemsControl of ItemsControl to match order with the rest of the view -->
+                                                <ItemsControl ItemsSource="{Binding Path=ErrorCollection[Name]}"
+                                                        ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                <ItemsControl ItemsSource="{Binding Path=ErrorCollection[CollectionPath]}"
+                                                        ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                <ItemsControl ItemsSource="{Binding Path=ErrorCollection[ImageQuery]}"
+                                                        ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                                <ItemsControl ItemsSource="{Binding Path=ErrorCollection[CyclePeriod]}"
+                                                        ItemTemplate="{StaticResource ExceptionTemplate}"/>
+                                            </StackPanel>
+                                        </fa:ImageAwesome.ToolTip>
+                                    </fa:ImageAwesome>
                                 </Grid>
-                            </Expander>
-                        </Border>
+                            </Expander.Header>
+
+                            <Grid Style="{StaticResource FormStyle}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Name"/>
+                                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Path=Name}"/>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Collection"/>
+                                <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Path=CollectionPath}"/>
+                                <Button Grid.Row="1" Grid.Column="3" Content="..." Click="BrowseForCollectionPath" Width="30"/>
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Query"/>
+                                <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Path=ImageQuery}"/>
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Period"/>
+                                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Path=CyclePeriod}"/>
+                                <Button Grid.Row="3" Grid.Column="2" Content="Remove" Width="80" HorizontalAlignment="Right">
+                                    <Button.Command>
+                                        <Binding RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}" Path="DataContext.RemoveConfigurationCommand"/>
+                                    </Button.Command>
+                                    <Button.CommandParameter>
+                                        <Binding/>
+                                    </Button.CommandParameter>
+                                </Button>
+                            </Grid>
+                        </Expander>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

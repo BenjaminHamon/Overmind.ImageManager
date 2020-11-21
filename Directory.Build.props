@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+
+  <PropertyGroup>
+    <PythonExecutable>python</PythonExecutable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SolutionDir Condition="'$(SolutionDir)'==''">$(MSBuildThisFileDirectory)</SolutionDir>
+    <ArtifactDirectory>$(SolutionDir)/Artifacts</ArtifactDirectory>
+    <ProjectDirectoryName>$([System.IO.Path]::GetFileName($(MSBuildProjectDirectory)))</ProjectDirectoryName>
+    <BaseIntermediateOutputPath>$(ArtifactDirectory)/$(ProjectDirectoryName)/Intermediate</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(ArtifactDirectory)/$(ProjectDirectoryName)/Intermediate/$(Configuration)</IntermediateOutputPath>
+    <OutputPath>$(ArtifactDirectory)/$(ProjectDirectoryName)/Binaries/$(Configuration)</OutputPath>
+    <PublishDir>$(ArtifactDirectory)/$(ProjectDirectoryName)/Publish/$(Configuration)</PublishDir>
+  </PropertyGroup>
+
+  <Import Project="$(SolutionDir)/Directory.Build.props.user" Condition="Exists('$(SolutionDir)/Directory.Build.props.user')"/>
+  
+</Project>

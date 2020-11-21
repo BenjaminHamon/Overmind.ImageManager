@@ -11,6 +11,9 @@ namespace Overmind.ImageManager.Model.Wallpapers
 		[DataMember(Name = "Configurations")]
 		public List<WallpaperConfiguration> ConfigurationCollection { get; set; } = new List<WallpaperConfiguration>();
 
+		[DataMember]
+		public string ActiveConfiguration { get; set; }
+
 		public Dictionary<string, List<Exception>> Validate()
 		{
 			Dictionary<string, List<Exception>> errorCollection = new Dictionary<string, List<Exception>>()
@@ -23,7 +26,7 @@ namespace Overmind.ImageManager.Model.Wallpapers
 
 			foreach (string nameDuplicate in configurationNameDuplicates)
 			{
-				Exception exception = new ArgumentException(String.Format("The collection name '{0}' is used several times.", nameDuplicate));
+				Exception exception = new ArgumentException(String.Format("The configuration name '{0}' is used several times.", nameDuplicate));
 				errorCollection[nameof(ConfigurationCollection)].Add(exception);
 			}
 

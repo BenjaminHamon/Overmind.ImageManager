@@ -1,26 +1,38 @@
 ﻿using Overmind.ImageManager.Model;
+using Overmind.WpfExtensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace Overmind.ImageManager.WindowsClient
 {
 	public class ImagePropertiesViewModel : INotifyPropertyChanged, INotifyDataErrorInfo
 	{
-		public ImagePropertiesViewModel(ImageModel model, Func<string> getImagePath)
+		public ImagePropertiesViewModel(ImageModel model, Func<string> getImagePath, IImageOperations imageOperations, Dispatcher dispatcher)
 		{
 			this.model = model;
 			this.getImagePath = getImagePath;
+			this.imageOperations = imageOperations;
+			this.dispatcher = dispatcher;
 
 			sourceField = model.Source?.OriginalString;
+			Format = GetFormatFromFilePath();
 
 			ErrorCollection = new Dictionary<string, List<Exception>>();
+
+			Task.Run(RefreshFileProperties);
 		}
 
 		private readonly ImageModel model;
 		private readonly Func<string> getImagePath;
+		private readonly IImageOperations imageOperations;
+		private readonly Dispatcher dispatcher;
+		private readonly object refreshLock = new object();
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
@@ -38,13 +50,16 @@ namespace Overmind.ImageManager.WindowsClient
 
 		public string FilePath { get { return getImagePath(); } }
 		public string Name { get { return model.FileName; } }
+
 		public string Title { get { return model.Title; } set { model.Title = value; } }
 		public List<string> SubjectCollection { get { return model.SubjectCollection; } set { model.SubjectCollection = value; } }
 		public List<string> ArtistCollection { get { return model.ArtistCollection; } set { model.ArtistCollection = value; } }
 		public List<string> TagCollection { get { return model.TagCollection; } set { model.TagCollection = value; } }
 		public int Score { get { return model.Score; } set { model.Score = value; } }
-		public DateTime AdditionDate { get { return model.AdditionDate.ToLocalTime(); } }
-		public string Hash { get { return model.Hash; } }
+
+		public List<string> AllSubjects { get; set; } = new List<string>();
+		public List<string> AllArtists { get; set; } = new List<string>();
+		public List<string> AllTags { get; set; } = new List<string>();
 
 		private string sourceField;
 		public string Source
@@ -72,15 +87,72 @@ namespace Overmind.ImageManager.WindowsClient
 			}
 		}
 
-		public List<string> AllSubjects { get; set; } = new List<string>();
-		public List<string> AllArtists { get; set; } = new List<string>();
-		public List<string> AllTags { get; set; } = new List<string>();
+		public DateTime AdditionDate { get { return model.AdditionDate.ToLocalTime(); } }
+
+		public string Hash { get { return model.Hash; } }
+		public string Format { get; private set; }
+		public long FileSize { get; private set; }
+		public string Dimensions { get; private set; }
+
+		public string FileSizeFormatted
+		{
+			get
+			{
+				if (FileSize == 0)
+					return "0 B";
+				return FormatExtensions.FormatUnit(FileSize, "B", "N1");
+			}
+		}
 
 		public void NotifyFileChanged()
 		{
+			Task.Run(RefreshFileProperties);
+
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FilePath)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Hash)));
+		}
+
+		private void RefreshFileProperties()
+		{
+			byte[] imageData;
+
+			try
+			{
+				imageData = File.ReadAllBytes(FilePath);
+			}
+			catch (SystemException)
+			{
+				return;
+			}
+
+			string formatResult = imageOperations.GetFormat(imageData).ToUpperInvariant();
+			string dimensionsResult = imageOperations.GetDimensions(imageData);
+
+			lock (refreshLock)
+			{
+				this.Format = formatResult;
+				this.FileSize = imageData.Length;
+				this.Dimensions = dimensionsResult;
+			}
+
+			dispatcher.Invoke(() =>
+			{
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Format)));
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FileSize)));
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FileSizeFormatted)));
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Dimensions)));
+			});
+		}
+
+		private string GetFormatFromFilePath()
+		{
+			string format = Path.GetExtension(FilePath).TrimStart('.').ToUpperInvariant();
+
+			if (format == "JPG")
+				return "JPEG";
+
+			return format;
 		}
 	}
 }

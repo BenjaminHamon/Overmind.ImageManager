@@ -34,7 +34,7 @@ namespace Overmind.ImageManager.Model
 		public string Format(ImageModel image, string fileExtension = null)
 		{
 			if (image == null)
-				throw new ArgumentNullException("Image must not be null.");
+				throw new ArgumentNullException(nameof(image), "Image must not be null.");
 
 			if (String.IsNullOrEmpty(fileExtension))
 				fileExtension = Path.GetExtension(image.FileName);
@@ -62,7 +62,7 @@ namespace Overmind.ImageManager.Model
 		public string FormatElement(IEnumerable<string> valueCollection, int lengthLimit)
 		{
 			if (valueCollection == null)
-				throw new ArgumentNullException("Value collection must not be null.");
+				throw new ArgumentNullException(nameof(valueCollection), "Value collection must not be null.");
 			if (lengthLimit < 0)
 				throw new ArgumentOutOfRangeException("Length limit must be positive.");
 			if (lengthLimit < EllipsisMark.Length)

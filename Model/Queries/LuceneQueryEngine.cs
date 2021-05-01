@@ -66,7 +66,8 @@ namespace Overmind.ImageManager.Model.Queries
 				}
 			}
 
-			return resultHashes.Select(hash => dataSet.First(image => image.Hash == hash)).ToList();
+			Dictionary<string, ImageModel> dataSetAsDictionary = dataSet.ToDictionary(image => image.Hash, x => x);
+			return resultHashes.Select(hash => dataSetAsDictionary[hash]).ToList();
 		}
 	}
 }

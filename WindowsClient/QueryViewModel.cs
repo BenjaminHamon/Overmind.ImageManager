@@ -126,7 +126,8 @@ namespace Overmind.ImageManager.WindowsClient
 		private IEnumerable<ImageViewModel> Filter(IEnumerable<ImageViewModel> source, string expression)
 		{
 			ICollection<ImageModel> searchResult = queryEngine.Search(source.Select(image => image.Model), expression);
-			return searchResult.Select(image => source.First(imageViewModel => imageViewModel.Model == image));
+			Dictionary<ImageModel, ImageViewModel> sourceAsDictionary = source.ToDictionary(image => image.Model, x => x);
+			return searchResult.Select(image => sourceAsDictionary[image]);
 		}
 
 		private IEnumerable<ImageViewModel> GroupBy(IEnumerable<ImageViewModel> source, string expression)

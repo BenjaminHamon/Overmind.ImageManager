@@ -18,7 +18,9 @@
     <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
+    <DocumentationFile>$(ArtifactDirectory)/$(ProjectDirectoryName)/Binaries/$(Configuration)/$(AssemblyName).xml</DocumentationFile>
     <CodeAnalysisRuleSet>$(SolutionDir)/stylecop.ruleset</CodeAnalysisRuleSet>
+    <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

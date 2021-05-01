@@ -27,5 +27,5 @@ Overmind Image Manager uses licensed assets and software from:
   ([Microsoft Software Licence](https://github.com/aybe/Windows-API-Code-Pack-1.1/blob/master/LICENCE))
 - [WPF CustomMessageBox](https://github.com/evanwon/WPFCustomMessageBox)
   ([MIT License](https://github.com/evanwon/WPFCustomMessageBox/blob/master/README.md))
-- [WPF NotifyIcon](http://www.hardcodet.net/wpf-notifyicon)
-  ([Code Project Open License](https://www.codeproject.com/info/cpol10.aspx))
+- [WPF NotifyIcon](https://github.com/hardcodet/wpf-notifyicon)
+  ([Code Project Open License](https://github.com/hardcodet/wpf-notifyicon/blob/master/LICENSE))

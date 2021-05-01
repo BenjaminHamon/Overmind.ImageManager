@@ -20,7 +20,7 @@ def load_configuration(environment):
 
 	configuration["development_toolkit"] = "git+https://github.com/BenjaminHamon/DevelopmentToolkit@{revision}#subdirectory=toolkit"
 	configuration["development_toolkit_revision"] = "032434c526e880fe1672f59ab4992f4b883ddbff"
-	configuration["development_dependencies"] = [ "pylint" ]
+	configuration["development_dependencies"] = [ "pylint ~= 2.8.2" ]
 
 	configuration["dotnet_solution"] = "Overmind.ImageManager.sln"
 

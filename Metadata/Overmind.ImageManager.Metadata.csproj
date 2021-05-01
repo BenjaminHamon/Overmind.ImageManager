@@ -21,6 +21,7 @@
   <Target Name="Rebuild" DependsOnTargets="Clean;Build"/>
 
   <Target Name="Metadata" BeforeTargets="PrepareForBuild" Condition="$(BuildingInsideVisualStudio) == 'true'">
+    <Error Condition="'$(PythonExecutable)' != 'python' And !Exists($(PythonExecutable))" Text="Python is required (Path: '$(PythonExecutable)')" /> 
     <Exec Command="$(PythonExecutable) $(SolutionDir)\development\main.py --verbosity warning metadata"/>
   </Target>
 

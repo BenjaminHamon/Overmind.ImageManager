@@ -31,8 +31,7 @@ namespace Overmind.ImageManager.WindowsClient
 		public static void Main(string[] arguments)
 		{
 			AppDomain.CurrentDomain.UnhandledException += ReportFatalError;
-			TaskScheduler.UnobservedTaskException += (sender, eventArguments)
-				=> { Logger.Error(eventArguments.Exception, "Unhandled exception in task"); };
+			TaskScheduler.UnobservedTaskException += ReportTaskException;
 
 			string applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
 			Model.Application.InitializeLogging(ApplicationFullName, ApplicationName, applicationDataDirectory);
@@ -264,6 +263,11 @@ namespace Overmind.ImageManager.WindowsClient
 			InternalLogger.Fatal(exception, "Unhandled exception");
 			Logger.Fatal(exception, "Unhandled exception");
 			ShowError(ApplicationTitle, "A fatal error has occured.", exception);
+		}
+
+		private static void ReportTaskException(object sender, UnobservedTaskExceptionEventArgs eventArguments)
+		{
+			Logger.Error(eventArguments.Exception, "Unhandled exception in task");
 		}
 
 		public static void ShowError(string context, string message, Exception exception)

@@ -52,7 +52,10 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		private string nameField;
 		public string Name
 		{
-			get { return nameField; }
+			get
+			{
+				return nameField;
+			}
 			set
 			{
 				if (nameField == value)
@@ -81,7 +84,10 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 		public string DomainName
 		{
-			get { return Model.DomainName; }
+			get
+			{
+				return Model.DomainName;
+			}
 			set
 			{
 				if (Model.DomainName == value)
@@ -96,7 +102,10 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 		public string Expression
 		{
-			get { return Model.Expression; }
+			get
+			{
+				return Model.Expression;
+			}
 			set
 			{
 				if (Model.Expression == value)

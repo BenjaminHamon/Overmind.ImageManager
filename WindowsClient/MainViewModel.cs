@@ -56,7 +56,10 @@ namespace Overmind.ImageManager.WindowsClient
 		private CollectionViewModel activeCollectionField;
 		public CollectionViewModel ActiveCollection
 		{
-			get { return activeCollectionField; }
+			get
+			{
+				return activeCollectionField;
+			}
 			private set
 			{
 				if (activeCollectionField == value)
@@ -78,7 +81,10 @@ namespace Overmind.ImageManager.WindowsClient
 		private DownloaderViewModel downloaderField;
 		public DownloaderViewModel Downloader
 		{
-			get { return downloaderField; }
+			get
+			{
+				return downloaderField;
+			}
 			private set
 			{
 				if (downloaderField == value)

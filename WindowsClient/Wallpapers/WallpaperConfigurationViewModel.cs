@@ -59,7 +59,10 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 		private string nameField;
 		public string Name
 		{
-			get { return nameField; }
+			get
+			{
+				return nameField;
+			}
 			set
 			{
 				if (nameField == value)
@@ -88,7 +91,10 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 
 		public string CollectionPath
 		{
-			get { return Model.CollectionPath; }
+			get
+			{
+				return Model.CollectionPath;
+			}
 			set
 			{
 				if (Model.CollectionPath == value)
@@ -103,7 +109,10 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 
 		public string ImageQuery
 		{
-			get { return Model.ImageQuery; }
+			get
+			{
+				return Model.ImageQuery;
+			}
 			set
 			{
 				if (Model.ImageQuery == value)
@@ -119,7 +128,10 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 		private string cyclePeriodField;
 		public string CyclePeriod
 		{
-			get { return cyclePeriodField; }
+			get
+			{
+				return cyclePeriodField;
+			}
 			set
 			{
 				if (cyclePeriodField == value)

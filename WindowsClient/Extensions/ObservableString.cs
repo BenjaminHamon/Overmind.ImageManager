@@ -9,7 +9,10 @@ namespace Overmind.ImageManager.WindowsClient.Extensions
 		private string valueField;
 		public string Value
 		{
-			get { return valueField; }
+			get
+			{
+				return valueField;
+			}
 			set
 			{
 				valueField = value;

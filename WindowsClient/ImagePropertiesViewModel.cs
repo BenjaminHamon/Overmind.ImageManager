@@ -64,7 +64,10 @@ namespace Overmind.ImageManager.WindowsClient
 		private string sourceField;
 		public string Source
 		{
-			get { return sourceField; }
+			get
+			{
+				return sourceField;
+			}
 			set
 			{
 				if (String.IsNullOrWhiteSpace(value))

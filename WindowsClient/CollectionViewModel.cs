@@ -58,7 +58,10 @@ namespace Overmind.ImageManager.WindowsClient
 		private ImageViewModel selectedImageField;
 		public ImageViewModel SelectedImage
 		{
-			get { return selectedImageField; }
+			get
+			{
+				return selectedImageField;
+			}
 			set
 			{
 				// Reset selection in case the image is not in DisplayedImages

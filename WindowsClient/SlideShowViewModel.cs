@@ -27,7 +27,10 @@ namespace Overmind.ImageManager.WindowsClient
 		private bool isRunningField;
 		public bool IsRunning
 		{
-			get { return isRunningField; }
+			get
+			{
+				return isRunningField;
+			}
 			set
 			{
 				if (isRunningField == value)
@@ -41,7 +44,10 @@ namespace Overmind.ImageManager.WindowsClient
 		private ImageViewModel currentImageField;
 		public ImageViewModel CurrentImage
 		{
-			get { return currentImageField; }
+			get
+			{
+				return currentImageField;
+			}
 			set
 			{
 				if (currentImageField == value)
@@ -55,7 +61,10 @@ namespace Overmind.ImageManager.WindowsClient
 		public TimeSpan Interval { get; private set; }
 		public double IntervalSeconds
 		{
-			get { return Interval.TotalSeconds; }
+			get
+			{
+				return Interval.TotalSeconds;
+			}
 			set
 			{
 				TimeSpan valueTimeSpan = TimeSpan.FromSeconds(value);

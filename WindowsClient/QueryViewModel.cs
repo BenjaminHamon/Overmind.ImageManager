@@ -42,7 +42,10 @@ namespace Overmind.ImageManager.WindowsClient
 		private string searchExpressionField;
 		public string SearchExpression
 		{
-			get { return searchExpressionField; }
+			get
+			{
+				return searchExpressionField;
+			}
 			set
 			{
 				if (searchExpressionField == value)
@@ -59,7 +62,10 @@ namespace Overmind.ImageManager.WindowsClient
 		private string groupByExpressionField;
 		public string GroupByExpression
 		{
-			get { return groupByExpressionField; }
+			get
+			{
+				return groupByExpressionField;
+			}
 			set
 			{
 				if (groupByExpressionField == value)
@@ -76,7 +82,10 @@ namespace Overmind.ImageManager.WindowsClient
 		private string orderByExpressionField;
 		public string OrderByExpression
 		{
-			get { return orderByExpressionField; }
+			get
+			{
+				return orderByExpressionField;
+			}
 			set
 			{
 				if (orderByExpressionField == value)

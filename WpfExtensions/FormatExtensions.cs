@@ -37,14 +37,23 @@ namespace Overmind.WpfExtensions
 		public static string FormatExceptionSummary(Exception exception)
 		{
 			ICollection<Exception> innerExceptions = new List<Exception>();
+
 			if (exception is AggregateException)
+			{
 				innerExceptions = ((AggregateException)exception).InnerExceptions;
+			}
 			else if (exception.InnerException != null)
+			{
 				innerExceptions.Add(exception.InnerException);
+			}
 
 			string formattedMessage = FormatExceptionHint(exception);
+
 			if (innerExceptions.Any())
+			{
 				formattedMessage += Environment.NewLine + String.Join(Environment.NewLine, innerExceptions.Select(FormatExceptionSummary));
+			}
+
 			return formattedMessage;
 		}
 

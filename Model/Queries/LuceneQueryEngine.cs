@@ -50,7 +50,9 @@ namespace Overmind.ImageManager.Model.Queries
 					using (IndexWriter indexWriter = new IndexWriter(searchIndex, searchAnalyser, IndexWriter.MaxFieldLength.UNLIMITED))
 					{
 						foreach (ImageModel image in dataSet)
+						{
 							indexWriter.AddDocument(image.ToDocument());
+						}
 					}
 
 					ImageQueryParser queryParser = new ImageQueryParser(SearchVersion, "any", searchAnalyser);

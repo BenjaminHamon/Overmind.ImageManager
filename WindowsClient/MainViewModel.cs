@@ -61,6 +61,7 @@ namespace Overmind.ImageManager.WindowsClient
 			{
 				if (activeCollectionField == value)
 					return;
+
 				activeCollectionField = value;
 
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActiveCollection)));
@@ -82,6 +83,7 @@ namespace Overmind.ImageManager.WindowsClient
 			{
 				if (downloaderField == value)
 					return;
+
 				downloaderField = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Downloader)));
 			}

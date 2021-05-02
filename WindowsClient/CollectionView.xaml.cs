@@ -78,8 +78,11 @@ namespace Overmind.ImageManager.WindowsClient
 			if (eventArguments.PropertyName == nameof(CollectionViewModel.SelectedImage))
 			{
 				CollectionViewModel viewModel = (CollectionViewModel) DataContext;
+
 				if (viewModel.DisplayedImages.Contains(viewModel.SelectedImage))
+				{
 					listBox.ScrollIntoView(viewModel.SelectedImage);
+				}
 			}
 		}
 

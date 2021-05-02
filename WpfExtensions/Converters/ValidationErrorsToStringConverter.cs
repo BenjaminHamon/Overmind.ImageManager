@@ -16,15 +16,21 @@ namespace Overmind.WpfExtensions.Converters
 		{
 			if (value is IEnumerable<ValidationError>)
 			{
-				IEnumerable<ValidationError> errorCollection = (IEnumerable<ValidationError>)value;
+				IEnumerable<ValidationError> errorCollection = (IEnumerable<ValidationError>) value;
+
 				if (errorCollection.Any())
+				{
 					return String.Join(Environment.NewLine, errorCollection.Select(ConvertError));
+				}
 			}
 			else if (value is IDictionary<string, List<Exception>>)
 			{
-				IDictionary<string, List<Exception>> errorCollection = (IDictionary<string, List<Exception>>)value;
+				IDictionary<string, List<Exception>> errorCollection = (IDictionary<string, List<Exception>>) value;
+
 				if (errorCollection.Any())
+				{
 					return String.Join(Environment.NewLine, errorCollection.SelectMany(kvp => kvp.Value).Select(ConvertError));
+				}
 			}
 
 			return null;

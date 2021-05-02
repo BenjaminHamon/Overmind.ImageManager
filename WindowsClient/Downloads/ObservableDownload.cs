@@ -88,7 +88,9 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 			Success = exception == null;
 
 			if (exception != null)
+			{
 				StatusMessage = FormatExtensions.FormatExceptionSummary(exception);
+			}
 
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsDownloading)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsCompleted)));

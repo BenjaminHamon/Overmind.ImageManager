@@ -48,7 +48,9 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		public void Dispose()
 		{
 			foreach (ObservableDownload download in DownloadCollection)
+			{
 				download.Dispose();
+			}
 		}
 
 		public void AddDownload(string uri)
@@ -166,7 +168,9 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 			List<ObservableDownload> downloadsToRemove = DownloadCollection.Where(d => d.IsCompleted).ToList();
 
 			foreach (var download in downloadsToRemove)
+			{
 				DownloadCollection.Remove(download);
+			}
 		}
 
 		private void SelectImage(ObservableDownload download)

@@ -60,7 +60,10 @@ namespace Overmind.ImageManager.WindowsClient.Extensions
 			if ((eventArguments.Key == Key.Enter) || (eventArguments.Key == Key.Tab))
 			{
 				if (listBox.SelectedItem != null)
+				{
 					SetTextValue((string)listBox.SelectedItem);
+				}
+
 				return;
 			}
 
@@ -78,15 +81,21 @@ namespace Overmind.ImageManager.WindowsClient.Extensions
 					if (eventArguments.Key == Key.Up)
 					{
 						newIndex = listBox.SelectedIndex - 1;
+
 						if (newIndex < 0)
+						{
 							newIndex = listBox.Items.Count - 1;
+						}
 					}
 
 					if (eventArguments.Key == Key.Down)
 					{
 						newIndex = listBox.SelectedIndex + 1;
+
 						if (newIndex >= listBox.Items.Count)
+						{
 							newIndex = 0;
+						}
 					}
 
 					listBox.SelectedIndex = newIndex;

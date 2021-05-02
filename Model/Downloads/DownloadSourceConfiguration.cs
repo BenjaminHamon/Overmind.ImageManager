@@ -24,14 +24,24 @@ namespace Overmind.ImageManager.Model.Downloads
 			};
 
 			if (String.IsNullOrWhiteSpace(Name))
+			{
 				errorCollection[nameof(Name)].Add(new ArgumentException("The configuration name cannot be empty.", nameof(Name)));
+			}
 
 			if (String.IsNullOrWhiteSpace(DomainName))
+			{
 				errorCollection[nameof(DomainName)].Add(new ArgumentException("The domain name cannot be empty.", nameof(DomainName)));
+			}
 
-			try { Uri baseUri = new Uri("http://" + DomainName + "/"); }
-			catch (UriFormatException exception) { errorCollection[nameof(DomainName)].Add(exception); }
-			
+			try
+			{
+				Uri baseUri = new Uri("http://" + DomainName + "/");
+			}
+			catch (UriFormatException exception)
+			{
+				errorCollection[nameof(DomainName)].Add(exception);
+			}
+
 			return errorCollection;
 		}
 	}

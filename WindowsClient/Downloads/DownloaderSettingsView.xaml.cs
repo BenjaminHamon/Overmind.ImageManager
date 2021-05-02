@@ -79,9 +79,13 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 			if (eventArguments.Action == NotifyCollectionChangedAction.Add)
 			{
 				// Dispatching because the item containers have not been created yet
+
 				Dispatcher.BeginInvoke(new Action(() => ShowNewConfiguration(eventArguments.NewItems.Cast<object>().First(), true)));
+
 				foreach (object item in eventArguments.NewItems.Cast<object>().Skip(1))
+				{
 					Dispatcher.BeginInvoke(new Action(() => ShowNewConfiguration(item, false)));
+				}
 			}
 		}
 

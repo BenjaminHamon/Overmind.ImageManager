@@ -58,7 +58,9 @@ namespace Overmind.ImageManager.WindowsClient.Extensions
 		private void AddItem(object sender, KeyEventArgs eventArguments)
 		{
 			if (eventArguments.Key == Key.Enter)
+			{
 				AddItem();
+			}
 		}
 
 		private void AddItem()
@@ -83,8 +85,12 @@ namespace Overmind.ImageManager.WindowsClient.Extensions
 		private void HandleItemLostFocus(object sender, RoutedEventArgs eventArguments)
 		{
 			TextBox textBox = VisualTreeExtensions.GetDescendant<TextBox>((UIElement)sender);
+
 			if (String.IsNullOrWhiteSpace(textBox.Text))
+			{
 				itemsControl.Items.Remove(textBox.DataContext);
+			}
+
 			UpdateSource();
 		}
 
@@ -109,7 +115,9 @@ namespace Overmind.ImageManager.WindowsClient.Extensions
 				if (newValue != null)
 				{
 					foreach (string item in newValue)
+					{
 						itemsControl.Items.Add(new ObservableString() { Value = item });
+					}
 				}
 			}
 		}

@@ -61,7 +61,9 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 				?? throw new ArgumentNullException(nameof(settings), "Wallpaper settings must not be null");
 
 			foreach (DownloadSourceConfigurationViewModel sourceConfigurationViewModel in SourceConfigurationCollection)
+			{
 				sourceConfigurationViewModel.PropertyChanged -= HandleConfigurationChanged;
+			}
 
 			SourceConfigurationCollection = new ObservableCollection<DownloadSourceConfigurationViewModel>();
 

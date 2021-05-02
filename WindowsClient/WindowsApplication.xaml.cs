@@ -157,6 +157,7 @@ namespace Overmind.ImageManager.WindowsClient
 			{
 				if (downloaderWindow.WindowState == WindowState.Minimized)
 					downloaderWindow.WindowState = WindowState.Normal;
+
 				downloaderWindow.Activate();
 			}
 		}
@@ -184,6 +185,7 @@ namespace Overmind.ImageManager.WindowsClient
 			{
 				if (settingsWindow.WindowState == WindowState.Minimized)
 					settingsWindow.WindowState = WindowState.Normal;
+
 				settingsWindow.Activate();
 			}
 		}
@@ -273,8 +275,11 @@ namespace Overmind.ImageManager.WindowsClient
 		public static void ShowError(string context, string message, Exception exception)
 		{
 			string formattedMessage = message;
+
 			if (exception != null)
+			{
 				formattedMessage += Environment.NewLine + FormatExtensions.FormatExceptionHint(exception);
+			}
 
 			MessageBox.Show(formattedMessage, context, MessageBoxButton.OK, MessageBoxImage.Error);
 		}

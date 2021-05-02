@@ -32,6 +32,7 @@ namespace Overmind.ImageManager.WindowsClient
 			{
 				if (isRunningField == value)
 					return;
+
 				isRunningField = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsRunning)));
 			}
@@ -45,6 +46,7 @@ namespace Overmind.ImageManager.WindowsClient
 			{
 				if (currentImageField == value)
 					return;
+
 				currentImageField = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentImage)));
 			}
@@ -59,6 +61,7 @@ namespace Overmind.ImageManager.WindowsClient
 				TimeSpan valueTimeSpan = TimeSpan.FromSeconds(value);
 				if (valueTimeSpan == Interval)
 					return;
+
 				Interval = valueTimeSpan;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Interval)));
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IntervalSeconds)));

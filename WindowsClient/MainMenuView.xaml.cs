@@ -155,7 +155,9 @@ namespace Overmind.ImageManager.WindowsClient
 				else
 				{
 					if (eventArguments is CancelEventArgs)
+					{
 						((CancelEventArgs)eventArguments).Cancel = true;
+					}
 				}
 			}
 		}

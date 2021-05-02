@@ -135,8 +135,11 @@ namespace Overmind.ImageManager.WallpaperService
 		public static void ShowError(string context, string message, Exception exception)
 		{
 			string formattedMessage = message;
+
 			if (exception != null)
+			{
 				formattedMessage += Environment.NewLine + FormatExtensions.FormatExceptionHint(exception);
+			}
 
 			MessageBox.Show(formattedMessage, context, MessageBoxButton.OK, MessageBoxImage.Error);
 		}

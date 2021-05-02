@@ -128,8 +128,7 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 				cyclePeriodField = value;
 				ErrorCollection[nameof(CyclePeriod)] = new List<Exception>();
 
-				TimeSpan parsedValue;
-				if (TimeSpan.TryParseExact(cyclePeriodField, @"hh\:mm\:ss", CultureInfo.InvariantCulture, out parsedValue) == false)
+				if (TimeSpan.TryParseExact(cyclePeriodField, @"hh\:mm\:ss", CultureInfo.InvariantCulture, out TimeSpan parsedValue) == false)
 				{
 					ErrorCollection[nameof(CyclePeriod)].Add(new ArgumentException("The cycle period must use the format 'hh:mm:ss'.", nameof(CyclePeriod)));
 				}

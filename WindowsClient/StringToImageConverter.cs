@@ -46,10 +46,16 @@ namespace Overmind.ImageManager.WindowsClient
 						image = new BitmapImage();
 						image.BeginInit();
 						image.CacheOption = BitmapCacheOption.OnLoad;
+
 						if ((MaxHeight != null) && (heightRatio < 1) && (heightRatio < widthRatio))
+						{
 							image.DecodePixelHeight = MaxHeight.Value;
+						}
 						else if ((MaxWidth != null) && (widthRatio < 1))
+						{
 							image.DecodePixelWidth = MaxWidth.Value;
+						}
+
 						image.StreamSource = stream;
 						image.EndInit();
 						image.Freeze();

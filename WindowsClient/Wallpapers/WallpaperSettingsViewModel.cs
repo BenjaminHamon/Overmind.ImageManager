@@ -64,7 +64,9 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 				?? throw new ArgumentNullException(nameof(settings), "Wallpaper settings must not be null");
 
 			foreach (WallpaperConfigurationViewModel configurationViewModel in ConfigurationCollection)
+			{
 				configurationViewModel.PropertyChanged -= HandleConfigurationChanged;
+			}
 
 			ConfigurationCollection = new ObservableCollection<WallpaperConfigurationViewModel>();
 

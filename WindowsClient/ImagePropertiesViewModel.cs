@@ -64,11 +64,17 @@ namespace Overmind.ImageManager.WindowsClient
 		private string sourceField;
 		public string Source
 		{
-			get { return sourceField; }
+			get
+			{
+				return sourceField;
+			}
 			set
 			{
 				if (String.IsNullOrWhiteSpace(value))
+				{
 					value = null;
+				}
+
 				if (sourceField == value)
 					return;
 
@@ -76,11 +82,16 @@ namespace Overmind.ImageManager.WindowsClient
 				ErrorCollection[nameof(Source)] = new List<Exception>();
 
 				Uri valueAsUri = null;
+
 				if ((sourceField != null) && (Uri.TryCreate(sourceField, UriKind.Absolute, out valueAsUri) == false))
+				{
 					ErrorCollection[nameof(Source)].Add(new ArgumentException("The URI is invalid.", nameof(Source)));
+				}
 
 				if (ErrorCollection[nameof(Source)].Any() == false)
+				{
 					model.Source = valueAsUri;
+				}
 
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Source)));
 				ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(Source)));

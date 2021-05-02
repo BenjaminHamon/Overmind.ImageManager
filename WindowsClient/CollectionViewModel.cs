@@ -21,8 +21,11 @@ namespace Overmind.ImageManager.WindowsClient
 			this.dispatcher = application.Dispatcher;
 
 			allImages = new List<ImageViewModel>();
+
 			foreach (ImageModel image in model.AllImages)
+			{
 				allImages.Add(new ImageViewModel(image, () => model.GetImagePath(image)));
+			}
 
 			Query = new QueryViewModel(queryEngine, randomFactory);
 			FilteredImages = new List<ImageViewModel>();
@@ -55,7 +58,10 @@ namespace Overmind.ImageManager.WindowsClient
 		private ImageViewModel selectedImageField;
 		public ImageViewModel SelectedImage
 		{
-			get { return selectedImageField; }
+			get
+			{
+				return selectedImageField;
+			}
 			set
 			{
 				// Reset selection in case the image is not in DisplayedImages
@@ -138,8 +144,11 @@ namespace Overmind.ImageManager.WindowsClient
 				model.UpdateImageFile(image.Model, data);
 
 				image.NotifyFileChanged();
+
 				if (SelectedImage == image)
+				{
 					SelectedImageProperties.NotifyFileChanged();
+				}
 			}
 		}
 
@@ -180,8 +189,11 @@ namespace Overmind.ImageManager.WindowsClient
 		public void DisplayMore()
 		{
 			IEnumerable<ImageViewModel> imagesToAdd = (FilteredImages ?? allImages).Skip(DisplayedImages.Count).Take(50);
+
 			foreach (ImageViewModel image in imagesToAdd)
+			{
 				DisplayedImages.Add(image);
+			}
 		}
 
 		public void ResetDisplay()

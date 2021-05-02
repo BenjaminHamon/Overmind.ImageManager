@@ -79,14 +79,20 @@ namespace Overmind.ImageManager.Model.Wallpapers
 				{
 					List<ImageModel> collectionCopy = imageCollection.ToList();
 					ImageModel newWallpaper = null;
+
 					if (collectionCopy.Any())
 					{
 						if (collectionCopy.Count == 1)
+						{
 							newWallpaper = collectionCopy.Single();
+						}
 						else
 						{
 							if (currentWallpaper != null)
+							{
 								collectionCopy.Remove(currentWallpaper);
+							}
+
 							newWallpaper = collectionCopy[random.Next(collectionCopy.Count)];
 						}
 					}

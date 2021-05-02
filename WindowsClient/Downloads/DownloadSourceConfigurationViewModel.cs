@@ -52,7 +52,10 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		private string nameField;
 		public string Name
 		{
-			get { return nameField; }
+			get
+			{
+				return nameField;
+			}
 			set
 			{
 				if (nameField == value)
@@ -62,10 +65,14 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 				ErrorCollection[nameof(Name)] = new List<Exception>();
 
 				if (String.IsNullOrWhiteSpace(nameField))
+				{
 					ErrorCollection[nameof(Name)].Add(new ArgumentException("The configuration name cannot be empty.", nameof(Name)));
+				}
 
 				if (ErrorCollection[nameof(Name)].Any() == false)
+				{
 					Model.Name = nameField;
+				}
 
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Title)));
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
@@ -77,7 +84,10 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 		public string DomainName
 		{
-			get { return Model.DomainName; }
+			get
+			{
+				return Model.DomainName;
+			}
 			set
 			{
 				if (Model.DomainName == value)
@@ -92,7 +102,10 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 		public string Expression
 		{
-			get { return Model.Expression; }
+			get
+			{
+				return Model.Expression;
+			}
 			set
 			{
 				if (Model.Expression == value)

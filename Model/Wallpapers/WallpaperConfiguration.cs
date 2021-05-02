@@ -34,10 +34,14 @@ namespace Overmind.ImageManager.Model.Wallpapers
 			};
 
 			if (String.IsNullOrWhiteSpace(Name))
+			{
 				errorCollection[nameof(Name)].Add(new ArgumentException("The configuration name cannot be empty.", nameof(Name)));
+			}
 
 			if (Directory.Exists(CollectionPath) == false)
+			{
 				errorCollection[nameof(CollectionPath)].Add(new ArgumentException("The collection path does not exist.", nameof(CollectionPath)));
+			}
 
 			try
 			{
@@ -49,7 +53,9 @@ namespace Overmind.ImageManager.Model.Wallpapers
 			}
 
 			if (CyclePeriod < TimeSpan.FromSeconds(1))
+			{
 				errorCollection[nameof(CyclePeriod)].Add(new ArgumentException("The cycle period cannot be smaller than one second.", nameof(CyclePeriod)));
+			}
 
 			return errorCollection;
 		}

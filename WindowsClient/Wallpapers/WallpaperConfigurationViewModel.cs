@@ -59,7 +59,10 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 		private string nameField;
 		public string Name
 		{
-			get { return nameField; }
+			get
+			{
+				return nameField;
+			}
 			set
 			{
 				if (nameField == value)
@@ -69,10 +72,14 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 				ErrorCollection[nameof(Name)] = new List<Exception>();
 
 				if (String.IsNullOrWhiteSpace(nameField))
+				{
 					ErrorCollection[nameof(Name)].Add(new ArgumentException("The configuration name cannot be empty.", nameof(Name)));
+				}
 
 				if (ErrorCollection[nameof(Name)].Any() == false)
+				{
 					Model.Name = nameField;
+				}
 
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Title)));
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
@@ -84,11 +91,15 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 
 		public string CollectionPath
 		{
-			get { return Model.CollectionPath; }
+			get
+			{
+				return Model.CollectionPath;
+			}
 			set
 			{
 				if (Model.CollectionPath == value)
 					return;
+
 				Model.CollectionPath = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CollectionPath)));
 
@@ -98,11 +109,15 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 
 		public string ImageQuery
 		{
-			get { return Model.ImageQuery; }
+			get
+			{
+				return Model.ImageQuery;
+			}
 			set
 			{
 				if (Model.ImageQuery == value)
 					return;
+
 				Model.ImageQuery = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageQuery)));
 
@@ -113,7 +128,10 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 		private string cyclePeriodField;
 		public string CyclePeriod
 		{
-			get { return cyclePeriodField; }
+			get
+			{
+				return cyclePeriodField;
+			}
 			set
 			{
 				if (cyclePeriodField == value)
@@ -122,12 +140,15 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 				cyclePeriodField = value;
 				ErrorCollection[nameof(CyclePeriod)] = new List<Exception>();
 
-				TimeSpan parsedValue;
-				if (TimeSpan.TryParseExact(cyclePeriodField, @"hh\:mm\:ss", CultureInfo.InvariantCulture, out parsedValue) == false)
+				if (TimeSpan.TryParseExact(cyclePeriodField, @"hh\:mm\:ss", CultureInfo.InvariantCulture, out TimeSpan parsedValue) == false)
+				{
 					ErrorCollection[nameof(CyclePeriod)].Add(new ArgumentException("The cycle period must use the format 'hh:mm:ss'.", nameof(CyclePeriod)));
+				}
 
 				if (ErrorCollection[nameof(CyclePeriod)].Any() == false)
+				{
 					Model.CyclePeriod = parsedValue;
+				}
 
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CyclePeriod)));
 				ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(nameof(CyclePeriod)));

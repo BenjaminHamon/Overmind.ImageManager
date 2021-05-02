@@ -155,7 +155,9 @@ namespace Overmind.ImageManager.WindowsClient
 				else
 				{
 					if (eventArguments is CancelEventArgs)
+					{
 						((CancelEventArgs)eventArguments).Cancel = true;
+					}
 				}
 			}
 		}
@@ -197,7 +199,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private void ShowApplicationHelp(object sender, RoutedEventArgs eventArguments)
 		{
-			WindowsApplication.ShowDocumentation("");
+			WindowsApplication.ShowDocumentation(String.Empty);
 		}
 	}
 }

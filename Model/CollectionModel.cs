@@ -49,8 +49,11 @@ namespace Overmind.ImageManager.Model
 		public void RemoveImage(ImageModel image)
 		{
 			bool removed = data.Images.Remove(image);
+
 			if (removed)
+			{
 				removedImages.Add(image);
+			}
 		}
 
 		public void Save()

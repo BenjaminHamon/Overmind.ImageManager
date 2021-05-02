@@ -9,11 +9,14 @@ namespace Overmind.WpfExtensions
 			where TVisual : Visual
 		{
 			if (element is FrameworkElement)
+			{
 				((FrameworkElement)element).ApplyTemplate();
+			}
 
 			for (int childIndex = 0; childIndex < VisualTreeHelper.GetChildrenCount(element); childIndex += 1)
 			{
 				Visual child = VisualTreeHelper.GetChild(element, childIndex) as Visual;
+
 				if (child != null)
 				{
 					if (child is TVisual)
@@ -32,10 +35,12 @@ namespace Overmind.WpfExtensions
 			where TVisual : Visual
 		{
 			Visual parent = VisualTreeHelper.GetParent(element) as Visual;
+
 			if (parent == null)
 				return null;
 			if (parent is TVisual)
 				return (TVisual)parent;
+
 			return GetAncestor<TVisual>(parent);
 		}
 	}

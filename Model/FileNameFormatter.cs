@@ -75,9 +75,9 @@ namespace Overmind.ImageManager.Model
 			lengthLimit -= EllipsisMark.Length;
 
 			string shortenedValue = fullValue;
-			while ((shortenedValue.Length > lengthLimit) && (shortenedValue.Contains(ValueSeparator)))
+			while ((shortenedValue.Length > lengthLimit) && shortenedValue.Contains(ValueSeparator))
 				shortenedValue = shortenedValue.Substring(0, shortenedValue.LastIndexOf(ValueSeparator));
-			while ((shortenedValue.Length > lengthLimit) && (shortenedValue.Contains(WordSeparator)))
+			while ((shortenedValue.Length > lengthLimit) && shortenedValue.Contains(WordSeparator))
 				shortenedValue = shortenedValue.Substring(0, shortenedValue.LastIndexOf(WordSeparator));
 			if (shortenedValue.Length > lengthLimit)
 				shortenedValue = shortenedValue.Substring(0, lengthLimit);
@@ -101,7 +101,7 @@ namespace Overmind.ImageManager.Model
 			if (TextTransform != null)
 				value = TextTransform(value);
 
-			value = InvalidCharactersRegex.Replace(value, "");
+			value = InvalidCharactersRegex.Replace(value, String.Empty);
 			value = WhiteSpaceRegex.Replace(value, WordSeparator);
 			return value.Trim();
 		}

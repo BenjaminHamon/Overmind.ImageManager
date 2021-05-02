@@ -2,7 +2,6 @@
 using Overmind.ImageManager.Model.Serialization;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 
@@ -48,8 +47,11 @@ namespace Overmind.ImageManager.Model
 				throw new InvalidDataException("The collection format version is not supported.");
 
 			collectionData.Images = serializer.DeserializeFromFile<List<ImageModel>>(Path.Combine(collectionPath, "Data", "Images.json"));
+
 			foreach (ImageModel image in collectionData.Images)
+			{
 				image.FileNameAsSaved = image.FileName;
+			}
 
 			return collectionData;
 		}
@@ -66,7 +68,9 @@ namespace Overmind.ImageManager.Model
 			Directory.CreateDirectory(Path.Combine(collectionPath, "Images-Temporary"));
 
 			foreach (ImageModel image in removedImages.Where(i => i.FileNameAsSaved != null))
+			{
 				File.Delete(Path.Combine(collectionPath, "Images", image.FileNameAsSaved));
+			}
 
 			foreach (ImageModel image in collectionData.Images)
 			{
@@ -75,7 +79,9 @@ namespace Overmind.ImageManager.Model
 				if (image.FileNameAsTemporary != null)
 				{
 					if (image.FileNameAsSaved != null)
+					{
 						File.Delete(Path.Combine(collectionPath, "Images", image.FileNameAsSaved));
+					}
 
 					string temporaryPath = Path.Combine(collectionPath, "Images-Temporary", image.FileNameAsTemporary);
 					string finalPath = Path.Combine(collectionPath, "Images", image.FileName);
@@ -103,7 +109,9 @@ namespace Overmind.ImageManager.Model
 			serializer.SerializeToFile(Path.Combine(collectionPath, "Data-Temporary", "Images.json"), collectionData.Images);
 
 			if (Directory.Exists(Path.Combine(collectionPath, "Data-ToRemove")))
+			{
 				Directory.Delete(Path.Combine(collectionPath, "Data-ToRemove"), true);
+			}
 
 			Directory.Move(Path.Combine(collectionPath, "Data"), Path.Combine(collectionPath, "Data-ToRemove"));
 			Directory.Move(Path.Combine(collectionPath, "Data-Temporary"), Path.Combine(collectionPath, "Data"));
@@ -169,8 +177,11 @@ namespace Overmind.ImageManager.Model
 		public void ClearUnsavedFiles(string collectionPath)
 		{
 			string temporaryDirectory = Path.Combine(collectionPath, "Images-Temporary");
+
 			if (Directory.Exists(temporaryDirectory))
+			{
 				Directory.Delete(temporaryDirectory, true);
+			}
 		}
 	}
 }

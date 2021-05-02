@@ -31,8 +31,7 @@ namespace Overmind.ImageManager.WindowsClient
 		public static void Main(string[] arguments)
 		{
 			AppDomain.CurrentDomain.UnhandledException += ReportFatalError;
-			TaskScheduler.UnobservedTaskException += (sender, eventArguments)
-				=> { Logger.Error(eventArguments.Exception, "Unhandled exception in task"); };
+			TaskScheduler.UnobservedTaskException += ReportTaskException;
 
 			string applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Model.Application.Identifier);
 			Model.Application.InitializeLogging(ApplicationFullName, ApplicationName, applicationDataDirectory);
@@ -144,7 +143,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 				downloaderWindow = new CustomWindow()
 				{
-					Title = "Downloads" +  " - " + ApplicationTitle,
+					Title = "Downloads" + " - " + ApplicationTitle,
 					Height = 400,
 					Width = 600,
 				};
@@ -158,6 +157,7 @@ namespace Overmind.ImageManager.WindowsClient
 			{
 				if (downloaderWindow.WindowState == WindowState.Minimized)
 					downloaderWindow.WindowState = WindowState.Normal;
+
 				downloaderWindow.Activate();
 			}
 		}
@@ -185,6 +185,7 @@ namespace Overmind.ImageManager.WindowsClient
 			{
 				if (settingsWindow.WindowState == WindowState.Minimized)
 					settingsWindow.WindowState = WindowState.Normal;
+
 				settingsWindow.Activate();
 			}
 		}
@@ -266,11 +267,19 @@ namespace Overmind.ImageManager.WindowsClient
 			ShowError(ApplicationTitle, "A fatal error has occured.", exception);
 		}
 
+		private static void ReportTaskException(object sender, UnobservedTaskExceptionEventArgs eventArguments)
+		{
+			Logger.Error(eventArguments.Exception, "Unhandled exception in task");
+		}
+
 		public static void ShowError(string context, string message, Exception exception)
 		{
 			string formattedMessage = message;
+
 			if (exception != null)
+			{
 				formattedMessage += Environment.NewLine + FormatExtensions.FormatExceptionHint(exception);
+			}
 
 			MessageBox.Show(formattedMessage, context, MessageBoxButton.OK, MessageBoxImage.Error);
 		}
@@ -278,7 +287,6 @@ namespace Overmind.ImageManager.WindowsClient
 		public static void ShowDocumentation(string page)
 		{
 			Uri uri = new Uri(DocumentationHome, page);
-
 			using (Process process = Process.Start(uri.ToString())) { }
 		}
 

@@ -56,11 +56,15 @@ namespace Overmind.ImageManager.WindowsClient
 		private CollectionViewModel activeCollectionField;
 		public CollectionViewModel ActiveCollection
 		{
-			get { return activeCollectionField; }
+			get
+			{
+				return activeCollectionField;
+			}
 			private set
 			{
 				if (activeCollectionField == value)
 					return;
+
 				activeCollectionField = value;
 
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ActiveCollection)));
@@ -77,11 +81,15 @@ namespace Overmind.ImageManager.WindowsClient
 		private DownloaderViewModel downloaderField;
 		public DownloaderViewModel Downloader
 		{
-			get { return downloaderField; }
+			get
+			{
+				return downloaderField;
+			}
 			private set
 			{
 				if (downloaderField == value)
 					return;
+
 				downloaderField = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Downloader)));
 			}

@@ -56,7 +56,9 @@ namespace Overmind.ImageManager.WindowsClient
 		private void HandleImageChanged(object sender, PropertyChangedEventArgs eventArguments)
 		{
 			if (eventArguments.PropertyName == nameof(SlideShowViewModel.CurrentImage))
+			{
 				Dispatcher.BeginInvoke(new Action(() => lastImageChange = DateTime.Now));
+			}
 		}
 
 		private void CycleImage(object sender, EventArgs eventArguments)

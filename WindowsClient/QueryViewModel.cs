@@ -42,7 +42,10 @@ namespace Overmind.ImageManager.WindowsClient
 		private string searchExpressionField;
 		public string SearchExpression
 		{
-			get { return searchExpressionField; }
+			get
+			{
+				return searchExpressionField;
+			}
 			set
 			{
 				if (searchExpressionField == value)
@@ -59,7 +62,10 @@ namespace Overmind.ImageManager.WindowsClient
 		private string groupByExpressionField;
 		public string GroupByExpression
 		{
-			get { return groupByExpressionField; }
+			get
+			{
+				return groupByExpressionField;
+			}
 			set
 			{
 				if (groupByExpressionField == value)
@@ -76,7 +82,10 @@ namespace Overmind.ImageManager.WindowsClient
 		private string orderByExpressionField;
 		public string OrderByExpression
 		{
-			get { return orderByExpressionField; }
+			get
+			{
+				return orderByExpressionField;
+			}
 			set
 			{
 				if (orderByExpressionField == value)
@@ -113,7 +122,9 @@ namespace Overmind.ImageManager.WindowsClient
 		public ICollection<ImageViewModel> Execute(IEnumerable<ImageViewModel> allImages)
 		{
 			foreach (ImageViewModel image in allImages)
+			{
 				image.Group = null;
+			}
 
 			IEnumerable<ImageViewModel> resultImages = allImages;
 			resultImages = Filter(resultImages, SearchExpression);
@@ -141,7 +152,9 @@ namespace Overmind.ImageManager.WindowsClient
 			else
 			{
 				foreach (string fieldExpression in expression.Split(new string[] { FieldSeparator }, StringSplitOptions.None))
+				{
 					getterList.Add(CreateFieldGetter(fieldExpression.Trim()));
+				}
 			}
 
 			foreach (ImageViewModel image in source)
@@ -156,6 +169,7 @@ namespace Overmind.ImageManager.WindowsClient
 		private IEnumerable<ImageViewModel> OrderBy(IEnumerable<ImageViewModel> source, string expression)
 		{
 			IOrderedEnumerable<ImageViewModel> orderedSource = source.OrderBy(image => image.Group);
+
 			if (String.IsNullOrWhiteSpace(expression))
 				return orderedSource;
 
@@ -176,8 +190,12 @@ namespace Overmind.ImageManager.WindowsClient
 						throw new ArgumentException(String.Format("Invalid order by field expression '{0}'", fieldExpression));
 
 					Func<ImageModel, object> fieldGetter = CreateFieldGetter(fieldExpressionParts[0]);
+
 					if (fieldExpressionParts.Count == 1)
+					{
 						fieldExpressionParts.Add("asc");
+					}
+
 					switch (fieldExpressionParts[1])
 					{
 						case "asc": orderedSource = orderedSource.ThenBy(image => fieldGetter(image.Model)); break;

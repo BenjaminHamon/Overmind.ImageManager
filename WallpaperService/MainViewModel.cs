@@ -129,23 +129,39 @@ namespace Overmind.ImageManager.WallpaperService
 			}
 
 			if (wallpaperSettings == null)
+			{
 				return new WallpaperSettings();
+			}
 
 			{
 				Dictionary<string, List<Exception>> settingsValidation = wallpaperSettings.Validate();
+
 				foreach (Exception validationException in settingsValidation.SelectMany(kvp => kvp.Value))
-					Logger.Warn("Failed to validate wallpaper settings: {0}", FormatExtensions.FormatExceptionHint(validationException));
+				{
+					Logger.Warn("Failed to validate wallpaper settings: {0}",
+						FormatExtensions.FormatExceptionHint(validationException));
+				}
+
 				if (settingsValidation.SelectMany(kvp => kvp.Value).Any())
+				{
 					return new WallpaperSettings();
+				}
 			}
 
 			foreach (WallpaperConfiguration configuration in wallpaperSettings.ConfigurationCollection.ToList())
 			{
 				Dictionary<string, List<Exception>> configurationValidation = configuration.Validate(queryEngine);
+
 				foreach (Exception validationException in configurationValidation.SelectMany(kvp => kvp.Value))
-					Logger.Warn("Failed to validate wallpaper configuration '{0}': {1}", configuration.Name, FormatExtensions.FormatExceptionHint(validationException));
+				{
+					Logger.Warn("Failed to validate wallpaper configuration '{0}': {1}",
+						configuration.Name, FormatExtensions.FormatExceptionHint(validationException));
+				}
+
 				if (configurationValidation.SelectMany(kvp => kvp.Value).Any())
+				{
 					wallpaperSettings.ConfigurationCollection.Remove(configuration);
+				}
 			}
 
 			return wallpaperSettings;

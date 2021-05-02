@@ -16,7 +16,7 @@ namespace Overmind.ImageManager.WindowsClient
 			isRunningField = CanCycle;
 			currentImageField = imageCollection.FirstOrDefault();
 			Interval = TimeSpan.FromSeconds(5);
-			
+
 			PreviousCommand = new DelegateCommand<object>(_ => Previous(), _ => CanCycle);
 			NextCommand = new DelegateCommand<object>(_ => Next(), _ => CanCycle);
 		}
@@ -27,11 +27,15 @@ namespace Overmind.ImageManager.WindowsClient
 		private bool isRunningField;
 		public bool IsRunning
 		{
-			get { return isRunningField; }
+			get
+			{
+				return isRunningField;
+			}
 			set
 			{
 				if (isRunningField == value)
 					return;
+
 				isRunningField = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsRunning)));
 			}
@@ -40,11 +44,15 @@ namespace Overmind.ImageManager.WindowsClient
 		private ImageViewModel currentImageField;
 		public ImageViewModel CurrentImage
 		{
-			get { return currentImageField; }
+			get
+			{
+				return currentImageField;
+			}
 			set
 			{
 				if (currentImageField == value)
 					return;
+
 				currentImageField = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentImage)));
 			}
@@ -53,12 +61,16 @@ namespace Overmind.ImageManager.WindowsClient
 		public TimeSpan Interval { get; private set; }
 		public double IntervalSeconds
 		{
-			get { return Interval.TotalSeconds; }
+			get
+			{
+				return Interval.TotalSeconds;
+			}
 			set
 			{
 				TimeSpan valueTimeSpan = TimeSpan.FromSeconds(value);
 				if (valueTimeSpan == Interval)
 					return;
+
 				Interval = valueTimeSpan;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Interval)));
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IntervalSeconds)));

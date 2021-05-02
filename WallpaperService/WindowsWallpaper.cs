@@ -20,7 +20,7 @@ namespace Overmind.ImageManager.WallpaperService
 		public static string Get()
 		{
 			RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
-			return (string)key.GetValue("Wallpaper");
+			return (string) key.GetValue("Wallpaper");
 		}
 
 		/// <summary>Sets the wallpaper.</summary>

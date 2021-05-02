@@ -101,7 +101,7 @@ namespace Overmind.ImageManager.Model
 			if (TextTransform != null)
 				value = TextTransform(value);
 
-			value = InvalidCharactersRegex.Replace(value, "");
+			value = InvalidCharactersRegex.Replace(value, String.Empty);
 			value = WhiteSpaceRegex.Replace(value, WordSeparator);
 			return value.Trim();
 		}

@@ -197,7 +197,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 		private void ShowApplicationHelp(object sender, RoutedEventArgs eventArguments)
 		{
-			WindowsApplication.ShowDocumentation("");
+			WindowsApplication.ShowDocumentation(String.Empty);
 		}
 	}
 }

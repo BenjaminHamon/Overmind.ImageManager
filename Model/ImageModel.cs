@@ -51,7 +51,7 @@ namespace Overmind.ImageManager.Model
 
 			document.Add(new Field("hash", Hash, Field.Store.YES, Field.Index.NOT_ANALYZED));
 
-			document.Add(new Field("title", Title ?? "", Field.Store.NO, Field.Index.ANALYZED));
+			document.Add(new Field("title", Title ?? String.Empty, Field.Store.NO, Field.Index.ANALYZED));
 			foreach (string subject in SubjectCollection)
 				document.Add(new Field("subject", subject, Field.Store.NO, Field.Index.ANALYZED));
 			foreach (string artist in ArtistCollection)

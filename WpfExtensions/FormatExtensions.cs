@@ -7,7 +7,7 @@ namespace Overmind.WpfExtensions
 	public static class FormatExtensions
 	{
 		// See https://en.wikipedia.org/wiki/Metric_prefix
-		private static readonly List<string> prefixCollection = new List<string>() { "", "k", "M", "G", "T", "P", "E", "Z", "Y" };
+		private static readonly List<string> PrefixCollection = new List<string>() { "", "k", "M", "G", "T", "P", "E", "Z", "Y" };
 
 		/// <summary>Format a numeric value to a human-friendly representation, using prefixes from the International System of Units.</summary>
 		/// <param name="value">The value to format.</param>
@@ -24,13 +24,13 @@ namespace Overmind.WpfExtensions
 
 			int prefixIndex = 0;
 
-			while ((Math.Abs(value) > multiplier) && (prefixIndex < (prefixCollection.Count - 1)))
+			while ((Math.Abs(value) > multiplier) && (prefixIndex < (PrefixCollection.Count - 1)))
 			{
 				value /= multiplier;
 				prefixIndex += 1;
 			}
 
-			return value.ToString(format, formatProvider) + " " + prefixCollection[prefixIndex] + unit;
+			return value.ToString(format, formatProvider) + " " + PrefixCollection[prefixIndex] + unit;
 		}
 
 		/// <summary>Format a summary from an exception hierarchy by using the first line of each exception.</summary>

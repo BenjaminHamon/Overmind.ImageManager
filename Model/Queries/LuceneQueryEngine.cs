@@ -12,7 +12,7 @@ namespace Overmind.ImageManager.Model.Queries
 {
 	public class LuceneQueryEngine : IQueryEngine<ImageModel>
 	{
-		private const Lucene.Net.Util.Version searchVersion = Lucene.Net.Util.Version.LUCENE_30;
+		private const Lucene.Net.Util.Version SearchVersion = Lucene.Net.Util.Version.LUCENE_30;
 
 		public void AssertQuery(string queryString)
 		{
@@ -21,9 +21,9 @@ namespace Overmind.ImageManager.Model.Queries
 
 			try
 			{
-				using (Analyzer searchAnalyser = new StandardAnalyzer(searchVersion))
+				using (Analyzer searchAnalyser = new StandardAnalyzer(SearchVersion))
 				{
-					ImageQueryParser queryParser = new ImageQueryParser(searchVersion, "any", searchAnalyser);
+					ImageQueryParser queryParser = new ImageQueryParser(SearchVersion, "any", searchAnalyser);
 					queryParser.AllowLeadingWildcard = true;
 					queryParser.Parse(queryString);
 				}
@@ -45,7 +45,7 @@ namespace Overmind.ImageManager.Model.Queries
 			{
 				Query query;
 
-				using (Analyzer searchAnalyser = new StandardAnalyzer(searchVersion))
+				using (Analyzer searchAnalyser = new StandardAnalyzer(SearchVersion))
 				{
 					using (IndexWriter indexWriter = new IndexWriter(searchIndex, searchAnalyser, IndexWriter.MaxFieldLength.UNLIMITED))
 					{
@@ -53,7 +53,7 @@ namespace Overmind.ImageManager.Model.Queries
 							indexWriter.AddDocument(image.ToDocument());
 					}
 
-					ImageQueryParser queryParser = new ImageQueryParser(searchVersion, "any", searchAnalyser);
+					ImageQueryParser queryParser = new ImageQueryParser(SearchVersion, "any", searchAnalyser);
 					queryParser.AllowLeadingWildcard = true;
 					query = queryParser.Parse(queryString);
 				}

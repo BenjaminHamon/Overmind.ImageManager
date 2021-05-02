@@ -36,7 +36,7 @@ namespace Overmind.ImageManager.Model
 			return BitConverter.ToString(hashAlgorithm.ComputeHash(data)).Replace("-", "").ToLowerInvariant();
 		}
 
-		/// <summary>Get an image format from its data</summary>
+		/// <summary>Get an image format from its data.</summary>
 		public string GetFormat(byte[] data)
 		{
 			using (MemoryStream stream = new MemoryStream(data))
@@ -44,7 +44,7 @@ namespace Overmind.ImageManager.Model
 				return new ImageFormatConverter().ConvertToString(image.RawFormat).ToLower();
 		}
 
-		/// <summary>Get an image dimensions from its data</summary>
+		/// <summary>Get an image dimensions from its data.</summary>
 		public string GetDimensions(byte[] data)
 		{
 			using (MemoryStream stream = new MemoryStream(data))

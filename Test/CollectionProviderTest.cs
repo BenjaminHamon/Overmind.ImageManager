@@ -132,7 +132,7 @@ namespace Overmind.ImageManager.Test
 			imageModel.Hash = imageOperations.ComputeHash(imageData);
 			collectionProvider.WriteImageFile(workingDirectory, imageModel, imageData);
 			collectionProvider.SaveCollection(workingDirectory, collectionData, new List<ImageModel>());
-			
+
 			Assert.IsTrue(File.Exists(Path.Combine(workingDirectory, "Images", imageModel.FileNameAsSaved)));
 
 			collectionData.Images.Remove(imageModel);

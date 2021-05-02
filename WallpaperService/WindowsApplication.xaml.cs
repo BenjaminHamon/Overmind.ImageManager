@@ -89,7 +89,7 @@ namespace Overmind.ImageManager.WallpaperService
 			MainWindow.Closing += HideMainWindow;
 
 			// FIXME: The NotificationIcon bindings throw exceptions on initialization (but still work).
-			TaskbarIcon notificationIcon = (TaskbarIcon)Resources["NotificationIcon"];
+			TaskbarIcon notificationIcon = (TaskbarIcon) Resources["NotificationIcon"];
 			notificationIcon.DataContext = mainViewModel;
 		}
 
@@ -130,7 +130,6 @@ namespace Overmind.ImageManager.WallpaperService
 			InternalLogger.Fatal(exception, "Unhandled exception");
 			Logger.Fatal(exception, "Unhandled exception");
 			ShowError(ApplicationTitle, "A fatal error has occured.", exception);
-
 		}
 
 		public static void ShowError(string context, string message, Exception exception)

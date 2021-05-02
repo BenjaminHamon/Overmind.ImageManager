@@ -29,13 +29,13 @@ namespace Overmind.ImageManager.WindowsClient.Wallpapers
 		{
 			if (eventArguments.OldValue != null)
 			{
-				WallpaperSettingsViewModel oldDataContext = (WallpaperSettingsViewModel)eventArguments.OldValue;
+				WallpaperSettingsViewModel oldDataContext = (WallpaperSettingsViewModel) eventArguments.OldValue;
 				oldDataContext.ConfigurationCollection.CollectionChanged -= ShowNewConfiguration_Dispatch;
 			}
 
 			if (eventArguments.NewValue != null)
 			{
-				WallpaperSettingsViewModel newDataContext = (WallpaperSettingsViewModel)eventArguments.NewValue;
+				WallpaperSettingsViewModel newDataContext = (WallpaperSettingsViewModel) eventArguments.NewValue;
 				newDataContext.ConfigurationCollection.CollectionChanged += ShowNewConfiguration_Dispatch;
 			}
 		}

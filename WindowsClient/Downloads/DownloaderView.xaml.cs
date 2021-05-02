@@ -72,9 +72,9 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 			IEnumerable<string> imageUriCollection = new List<string>();
 
 			if (eventArguments.Data.GetDataPresent(DataFormats.FileDrop))
-				imageUriCollection = (IEnumerable<string>)eventArguments.Data.GetData(DataFormats.FileDrop);
+				imageUriCollection = (IEnumerable<string>) eventArguments.Data.GetData(DataFormats.FileDrop);
 			else if (eventArguments.Data.GetDataPresent(DataFormats.Text))
-				imageUriCollection = ((string)eventArguments.Data.GetData(DataFormats.Text))
+				imageUriCollection = ((string) eventArguments.Data.GetData(DataFormats.Text))
 					.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
 			foreach (string imageUri in imageUriCollection)

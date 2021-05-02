@@ -49,14 +49,14 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			if (eventArguments.OldValue != null)
 			{
-				CollectionViewModel oldDataContext = (CollectionViewModel)eventArguments.OldValue;
+				CollectionViewModel oldDataContext = (CollectionViewModel) eventArguments.OldValue;
 				oldDataContext.DisplayedImages.CollectionChanged -= HandleCollectionReset;
 				oldDataContext.PropertyChanged -= ScrollToSelection;
 			}
 
 			if (eventArguments.NewValue != null)
 			{
-				CollectionViewModel newDataContext = (CollectionViewModel)eventArguments.NewValue;
+				CollectionViewModel newDataContext = (CollectionViewModel) eventArguments.NewValue;
 				newDataContext.DisplayedImages.CollectionChanged += HandleCollectionReset;
 				newDataContext.PropertyChanged += ScrollToSelection;
 
@@ -77,7 +77,7 @@ namespace Overmind.ImageManager.WindowsClient
 		{
 			if (eventArguments.PropertyName == nameof(CollectionViewModel.SelectedImage))
 			{
-				CollectionViewModel viewModel = (CollectionViewModel)DataContext;
+				CollectionViewModel viewModel = (CollectionViewModel) DataContext;
 				if (viewModel.DisplayedImages.Contains(viewModel.SelectedImage))
 					listBox.ScrollIntoView(viewModel.SelectedImage);
 			}

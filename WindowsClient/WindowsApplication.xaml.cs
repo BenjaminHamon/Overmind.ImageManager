@@ -144,7 +144,7 @@ namespace Overmind.ImageManager.WindowsClient
 
 				downloaderWindow = new CustomWindow()
 				{
-					Title = "Downloads" +  " - " + ApplicationTitle,
+					Title = "Downloads" + " - " + ApplicationTitle,
 					Height = 400,
 					Width = 600,
 				};
@@ -278,7 +278,6 @@ namespace Overmind.ImageManager.WindowsClient
 		public static void ShowDocumentation(string page)
 		{
 			Uri uri = new Uri(DocumentationHome, page);
-
 			using (Process process = Process.Start(uri.ToString())) { }
 		}
 

@@ -45,7 +45,6 @@ namespace Overmind.ImageManager.WindowsClient
 		private void NavigateToLink(object sender, ExecutedRoutedEventArgs eventArguments)
 		{
 			Uri uri = new Uri((string)eventArguments.Parameter);
-
 			using (Process process = Process.Start(uri.ToString())) { }
 		}
 	}

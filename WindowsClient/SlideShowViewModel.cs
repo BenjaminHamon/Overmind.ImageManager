@@ -16,7 +16,7 @@ namespace Overmind.ImageManager.WindowsClient
 			isRunningField = CanCycle;
 			currentImageField = imageCollection.FirstOrDefault();
 			Interval = TimeSpan.FromSeconds(5);
-			
+
 			PreviousCommand = new DelegateCommand<object>(_ => Previous(), _ => CanCycle);
 			NextCommand = new DelegateCommand<object>(_ => Next(), _ => CanCycle);
 		}

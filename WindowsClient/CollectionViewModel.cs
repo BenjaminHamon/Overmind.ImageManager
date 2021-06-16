@@ -31,8 +31,6 @@ namespace Overmind.ImageManager.WindowsClient
 			FilteredImages = new List<ImageViewModel>();
 			DisplayedImages = new ObservableCollection<ImageViewModel>();
 
-			ExecuteQuery();
-
 			ViewImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) application.ViewImage(image); });
 			RemoveImageCommand = new DelegateCommand<ImageViewModel>(image => { if (image != null) RemoveImage(image); });
 			ExecuteQueryCommand = new DelegateCommand<object>(_ => ExecuteQuery());

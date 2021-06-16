@@ -151,6 +151,8 @@ namespace Overmind.ImageManager.WindowsClient
 			CollectionModel collectionModel = new CollectionModel(collectionProvider, imageOperations, collectionData, collectionPath);
 			ActiveCollection = new CollectionViewModel(application, collectionModel, imageOperations, queryEngine, randomFactory);
 			Downloader = new DownloaderViewModel(downloader, ActiveCollection, settingsProvider, imageOperations, application.Dispatcher);
+
+			ActiveCollection.ExecuteQueryCommand.Execute(null);
 		}
 
 		private void CloseCollection()

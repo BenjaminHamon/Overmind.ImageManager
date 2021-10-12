@@ -119,11 +119,17 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 			if (downloadData != null)
 			{
-				dispatcher.Invoke(() =>
+				string hash = imageOperations.ComputeHash(downloadData);
+				ImageViewModel image = collection.GetImage(hash);
+
+				if (image != null)
 				{
-					downloadHashCache[download] = imageOperations.ComputeHash(downloadData);
-					SelectImageCommand.RaiseCanExecuteChanged();
-				});
+					dispatcher.Invoke(() =>
+					{
+						downloadHashCache[download] = hash;
+						SelectImageCommand.RaiseCanExecuteChanged();
+					});
+				}
 			}
 		}
 
@@ -167,7 +173,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 		{
 			List<ObservableDownload> downloadsToRemove = DownloadCollection.Where(d => d.IsCompleted).ToList();
 
-			foreach (var download in downloadsToRemove)
+			foreach (ObservableDownload download in downloadsToRemove)
 			{
 				DownloadCollection.Remove(download);
 			}

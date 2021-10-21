@@ -102,7 +102,7 @@ namespace Overmind.ImageManager.Model.Downloads
 				{
 					case "Request": result = await ExecuteRequest(String.Format(commandElements.ElementAtOrDefault(1) ?? result, uri.Segments), cancellationToken); break;
 					case "Json": result = ExecuteJson(result, String.Format(commandElements[1], uri.Segments)); break;
-					case "XPath": result = ExecuteXPath(result, String.Format(commandElements[1], uri.Segments)); break;
+					case "XPath": result = ExecuteXPath(result, commandElements.Skip(1).Select(x => String.Format(x, uri.Segments))); break;
 					default: throw new ArgumentException(String.Format("Unknown operation '{0}'", commandElements[0]));
 				}
 			}
@@ -131,16 +131,19 @@ namespace Overmind.ImageManager.Model.Downloads
 			return jsonToken.Value<string>();
 		}
 
-		private string ExecuteXPath(string data, string xPath)
+		private string ExecuteXPath(string data, IEnumerable<string> allPaths)
 		{
 			HtmlDocument htmlDocument = new HtmlDocument();
 			htmlDocument.LoadHtml(data);
 
-			XPathNavigator xPathNavigator = htmlDocument.CreateNavigator().SelectSingleNode(xPath);
-			if (xPathNavigator == null)
-				throw new InvalidDataException("The XPath matched no node");
+			foreach (string xPath in allPaths)
+			{
+				XPathNavigator xPathNavigator = htmlDocument.CreateNavigator().SelectSingleNode(xPath);
+				if (xPathNavigator != null)
+					return xPathNavigator.Value;
+			}
 
-			return xPathNavigator.Value;
+			throw new InvalidDataException("The XPath matched no node");
 		}
 	}
 }

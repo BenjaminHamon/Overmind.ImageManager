@@ -1,6 +1,7 @@
 ﻿using Overmind.WpfExtensions;
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Threading;
 
@@ -20,7 +21,7 @@ namespace Overmind.ImageManager.WindowsClient.Downloads
 
 		public Uri Uri { get; private set; }
 		public string UriString { get { return Uri == null ? uriStringField : Uri.ToString(); } }
-		public string Name { get { return Uri == null ? uriStringField : Uri.UnescapeDataString(Uri.Segments.Last()); } }
+		public string Name { get { return Uri == null ? uriStringField : Path.GetFileName(Uri.UnescapeDataString(Uri.AbsolutePath.TrimEnd('/'))); } }
 
 		public bool IsDownloading { get; private set; }
 		public bool IsCompleted { get; private set; }
